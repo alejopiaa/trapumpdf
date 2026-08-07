@@ -86,4 +86,6 @@ Todos los archivos generados por TrapümPDF siguen la nomenclatura estándar:
 
 ## 📄 Licencia
 
-MIT © [alejopia.com](https://alejopia.com)
+GNU General Public License v3.0 © [alejopia.com](https://alejopia.com)
+
+Consulta el archivo [LICENSE](./LICENSE) para más detalles.
