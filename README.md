@@ -40,7 +40,22 @@ Este diseño es compatible con los principios establecidos en la **Ley N.º 21.7
 
 ---
 
-## 🚀 Instalación y Uso Local
+## 📥 Descarga y Uso (Usuarios)
+
+Descarga la última versión estable desde la sección **[Releases](https://github.com/alejopiaa/trapumpdf/releases)** de este repositorio:
+
+1. Ve a **Releases → v1.0.0 → Assets**.
+2. Descarga el archivo `.zip` de la versión.
+3. Descomprime la carpeta en tu equipo.
+4. Abre el archivo `index.html` directamente en tu navegador (Chrome, Edge o Firefox).
+
+No requiere instalación, internet ni permisos de administrador.
+
+---
+
+## 🛠️ Desarrollo Local (Desarrolladores)
+
+Si deseas revisar el código, modificarlo o contribuir al proyecto:
 
 ```bash
 # 1. Clona el repositorio
