@@ -44,7 +44,8 @@ export const ResultCard: React.FC<ResultCardProps> = ({
     : compressedSize;
 
   const savingsBytes = Math.max(0, totalOrig - totalComp);
-  const savingsPercent = totalOrig > 0 ? ((savingsBytes / totalOrig) * 100).toFixed(1) : '0';
+  const rawPercent = totalOrig > 0 ? (savingsBytes / totalOrig) * 100 : 0;
+  const savingsPercent = rawPercent > 0 ? parseFloat(rawPercent.toFixed(1)) : 0;
 
   const downloadSinglePdf = (bytes: Uint8Array, fileName: string) => {
     const blob = new Blob([bytes as unknown as BlobPart], { type: 'application/pdf' });

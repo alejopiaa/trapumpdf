@@ -125,6 +125,27 @@ export const revokeThumbnailUrl = (url?: string) => {
 };
 
 /**
+ * Safely revokes multiple Blob Object URLs to free browser RAM.
+ */
+export const releaseBlobUrls = (urls: (string | undefined)[]) => {
+  urls.forEach((url) => revokeThumbnailUrl(url));
+};
+
+/**
+ * Destroys all cached PDF.js document proxies and clears the internal cache map to free RAM.
+ */
+export const clearPdfjsCache = () => {
+  pdfjsDocMap.forEach((doc) => {
+    try {
+      doc.destroy();
+    } catch (e) {
+      console.warn('Error destruyendo proxy de PDF.js:', e);
+    }
+  });
+  pdfjsDocMap.clear();
+};
+
+/**
  * Parses files (PDFs or Images) into individual PageItems with high-res thumbnails
  */
 export const parseFilesToPages = async (
