@@ -156,17 +156,17 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
 
           {/* Grupo de Botones de Ordenamiento */}
           {(onSortAZ || onSortZA || onInvertOrder || onResetOrder) && (
-            <div className="flex items-center gap-1 border border-border/80 rounded-xl p-1 bg-muted/50">
+            <div className="flex items-center gap-1 border border-border/80 rounded-xl p-1 bg-muted/60">
               {onSortAZ && (
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
                   onClick={onSortAZ}
-                  className="h-7 px-2 text-xs font-bold gap-1 rounded-lg hover:bg-background"
-                  title="Ordenar A-Z"
+                  className="h-7 px-2.5 text-xs font-black rounded-lg hover:bg-background text-foreground tracking-wide"
+                  title="Ordenar de A a Z"
                 >
-                  <ArrowDownAZ className="w-3.5 h-3.5" /> A-Z
+                  A → Z
                 </Button>
               )}
               {onSortZA && (
@@ -175,10 +175,10 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
                   variant="ghost"
                   size="sm"
                   onClick={onSortZA}
-                  className="h-7 px-2 text-xs font-bold gap-1 rounded-lg hover:bg-background"
-                  title="Ordenar Z-A"
+                  className="h-7 px-2.5 text-xs font-black rounded-lg hover:bg-background text-foreground tracking-wide"
+                  title="Ordenar de Z a A"
                 >
-                  <ArrowUpAZ className="w-3.5 h-3.5" /> Z-A
+                  Z → A
                 </Button>
               )}
               {onInvertOrder && (
@@ -187,8 +187,8 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
                   variant="ghost"
                   size="sm"
                   onClick={onInvertOrder}
-                  className="h-7 px-2 text-xs font-bold gap-1 rounded-lg hover:bg-background"
-                  title="Invertir orden"
+                  className="h-7 px-2.5 text-xs font-bold gap-1 rounded-lg hover:bg-background text-foreground"
+                  title="Invertir secuencia de páginas (N → 1)"
                 >
                   <ArrowLeftRight className="w-3.5 h-3.5" /> Invertir
                 </Button>
@@ -199,10 +199,10 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
                   variant="ghost"
                   size="sm"
                   onClick={onResetOrder}
-                  className="h-7 px-2 text-xs font-bold gap-1 rounded-lg hover:bg-background text-muted-foreground"
-                  title="Restaurar orden de carga inicial"
+                  className="h-7 px-2.5 text-xs font-bold gap-1 rounded-lg hover:bg-background text-muted-foreground"
+                  title="Restaurar orden inicial"
                 >
-                  <RotateCcw className="w-3 h-3" /> Restaurar
+                  <RotateCcw className="w-3.5 h-3.5" /> Restaurar
                 </Button>
               )}
             </div>
