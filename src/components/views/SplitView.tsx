@@ -153,7 +153,6 @@ export const SplitView: React.FC<SplitViewProps> = ({
                 index={idx}
                 totalCount={pages.length}
                 viewMode={splitViewMode}
-                onRotate={() => {}}
                 onDelete={() => onTogglePageSelection(page.id)}
                 onRestore={() => onTogglePageSelection(page.id)}
                 onDragStart={(e) => {
@@ -200,7 +199,7 @@ export const SplitView: React.FC<SplitViewProps> = ({
                   </Button>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 justify-items-center pt-1">
+                <div className={splitViewMode === 'grid' ? 'grid grid-cols-2 sm:grid-cols-3 gap-4 justify-items-center pt-1' : 'flex flex-col gap-2 pt-1'}>
                   {rangePages.map((page) => {
                     const globalIdx = pages.findIndex((p) => p.id === page.id);
                     return (
@@ -209,8 +208,7 @@ export const SplitView: React.FC<SplitViewProps> = ({
                         page={{ ...page, excluded: false }}
                         index={globalIdx}
                         totalCount={pages.length}
-                        viewMode="grid"
-                        onRotate={() => {}}
+                        viewMode={splitViewMode}
                         onMove={(i, dir) => onMovePageItem(i, dir)}
                         onDragStart={() => setDraggedPageIdx(globalIdx)}
                         onDragOver={(e) => e.preventDefault()}
@@ -240,7 +238,7 @@ export const SplitView: React.FC<SplitViewProps> = ({
                   </Badge>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 justify-items-center pt-1">
+                <div className={splitViewMode === 'grid' ? 'grid grid-cols-2 sm:grid-cols-3 gap-4 justify-items-center pt-1' : 'flex flex-col gap-2 pt-1'}>
                   {blockPages.map((page) => {
                     const globalIdx = pages.findIndex((p) => p.id === page.id);
                     return (
@@ -249,8 +247,7 @@ export const SplitView: React.FC<SplitViewProps> = ({
                         page={{ ...page, excluded: false }}
                         index={globalIdx}
                         totalCount={pages.length}
-                        viewMode="grid"
-                        onRotate={() => {}}
+                        viewMode={splitViewMode}
                         onMove={(i, dir) => onMovePageItem(i, dir)}
                         onDragStart={() => setDraggedPageIdx(globalIdx)}
                         onDragOver={(e) => e.preventDefault()}
