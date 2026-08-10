@@ -113,13 +113,21 @@ export const ResultCard: React.FC<ResultCardProps> = ({
 
         <div className="flex flex-col items-center">
           <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Tamaño Final</span>
-          <span className="text-lg font-bold text-primary mt-0.5">{formatBytes(totalComp)}</span>
+          <span className={`text-lg font-bold mt-0.5 ${totalComp < totalOrig ? 'text-emerald-600 dark:text-emerald-400' : 'text-foreground'}`}>
+            {formatBytes(totalComp)}
+          </span>
         </div>
 
-        {savingsBytes > 0 && showSavingsBadge && (
-          <Badge variant="destructive" className="ml-2 font-bold">
-            -{savingsPercent}% Ahorro
-          </Badge>
+        {showSavingsBadge && (
+          savingsBytes > 0 ? (
+            <Badge variant="destructive" className="ml-2 font-bold">
+              -{savingsPercent}% Ahorro
+            </Badge>
+          ) : (
+            <Badge variant="secondary" className="ml-2 font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/30">
+              ⚡ Tamaño óptimo alcanzado
+            </Badge>
+          )
         )}
       </div>
 
