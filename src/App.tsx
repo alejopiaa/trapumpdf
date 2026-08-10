@@ -439,8 +439,8 @@ function App() {
   };
 
   return (
-    <div className="h-screen overflow-hidden bg-background text-foreground flex flex-col font-sans selection:bg-[#e60380]/20">
-      <div className="h-1 bg-gradient-to-r from-[#e60380] via-[#ffb800] to-[#00a3e0] w-full" />
+    <div className="h-screen overflow-hidden bg-background text-foreground flex flex-col font-sans selection:bg-primary/20">
+      <div className="h-1 bg-gradient-to-r from-sky-500 via-cyan-400 to-indigo-600 w-full" />
 
       <input
         ref={addFilesInputRef}
