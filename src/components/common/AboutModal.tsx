@@ -37,9 +37,14 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
             <MonogramTIcon className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h2 className="text-lg font-black text-foreground tracking-tight flex items-center gap-2">
-              TRAPÜM<span className="text-primary">PDF</span>
-            </h2>
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-black text-foreground tracking-tight">
+                TRAPÜM<span className="text-primary">PDF</span>
+              </h2>
+              <span className="text-[11px] font-extrabold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                v1.0.0
+              </span>
+            </div>
             <p className="text-xs text-muted-foreground font-semibold">
               Trapüm (del mapudungun <span className="italic">Trapümün</span>: "unir", "juntar" o "enlazar")
             </p>
