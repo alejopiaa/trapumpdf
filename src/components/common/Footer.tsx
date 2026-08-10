@@ -7,8 +7,8 @@ interface FooterProps {
 
 export const Footer: React.FC<FooterProps> = ({ onOpenAbout }) => {
   return (
-    <footer className="w-full border-t border-border/60 bg-background/80 backdrop-blur-sm mt-auto">
-      <div className="max-w-7xl mx-auto flex h-12 items-center justify-between px-4 sm:px-6">
+    <footer className="w-full border-t border-border/60 bg-background/80 backdrop-blur-sm mt-auto pb-24 sm:pb-28">
+      <div className="max-w-7xl mx-auto flex h-14 items-center justify-between px-4 sm:px-6">
         {/* Izquierda: Enlace 'Acerca de TrapümPDF' (Reemplaza al logo estático) */}
         <button
           onClick={onOpenAbout}
