@@ -460,7 +460,7 @@ function App() {
 
       <main ref={mainRef} className="flex-1 overflow-y-auto w-full">
         <HeroBanner activeTool={activeTool} />
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 pt-8 sm:pt-10 pb-36">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 pt-8 sm:pt-10 pb-10">
         {errorMessage && (
           <div className="mb-6 p-4 rounded-2xl bg-destructive/10 border border-destructive/30 text-destructive text-sm font-bold flex items-center justify-between">
             <span>⚠️ {errorMessage}</span>
