@@ -109,22 +109,22 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
     <div className="relative w-full max-w-6xl mx-auto flex flex-col gap-6 pb-6 sm:pb-8">
       
       {/* ── Fila 1: Cabecera Superior del Canvas (Top Toolbar) ── */}
-      <div className="flex items-center justify-between flex-wrap gap-4 py-1">
-        {/* Izquierda: Badge de información y botón Añadir */}
-        <div className="flex items-center gap-3 flex-wrap">
+      <div className="flex items-center justify-between flex-wrap gap-2.5 py-1">
+        {/* Izquierda: Badge de información y botones de acción */}
+        <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap min-w-0">
           <Badge
-            variant="secondary"
-            className="font-extrabold text-xs px-3.5 py-1.5 rounded-full shrink-0 min-w-[100px] text-center inline-flex items-center justify-center"
+            variant="default"
+            className="bg-primary text-primary-foreground font-extrabold text-xs px-3 py-1.5 rounded-full shrink-0 shadow-xs"
           >
             {badgeText}
           </Badge>
 
           {/* Pastilla no bloqueante de archivos omitidos con clic/hover */}
           {omittedFiles && omittedFiles.length > 0 && (
-            <div className="relative inline-block">
+            <div className="relative inline-block shrink-0">
               <Badge
                 onClick={() => setShowPopover(!showPopover)}
-                className="bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 font-extrabold text-xs px-3 py-1.5 rounded-full cursor-pointer hover:bg-amber-500/25 transition-all flex items-center gap-1.5 shadow-xs select-none"
+                className="bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 font-extrabold text-xs px-2.5 py-1.5 rounded-full cursor-pointer hover:bg-amber-500/25 transition-all flex items-center gap-1.5 shadow-xs select-none"
               >
                 <span>⚠️ {omittedFiles.length} {omittedFiles.length === 1 ? 'omitido' : 'omitidos'}</span>
               </Badge>
@@ -163,22 +163,40 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
               variant="outline"
               size="sm"
               onClick={onAddFilesClick}
-              className="rounded-xl text-xs font-bold"
+              className="rounded-xl text-xs font-bold shrink-0 h-8 px-2.5"
             >
               {addFilesLabel}
             </Button>
           )}
 
+          {/* Botón Detección y Quitado de Páginas en Blanco */}
+          {onRemoveBlankPages && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={onRemoveBlankPages}
+              className={`rounded-xl text-xs font-bold gap-1 transition-colors shrink-0 h-8 px-2.5 ${
+                hasBlankPages
+                  ? 'border-amber-500/50 bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20'
+                  : 'text-muted-foreground'
+              }`}
+              title="Detectar y excluir páginas en blanco automáticamente"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Quitar en blanco
+            </Button>
+          )}
+
           {/* Grupo de Botones de Ordenamiento */}
           {(onSortAZ || onSortZA || onInvertOrder || onResetOrder) && (
-            <div className="flex items-center gap-1 border border-border/80 rounded-xl p-1 bg-muted/60">
+            <div className="flex items-center gap-0.5 border border-border/80 rounded-xl p-0.5 bg-muted/60 shrink-0 h-8">
               {onSortAZ && (
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
                   onClick={onSortAZ}
-                  className="h-7 px-2.5 text-xs font-black rounded-lg hover:bg-background text-foreground tracking-wide"
+                  className="h-7 px-2 text-xs font-black rounded-lg hover:bg-background text-foreground tracking-wide"
                   title="Ordenar de A a Z"
                 >
                   A → Z
@@ -190,7 +208,7 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
                   variant="ghost"
                   size="sm"
                   onClick={onSortZA}
-                  className="h-7 px-2.5 text-xs font-black rounded-lg hover:bg-background text-foreground tracking-wide"
+                  className="h-7 px-2 text-xs font-black rounded-lg hover:bg-background text-foreground tracking-wide"
                   title="Ordenar de Z a A"
                 >
                   Z → A
@@ -202,7 +220,7 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
                   variant="ghost"
                   size="sm"
                   onClick={onInvertOrder}
-                  className="h-7 px-2.5 text-xs font-bold gap-1 rounded-lg hover:bg-background text-foreground"
+                  className="h-7 px-2 text-xs font-bold gap-1 rounded-lg hover:bg-background text-foreground"
                   title="Invertir secuencia de páginas (N → 1)"
                 >
                   <ArrowLeftRight className="w-3.5 h-3.5" /> Invertir
@@ -214,31 +232,13 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
                   variant="ghost"
                   size="sm"
                   onClick={onResetOrder}
-                  className="h-7 px-2.5 text-xs font-bold gap-1 rounded-lg hover:bg-background text-muted-foreground"
+                  className="h-7 px-2 text-xs font-bold gap-1 rounded-lg hover:bg-background text-muted-foreground"
                   title="Restaurar orden inicial"
                 >
                   <RotateCcw className="w-3.5 h-3.5" /> Restaurar
                 </Button>
               )}
             </div>
-          )}
-
-          {/* Botón Detección y Quitado de Páginas en Blanco */}
-          {onRemoveBlankPages && (
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={onRemoveBlankPages}
-              className={`rounded-xl text-xs font-bold gap-1.5 transition-colors ${
-                hasBlankPages
-                  ? 'border-amber-500/50 bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20'
-                  : 'text-muted-foreground'
-              }`}
-              title="Detectar y excluir páginas en blanco automáticamente"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Quitar en blanco
-            </Button>
           )}
 
           {extraHeaderButtons}
