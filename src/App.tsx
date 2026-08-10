@@ -505,7 +505,6 @@ function App() {
             omittedFiles={omittedFiles}
             onSortAZ={pdfMerge.handleSortMergeFilesAZ}
             onSortZA={pdfMerge.handleSortMergeFilesZA}
-            onInvertOrder={pdfMerge.handleInvertMergeFiles}
             onResetOrder={pdfMerge.handleResetMergeFiles}
           />
         ) : activeTool === 'edit' ? (
