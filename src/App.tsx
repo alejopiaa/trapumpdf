@@ -525,8 +525,6 @@ function App() {
             isLoading={isLoading}
             onPreview={(t, gId, pIdx) => openLightbox(t, pIdx, gId)}
             omittedFiles={omittedFiles}
-            onSortAZ={pdfEdit.handleSortEditPagesAZ}
-            onSortZA={pdfEdit.handleSortEditPagesZA}
             onInvertOrder={pdfEdit.handleInvertEditPagesOrder}
             onResetOrder={pdfEdit.handleResetEditPagesOrder}
             onRemoveBlankPages={pdfEdit.handleRemoveBlankPages}
