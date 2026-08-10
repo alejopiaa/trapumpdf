@@ -10,23 +10,19 @@ y el versionado sigue [Semantic Versioning](https://semver.org/lang/es/).
 ## [1.1.0] - 2026-08-10
 
 ### Added
-- Función `clearPdfjsCache()` y `releaseBlobUrls()` para liberar activamente memoria RAM (proxies PDF.js y Blob URLs) al limpiar archivos.
-- Animación sutil periódica en el logo de la cabecera.
+- Liberación activa de memoria RAM (proxies de PDF.js y Blob URLs) al vaciar o limpiar archivos.
 - Indicador visual `⚡ Tamaño óptimo alcanzado` en la pantalla de resultado para documentos previamente optimizados.
 
 ### Changed
-- Rediseño de la pantalla de resultado en procesamiento masivo a 2 botones limpios: `Descargar Paquete (.ZIP)` y `Descargar Archivos Separados`.
-- Condicionamiento de accesos directos de encadenado (*Organizar*, *Comprimir*, *Unir*) para mostrarse exclusivamente al procesar 1 solo archivo individual.
-- Unificación del espaciado superior global a `pt-8` en el contenedor principal de `App.tsx`.
+- Rediseño de la pantalla de resultado en procesamiento masivo a 2 botones principales: `Descargar Paquete (.ZIP)` y `Descargar Archivos Separados`.
+- Condicionamiento de accesos directos de encadenado (*Organizar*, *Comprimir*, *Unir*) para desplegarse únicamente al procesar 1 solo archivo individual.
 
 ### Fixed
-- Corrección de desbordamiento horizontal (*scroll horizontal*) en laptops acomodando el lienzo y el panel lateral lado a lado en un flujo flexible continuo.
-- Salvaguarda en Comprimir PDF que previene que un archivo procesado resulte más pesado que el archivo original.
-- Corrección de paddings superiores duplicados entre el contenedor principal y las vistas internas.
-- Corrección de alineación asimétrica en el componente de carga `DropZone` ajustando su contenedor a `max-w-4xl`.
+- Corrección de desbordamiento horizontal (*scroll horizontal*) en laptops acomodando el lienzo y el panel lateral en una distribución fluida.
+- Salvaguarda en la herramienta Comprimir PDF que evita que un archivo procesado resulte más pesado que el original.
 
 ### Removed
-- Eliminación de la lista redundante inferior de descargas por archivo individual en la pantalla de éxito.
+- Eliminación de la lista redundante de descargas por archivo individual en la pantalla de éxito.
 
 ## [1.0.0] - 2026-08-07
 
