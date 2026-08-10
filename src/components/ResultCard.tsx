@@ -160,66 +160,61 @@ export const ResultCard: React.FC<ResultCardProps> = ({
         </Button>
       )}
 
-      {/* Connected Action Shortcuts */}
+      {/* Connected Action Shortcuts (solo visibles para 1 solo archivo individual) */}
       <div className="w-full border-t border-border pt-6 mt-2 flex flex-col items-center">
-        <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-4">
-          ¿Qué deseas hacer a continuación con este resultado?
-        </span>
+        {!isMultiple && (onContinueEdit || onContinueCompress || onContinueMerge) && (
+          <>
+            <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-4">
+              ¿Qué deseas hacer a continuación con este resultado?
+            </span>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
-          {onContinueEdit && (
-            <Button
-              variant="outline"
-              className="h-auto py-3 flex-col gap-1 text-left items-start justify-start border-border hover:border-primary/50"
-              onClick={() => {
-                const bytes = pdfBytes || (multipleResults && multipleResults.length > 0 ? multipleResults[0].pdfBytes : undefined);
-                onContinueEdit(bytes);
-              }}
-            >
-              <div className="flex items-center gap-2 font-bold text-xs text-foreground">
-                <Wrench className="w-4 h-4 text-primary" /> Organizar este PDF
-              </div>
-              <span className="text-[11px] text-muted-foreground font-normal">Reordena o quita págs.</span>
-            </Button>
-          )}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full">
+              {onContinueEdit && (
+                <Button
+                  variant="outline"
+                  className="h-auto py-3 flex-col gap-1 text-left items-start justify-start border-border hover:border-primary/50"
+                  onClick={() => onContinueEdit(pdfBytes)}
+                >
+                  <div className="flex items-center gap-2 font-bold text-xs text-foreground">
+                    <Wrench className="w-4 h-4 text-primary" /> Organizar este PDF
+                  </div>
+                  <span className="text-[11px] text-muted-foreground font-normal">Reordena o quita págs.</span>
+                </Button>
+              )}
 
-          {onContinueCompress && (
-            <Button
-              variant="outline"
-              className="h-auto py-3 flex-col gap-1 text-left items-start justify-start border-border hover:border-primary/50"
-              onClick={() => {
-                const bytes = pdfBytes || (multipleResults && multipleResults.length > 0 ? multipleResults[0].pdfBytes : undefined);
-                onContinueCompress(bytes);
-              }}
-            >
-              <div className="flex items-center gap-2 font-bold text-xs text-foreground">
-                <Zap className="w-4 h-4 text-amber-500" /> Comprimir este PDF
-              </div>
-              <span className="text-[11px] text-muted-foreground font-normal">Reduce peso en MB</span>
-            </Button>
-          )}
+              {onContinueCompress && (
+                <Button
+                  variant="outline"
+                  className="h-auto py-3 flex-col gap-1 text-left items-start justify-start border-border hover:border-primary/50"
+                  onClick={() => onContinueCompress(pdfBytes)}
+                >
+                  <div className="flex items-center gap-2 font-bold text-xs text-foreground">
+                    <Zap className="w-4 h-4 text-amber-500" /> Comprimir este PDF
+                  </div>
+                  <span className="text-[11px] text-muted-foreground font-normal">Reduce peso en MB</span>
+                </Button>
+              )}
 
-          {onContinueMerge && (
-            <Button
-              variant="outline"
-              className="h-auto py-3 flex-col gap-1 text-left items-start justify-start border-border hover:border-primary/50"
-              onClick={() => {
-                const bytes = pdfBytes || (multipleResults && multipleResults.length > 0 ? multipleResults[0].pdfBytes : undefined);
-                onContinueMerge(bytes);
-              }}
-            >
-              <div className="flex items-center gap-2 font-bold text-xs text-foreground">
-                <LinkIcon className="w-4 h-4 text-sky-500" /> Unir con otro PDF
-              </div>
-              <span className="text-[11px] text-muted-foreground font-normal">Agrega otros PDF</span>
-            </Button>
-          )}
-        </div>
+              {onContinueMerge && (
+                <Button
+                  variant="outline"
+                  className="h-auto py-3 flex-col gap-1 text-left items-start justify-start border-border hover:border-primary/50"
+                  onClick={() => onContinueMerge(pdfBytes)}
+                >
+                  <div className="flex items-center gap-2 font-bold text-xs text-foreground">
+                    <LinkIcon className="w-4 h-4 text-sky-500" /> Unir con otro PDF
+                  </div>
+                  <span className="text-[11px] text-muted-foreground font-normal">Agrega otros PDF</span>
+                </Button>
+              )}
+            </div>
+          </>
+        )}
 
         <Button
           variant="ghost"
           size="sm"
-          className="mt-6 text-xs text-muted-foreground hover:text-foreground"
+          className={`${!isMultiple && (onContinueEdit || onContinueCompress || onContinueMerge) ? 'mt-6' : 'mt-2'} text-xs text-muted-foreground hover:text-foreground`}
           onClick={onReset}
         >
           <RefreshCw className="w-3.5 h-3.5 mr-1.5" /> Comenzar un nuevo proceso desde cero
