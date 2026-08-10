@@ -92,7 +92,9 @@ const PageCardComponent: React.FC<PageCardProps> = ({
             )}
           </div>
           {isExcluded && (
-            <span className="text-[10px] font-bold text-destructive">Excluida</span>
+            <span className="text-[10px] font-bold text-destructive">
+              {page.isBlank ? '⚠️ En Blanco Excluida' : 'Excluida'}
+            </span>
           )}
         </div>
 
@@ -210,7 +212,9 @@ const PageCardComponent: React.FC<PageCardProps> = ({
         {/* Soft deletion overlay */}
         {isExcluded && (
           <div className="absolute inset-0 bg-destructive/80 text-destructive-foreground backdrop-blur-xs flex flex-col items-center justify-center p-3 text-center gap-2 z-30 animate-in fade-in-0">
-            <span className="text-xs font-bold">Página Excluida</span>
+            <span className="text-xs font-bold leading-snug">
+              {page.isBlank ? 'Página en Blanco Excluida' : 'Página Excluida'}
+            </span>
             <Button
               type="button"
               variant="secondary"
