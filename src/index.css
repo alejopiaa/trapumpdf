@@ -40,12 +40,12 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
 
-  /* Tokens de Marca Institucionales SECMUN Maipú */
-  --color-brand-magenta: #e60380;
-  --color-brand-navy: #002d62;
-  --color-brand-cyan: #00a3e0;
-  --color-brand-amber: #ffb800;
-  --color-brand-emerald: #059669;
+  /* Tokens de Marca Oficial TrapümPDF (Cyan Turquesa & Navy) */
+  --color-brand-cyan: #0284c7;
+  --color-brand-navy: #0f172a;
+  --color-brand-magenta: #0284c7;
+  --color-brand-amber: #f59e0b;
+  --color-brand-emerald: #10b981;
 
   /* Animación Periódica Sutil de Logo en Tailwind v4 (Mueve 1.5px cada 6 segundos) */
   --animate-logo-nod: logo-subtle-nod 6s ease-in-out infinite;
@@ -82,26 +82,26 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
 
-    /* Primary = Magenta Institucional SECMUN (#e60380) */
-    --primary: 327 97% 45%;
+    /* Primary = Cyan Turquesa Tecnológico (#0284C7) */
+    --primary: 199 89% 48%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary = Azul Marino Institucional SECMUN (#002d62) */
-    --secondary: 213 100% 19%;
+    /* Secondary = Deep Slate Navy (#0F172A) */
+    --secondary: 222 47% 11%;
     --secondary-foreground: 0 0% 100%;
 
     --muted: 210 40% 96%;
     --muted-foreground: 215 16% 47%;
 
-    --accent: 327 97% 95%;
-    --accent-foreground: 327 97% 45%;
+    --accent: 199 89% 95%;
+    --accent-foreground: 199 89% 38%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 214 32% 91%;
     --input: 214 32% 91%;
-    --ring: 327 97% 45%;
+    --ring: 199 89% 48%;
 
     --radius: 0.75rem;
   }
@@ -118,24 +118,25 @@
     --popover: 222 47% 10%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 327 97% 50%;
-    --primary-foreground: 0 0% 100%;
+    /* Primary = Cyan Sky Bright en Dark Mode (#38BDF8) */
+    --primary: 199 89% 55%;
+    --primary-foreground: 222 47% 7%;
 
-    --secondary: 213 60% 25%;
+    --secondary: 215 60% 25%;
     --secondary-foreground: 210 40% 98%;
 
     --muted: 217 33% 17%;
     --muted-foreground: 215 20% 65%;
 
-    --accent: 327 97% 15%;
-    --accent-foreground: 327 97% 85%;
+    --accent: 199 89% 15%;
+    --accent-foreground: 199 89% 85%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 217 33% 20%;
     --input: 217 33% 20%;
-    --ring: 327 97% 50%;
+    --ring: 199 89% 55%;
   }
 
   * {
