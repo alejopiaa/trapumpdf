@@ -34,8 +34,14 @@ export const Header: React.FC<HeaderProps> = ({
           onClick={() => onToolSwitch('home')}
           title="Ir al inicio"
         >
-          <div className="w-10 h-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-200">
-            <MonogramTIcon className="w-5.5 h-5.5 text-white" />
+          <div className="relative flex items-center justify-center">
+            {/* Glow Pulse Aura (100% Tailwind v4) */}
+            <div className="absolute inset-0 rounded-xl bg-primary/40 blur-md animate-pulse pointer-events-none" />
+
+            {/* Squircle Isotipo */}
+            <div className="relative w-10 h-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-md shadow-primary/20 group-hover:scale-105 transition-transform duration-200">
+              <MonogramTIcon className="w-5.5 h-5.5 text-white" />
+            </div>
           </div>
           <span className="text-xl font-black tracking-tight text-foreground whitespace-nowrap">
             TRAPÜM<span className="text-primary">PDF</span>
