@@ -48,26 +48,26 @@ const PageCardComponent: React.FC<PageCardProps> = ({
         onDragStart={(e) => onDragStart(e, index)}
         onDragOver={(e) => onDragOver(e, index)}
         onDrop={(e) => onDrop(e, index)}
-        className={`flex items-center gap-3 p-3 transition-all cursor-grab active:cursor-grabbing ${
+        className={`flex items-center gap-2 sm:gap-3 p-2 sm:p-3 transition-all cursor-grab active:cursor-grabbing max-w-full overflow-hidden ${
           isDragging ? 'opacity-40 scale-98 border-dashed border-primary' : ''
         } ${isExcluded ? 'opacity-50 bg-destructive/5 border-destructive/30' : 'hover:border-primary/50'}`}
       >
-        <div className="text-muted-foreground hover:text-foreground p-1" title="Arrastra para reordenar">
-          <GripVertical className="w-4 h-4" />
+        <div className="text-muted-foreground hover:text-foreground p-0.5 shrink-0" title="Arrastra para reordenar">
+          <GripVertical className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
         </div>
 
         <Badge
           className={
             isExcluded
-              ? 'bg-destructive text-destructive-foreground font-bold shrink-0'
-              : 'bg-primary text-primary-foreground font-extrabold shrink-0 shadow-sm border border-background/20'
+              ? 'bg-destructive text-destructive-foreground font-bold shrink-0 text-[10px] px-1.5 py-0.5'
+              : 'bg-primary text-primary-foreground font-extrabold shrink-0 shadow-xs border border-background/20 text-[10px] px-1.5 py-0.5'
           }
         >
           {badgePrefix} {index + 1}
         </Badge>
 
         <div
-          className="w-12 h-14 bg-muted rounded-md overflow-hidden shrink-0 cursor-pointer border hover:ring-2 hover:ring-primary/50 transition-all flex items-center justify-center relative"
+          className="w-9 h-11 sm:w-12 sm:h-14 bg-muted rounded-md overflow-hidden shrink-0 cursor-pointer border hover:ring-2 hover:ring-primary/50 transition-all flex items-center justify-center relative"
           onClick={(e) => { e.stopPropagation(); onPreview && onPreview(page); }}
           title="Haz clic para ver en grande"
         >
@@ -81,18 +81,18 @@ const PageCardComponent: React.FC<PageCardProps> = ({
         </div>
 
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <p className="text-xs font-bold text-foreground truncate" title={page.fileName}>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <p className="text-xs font-bold text-foreground truncate max-w-full" title={page.fileName}>
               {page.fileName}
             </p>
             {page.isBlank && !isExcluded && (
-              <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30">
-                ⚠️ En blanco
+              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 shrink-0">
+                ⚠️ Blanco
               </span>
             )}
           </div>
           {isExcluded && (
-            <span className="text-[11px] font-bold text-destructive">Página Excluida</span>
+            <span className="text-[10px] font-bold text-destructive">Excluida</span>
           )}
         </div>
 
