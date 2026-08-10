@@ -23,6 +23,11 @@ interface EditViewProps {
   isLoading: boolean;
   onPreview: (tool: 'edit', groupIdx: string, pageIdx: number) => void;
   omittedFiles?: OmittedFileItem[];
+  onSortAZ?: () => void;
+  onSortZA?: () => void;
+  onInvertOrder?: () => void;
+  onResetOrder?: () => void;
+  onRemoveBlankPages?: () => void;
 }
 
 export const EditView: React.FC<EditViewProps> = ({
@@ -41,6 +46,11 @@ export const EditView: React.FC<EditViewProps> = ({
   isLoading,
   onPreview,
   omittedFiles = [],
+  onSortAZ,
+  onSortZA,
+  onInvertOrder,
+  onResetOrder,
+  onRemoveBlankPages,
 }) => {
   const [draggedItem, setDraggedItem] = React.useState<{ groupId: string; index: number } | null>(null);
 
@@ -50,6 +60,7 @@ export const EditView: React.FC<EditViewProps> = ({
 
   const totalPages = editGroups.reduce((acc, g) => acc + g.pages.length, 0);
   const badgeText = `${editGroups.length} ${editGroups.length === 1 ? 'archivo' : 'archivos'} (${totalPages} págs)`;
+  const hasBlankPages = editGroups.some((g) => g.pages.some((p) => p.isBlank && !p.excluded));
 
   return (
     <ToolCanvasLayout
@@ -63,6 +74,12 @@ export const EditView: React.FC<EditViewProps> = ({
       onProcess={onProcess}
       isProcessDisabled={isLoading || editGroups.length === 0}
       omittedFiles={omittedFiles}
+      onSortAZ={onSortAZ}
+      onSortZA={onSortZA}
+      onInvertOrder={onInvertOrder}
+      onResetOrder={onResetOrder}
+      onRemoveBlankPages={onRemoveBlankPages}
+      hasBlankPages={hasBlankPages}
     >
       <div className="flex flex-col gap-6">
         {editGroups.map((group) => (

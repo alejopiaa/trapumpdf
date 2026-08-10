@@ -20,6 +20,10 @@ interface MergeViewProps {
   setDraggedMergeIdx: (idx: number | null) => void;
   onPreview: (tool: 'merge', idx: number) => void;
   omittedFiles?: OmittedFileItem[];
+  onSortAZ?: () => void;
+  onSortZA?: () => void;
+  onInvertOrder?: () => void;
+  onResetOrder?: () => void;
 }
 
 export const MergeView: React.FC<MergeViewProps> = ({
@@ -38,6 +42,10 @@ export const MergeView: React.FC<MergeViewProps> = ({
   setDraggedMergeIdx,
   onPreview,
   omittedFiles = [],
+  onSortAZ,
+  onSortZA,
+  onInvertOrder,
+  onResetOrder,
 }) => {
   if (mergeFiles.length === 0) {
     return <DropZone onFilesSelected={onFilesSelected} omittedFiles={omittedFiles} multiple accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/*" isLoading={isLoading} />;
@@ -67,6 +75,10 @@ export const MergeView: React.FC<MergeViewProps> = ({
       onProcess={onProcess}
       isProcessDisabled={isLoading || mergeFiles.length === 0}
       omittedFiles={omittedFiles}
+      onSortAZ={onSortAZ}
+      onSortZA={onSortZA}
+      onInvertOrder={onInvertOrder}
+      onResetOrder={onResetOrder}
     >
       {mergeViewMode === 'grid' ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 justify-items-center">

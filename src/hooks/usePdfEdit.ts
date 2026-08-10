@@ -71,6 +71,51 @@ export function usePdfEdit() {
     );
   }, []);
 
+  const handleSortEditPagesAZ = useCallback(() => {
+    setEditGroups((prev) =>
+      prev.map((g) => ({
+        ...g,
+        pages: [...g.pages].sort((a, b) => a.fileName.localeCompare(b.fileName, undefined, { numeric: true })),
+      }))
+    );
+  }, []);
+
+  const handleSortEditPagesZA = useCallback(() => {
+    setEditGroups((prev) =>
+      prev.map((g) => ({
+        ...g,
+        pages: [...g.pages].sort((a, b) => b.fileName.localeCompare(a.fileName, undefined, { numeric: true })),
+      }))
+    );
+  }, []);
+
+  const handleInvertEditPagesOrder = useCallback(() => {
+    setEditGroups((prev) =>
+      prev.map((g) => ({
+        ...g,
+        pages: [...g.pages].reverse(),
+      }))
+    );
+  }, []);
+
+  const handleResetEditPagesOrder = useCallback(() => {
+    setEditGroups((prev) =>
+      prev.map((g) => ({
+        ...g,
+        pages: [...g.pages].sort((a, b) => a.originalIndex - b.originalIndex),
+      }))
+    );
+  }, []);
+
+  const handleRemoveBlankPages = useCallback(() => {
+    setEditGroups((prev) =>
+      prev.map((g) => ({
+        ...g,
+        pages: g.pages.map((p) => (p.isBlank ? { ...p, excluded: true } : p)),
+      }))
+    );
+  }, []);
+
   const clearEditState = useCallback(() => {
     setEditGroups((prev) => {
       prev.forEach((g) => {
@@ -93,6 +138,11 @@ export function usePdfEdit() {
     handleMoveEditPage,
     handleDropEditPage,
     handleRemoveGroup,
+    handleSortEditPagesAZ,
+    handleSortEditPagesZA,
+    handleInvertEditPagesOrder,
+    handleResetEditPagesOrder,
+    handleRemoveBlankPages,
     clearEditState,
   };
 }

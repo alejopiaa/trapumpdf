@@ -25,6 +25,8 @@ interface SplitViewProps {
   onTogglePageSelection: (id: string) => void;
   onSelectAllPages: () => void;
   onDeselectAllPages: () => void;
+  onSelectEvenPages?: () => void;
+  onSelectOddPages?: () => void;
   onMovePageItem: (idx: number, direction: 'left' | 'right') => void;
   draggedPageIdx: number | null;
   setDraggedPageIdx: (idx: number | null) => void;
@@ -54,6 +56,8 @@ export const SplitView: React.FC<SplitViewProps> = ({
   onTogglePageSelection,
   onSelectAllPages,
   onDeselectAllPages,
+  onSelectEvenPages,
+  onSelectOddPages,
   onMovePageItem,
   draggedPageIdx,
   setDraggedPageIdx,
@@ -112,6 +116,8 @@ export const SplitView: React.FC<SplitViewProps> = ({
       onFixedSizeChange={onFixedSizeChange}
       totalPages={pages.length}
       selectedCount={selectedCount}
+      onSelectEvenPages={onSelectEvenPages}
+      onSelectOddPages={onSelectOddPages}
     />
   );
 
