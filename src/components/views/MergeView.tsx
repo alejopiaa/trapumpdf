@@ -22,7 +22,6 @@ interface MergeViewProps {
   omittedFiles?: OmittedFileItem[];
   onSortAZ?: () => void;
   onSortZA?: () => void;
-  onInvertOrder?: () => void;
   onResetOrder?: () => void;
 }
 
@@ -44,7 +43,6 @@ export const MergeView: React.FC<MergeViewProps> = ({
   omittedFiles = [],
   onSortAZ,
   onSortZA,
-  onInvertOrder,
   onResetOrder,
 }) => {
   if (mergeFiles.length === 0) {
@@ -77,7 +75,6 @@ export const MergeView: React.FC<MergeViewProps> = ({
       omittedFiles={omittedFiles}
       onSortAZ={onSortAZ}
       onSortZA={onSortZA}
-      onInvertOrder={onInvertOrder}
       onResetOrder={onResetOrder}
     >
       {mergeViewMode === 'grid' ? (
