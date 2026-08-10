@@ -7,23 +7,7 @@ y el versionado sigue [Semantic Versioning](https://semver.org/lang/es/).
 
 ## [Unreleased]
 
-### Added
-- Badge de versión `v1.0.0` en el modal informativo "Acerca de TrapümPDF".
-- Salvaguarda antiaumento de peso en Comprimir PDF que garantiza que el archivo final nunca pese más que el original.
-- Indicador visual `⚡ Tamaño óptimo alcanzado` en la pantalla de resultado para documentos previamente optimizados.
-- Función `clearPdfjsCache()` y `releaseBlobUrls()` para liberar activamente memoria RAM (proxies PDF.js y Blob URLs) al limpiar archivos.
-- Micro-animación de asentamiento sutil periódica (`animate-logo-nod`) de 1.5px cada 6 segundos en el logo de la cabecera.
-
-### Changed
-- Rediseño de la pantalla de resultado en procesamiento masivo a 2 botones limpios: `Descargar Paquete (.ZIP)` y `Descargar Archivos Separados`.
-- Condicionamiento de accesos directos de encadenado (*Organizar*, *Comprimir*, *Unir*) para mostrarse exclusivamente al procesar 1 solo archivo individual.
-- Reestructuración de la maquetación en laptops acomodando el lienzo y el panel lateral lado a lado en un flujo flexible continuo, eliminando el scroll horizontal.
-- Unificación del espaciado superior global a `pt-8` en el contenedor principal de `App.tsx`, removiendo paddings superiores duplicados en vistas.
-- Envoltorio de `DropZone` ajustado a `max-w-4xl` para alineación simétrica perfecta con el lienzo.
-- Actualización del número de versión a `"1.0.0"` y nombre a `"trapumpdf"` en `package.json`.
-
-### Removed
-- Eliminación de la lista redundante inferior de descargas por archivo individual en la pantalla de éxito.
+## [1.0.0] - 2026-08-07
 
 ### Added
 
