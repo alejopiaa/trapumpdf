@@ -43,6 +43,10 @@ export interface ToolCanvasLayoutProps {
   onRemoveBlankPages?: () => void;
   /** Indica si hay páginas en blanco detectadas */
   hasBlankPages?: boolean;
+  /** Handler para restaurar todas las páginas excluidas y su estado */
+  onRestoreAllPages?: () => void;
+  /** Indica si hay páginas excluidas en este momento */
+  hasExcludedPages?: boolean;
   /** Contenido interno del canvas (lista o cuadrícula de miniaturas) */
   children: React.ReactNode;
 }
@@ -69,9 +73,12 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
   onResetOrder,
   onRemoveBlankPages,
   hasBlankPages = false,
+  onRestoreAllPages,
+  hasExcludedPages = false,
   children,
 }) => {
   const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const [showRestoreConfirm, setShowRestoreConfirm] = useState(false);
   const [showPopover, setShowPopover] = useState(false);
   const [showToast, setShowToast] = useState(false);
 
@@ -215,9 +222,9 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
                   size="sm"
                   onClick={onResetOrder}
                   className="h-7 px-2 text-xs font-bold gap-1 rounded-lg hover:bg-background text-muted-foreground"
-                  title="Restaurar orden inicial"
+                  title="Reorganizar al orden de carga inicial"
                 >
-                  <RotateCcw className="w-3.5 h-3.5" /> Restaurar
+                  <RotateCcw className="w-3.5 h-3.5" /> Orden Original
                 </Button>
               )}
             </div>
@@ -239,6 +246,25 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
             >
               <Sparkles className="w-3.5 h-3.5 text-amber-500" />
               <span>Quitar en blanco</span>
+            </Button>
+          )}
+
+          {/* Botón Restaurar Todas las Páginas Excluidas */}
+          {onRestoreAllPages && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setShowRestoreConfirm(true)}
+              className={`rounded-xl text-xs font-bold gap-1 transition-colors shrink-0 h-8 px-2.5 ${
+                hasExcludedPages
+                  ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20'
+                  : 'text-muted-foreground'
+              }`}
+              title="Restaurar todas las páginas excluidas al estado inicial"
+            >
+              <RotateCcw className="w-3.5 h-3.5 text-emerald-500" />
+              <span>Restaurar páginas</span>
             </Button>
           )}
 
@@ -373,6 +399,56 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
                 className="rounded-xl font-bold text-xs gap-1.5 shadow-sm"
               >
                 <Trash2 className="w-3.5 h-3.5" /> Sí, limpiar todo
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Modal de Confirmación para Restaurar Todas las Páginas ── */}
+      {showRestoreConfirm && (
+        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in-0 duration-200">
+          <div className="bg-card border border-border/80 rounded-2xl p-6 max-w-md w-full shadow-2xl flex flex-col gap-5 relative animate-in zoom-in-95 duration-200">
+            <button
+              onClick={() => setShowRestoreConfirm(false)}
+              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground rounded-lg p-1"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                <RotateCcw className="w-5 h-5" />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <h3 className="text-base font-extrabold text-foreground">
+                  ¿Restaurar todas las páginas?
+                </h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Se volverán a incluir todas las páginas excluidas y se restablecerán sus rotaciones al estado original.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowRestoreConfirm(false)}
+                className="rounded-xl font-bold text-xs"
+              >
+                Cancelar
+              </Button>
+              <Button
+                variant="success"
+                size="sm"
+                onClick={() => {
+                  setShowRestoreConfirm(false);
+                  onRestoreAllPages && onRestoreAllPages();
+                }}
+                className="rounded-xl font-bold text-xs gap-1.5 shadow-sm"
+              >
+                <RotateCcw className="w-3.5 h-3.5" /> Sí, restaurar páginas
               </Button>
             </div>
           </div>

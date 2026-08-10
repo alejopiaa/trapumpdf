@@ -527,6 +527,7 @@ function App() {
             onInvertOrder={pdfEdit.handleInvertEditPagesOrder}
             onResetOrder={pdfEdit.handleResetEditPagesOrder}
             onRemoveBlankPages={pdfEdit.handleRemoveBlankPages}
+            onRestoreAllPages={pdfEdit.handleRestoreAllPages}
           />
         ) : activeTool === 'split' ? (
           <SplitView
