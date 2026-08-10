@@ -11,7 +11,7 @@ y el versionado sigue [Semantic Versioning](https://semver.org/lang/es/).
 
 ### Added
 - Función `clearPdfjsCache()` y `releaseBlobUrls()` para liberar activamente memoria RAM (proxies PDF.js y Blob URLs) al limpiar archivos.
-- Micro-animación de asentamiento sutil periódica (`animate-logo-nod`) de 1.5px cada 6 segundos en el logo de la cabecera.
+- Animación sutil periódica en el logo de la cabecera.
 - Indicador visual `⚡ Tamaño óptimo alcanzado` en la pantalla de resultado para documentos previamente optimizados.
 
 ### Changed
