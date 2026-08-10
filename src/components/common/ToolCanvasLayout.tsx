@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { LayoutGrid, List, Trash2, ArrowRight, AlertTriangle, X } from 'lucide-react';
+import { LayoutGrid, List, Trash2, ArrowRight, AlertTriangle, X, ArrowDownAZ, ArrowUpAZ, ArrowLeftRight, RotateCcw, Sparkles } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 
@@ -34,6 +34,15 @@ export interface ToolCanvasLayoutProps {
   omittedFiles?: Array<{ name: string; reason: string }>;
   /** Componente de controles lateral (Sidebar flotante a la derecha en DIVIDIR y COMPRIMIR) */
   sidebar?: React.ReactNode;
+  /** Controles de ordenamiento opcionales (A-Z, Z-A, Invertir, Restaurar) */
+  onSortAZ?: () => void;
+  onSortZA?: () => void;
+  onInvertOrder?: () => void;
+  onResetOrder?: () => void;
+  /** Handler para quitar páginas en blanco */
+  onRemoveBlankPages?: () => void;
+  /** Indica si hay páginas en blanco detectadas */
+  hasBlankPages?: boolean;
   /** Contenido interno del canvas (lista o cuadrícula de miniaturas) */
   children: React.ReactNode;
 }
@@ -54,6 +63,12 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
   extraHeaderButtons,
   omittedFiles = [],
   sidebar,
+  onSortAZ,
+  onSortZA,
+  onInvertOrder,
+  onResetOrder,
+  onRemoveBlankPages,
+  hasBlankPages = false,
   children,
 }) => {
   const [showClearConfirm, setShowClearConfirm] = useState(false);
@@ -138,6 +153,79 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
               {addFilesLabel}
             </Button>
           )}
+
+          {/* Grupo de Botones de Ordenamiento */}
+          {(onSortAZ || onSortZA || onInvertOrder || onResetOrder) && (
+            <div className="flex items-center gap-1 border border-border/80 rounded-xl p-1 bg-muted/50">
+              {onSortAZ && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={onSortAZ}
+                  className="h-7 px-2 text-xs font-bold gap-1 rounded-lg hover:bg-background"
+                  title="Ordenar A-Z"
+                >
+                  <ArrowDownAZ className="w-3.5 h-3.5" /> A-Z
+                </Button>
+              )}
+              {onSortZA && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={onSortZA}
+                  className="h-7 px-2 text-xs font-bold gap-1 rounded-lg hover:bg-background"
+                  title="Ordenar Z-A"
+                >
+                  <ArrowUpAZ className="w-3.5 h-3.5" /> Z-A
+                </Button>
+              )}
+              {onInvertOrder && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={onInvertOrder}
+                  className="h-7 px-2 text-xs font-bold gap-1 rounded-lg hover:bg-background"
+                  title="Invertir orden"
+                >
+                  <ArrowLeftRight className="w-3.5 h-3.5" /> Invertir
+                </Button>
+              )}
+              {onResetOrder && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={onResetOrder}
+                  className="h-7 px-2 text-xs font-bold gap-1 rounded-lg hover:bg-background text-muted-foreground"
+                  title="Restaurar orden de carga inicial"
+                >
+                  <RotateCcw className="w-3 h-3" /> Restaurar
+                </Button>
+              )}
+            </div>
+          )}
+
+          {/* Botón Detección y Quitado de Páginas en Blanco */}
+          {onRemoveBlankPages && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={onRemoveBlankPages}
+              className={`rounded-xl text-xs font-bold gap-1.5 transition-colors ${
+                hasBlankPages
+                  ? 'border-amber-500/50 bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20'
+                  : 'text-muted-foreground'
+              }`}
+              title="Detectar y excluir páginas en blanco automáticamente"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Quitar en blanco
+            </Button>
+          )}
+
           {extraHeaderButtons}
         </div>
 

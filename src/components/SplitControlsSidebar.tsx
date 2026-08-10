@@ -16,6 +16,8 @@ interface SplitControlsSidebarProps {
   onFixedSizeChange: (val: string) => void;
   totalPages: number;
   selectedCount: number;
+  onSelectEvenPages?: () => void;
+  onSelectOddPages?: () => void;
 }
 
 const SplitControlsSidebar: React.FC<SplitControlsSidebarProps> = ({
@@ -29,6 +31,8 @@ const SplitControlsSidebar: React.FC<SplitControlsSidebarProps> = ({
   onFixedSizeChange,
   totalPages,
   selectedCount,
+  onSelectEvenPages,
+  onSelectOddPages,
 }) => {
   const [startPage, setStartPage] = useState('');
   const [endPage, setEndPage] = useState('');
@@ -55,37 +59,16 @@ const SplitControlsSidebar: React.FC<SplitControlsSidebarProps> = ({
     setEndPage('');
   };
 
-  const handleRangeInputChange = (idx: number, field: 'start' | 'end', val: string) => {
+  const handleRangeInputChange = (idx: number, field: 'start' | 'end', value: string) => {
     if (!onUpdateRange) return;
-    const num = parseInt(val, 10);
-    const curr = ranges[idx];
-    if (!curr) return;
-
-    if (isNaN(num)) {
-      onUpdateRange(idx, { ...curr, [field]: 0 });
-      return;
-    }
-
-    let newStart = field === 'start' ? num : curr.start;
-    let newEnd = field === 'end' ? num : curr.end;
-
-    if (newStart < 1) newStart = 1;
-    if (totalPages > 0 && newStart > totalPages) newStart = totalPages;
-
-    if (field === 'start' && newEnd > 0 && newStart > newEnd) {
-      newEnd = newStart;
-    }
-
-    if (field === 'end') {
-      if (newStart > 0 && newEnd < newStart) {
-        newEnd = newStart;
-      }
-      if (totalPages > 0 && newEnd > totalPages) {
-        newEnd = totalPages;
-      }
-    }
-
-    onUpdateRange(idx, { start: newStart, end: newEnd });
+    const num = parseInt(value, 10);
+    const val = isNaN(num) ? 0 : num;
+    const current = ranges[idx];
+    const updated = {
+      ...current,
+      [field]: val,
+    };
+    onUpdateRange(idx, updated);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -106,7 +89,6 @@ const SplitControlsSidebar: React.FC<SplitControlsSidebarProps> = ({
 
       {/* ── Top Header Tabs (Clean 2-Tab Layout: Por Rango vs Extraer Págs) ── */}
       <div className="grid grid-cols-2 gap-1 bg-muted p-1 rounded-xl border border-border">
-        {/* Tab 1: Por Rango */}
         <Button
           type="button"
           variant={isRangeMode ? 'default' : 'ghost'}
@@ -120,7 +102,6 @@ const SplitControlsSidebar: React.FC<SplitControlsSidebarProps> = ({
           <span>Por Rango</span>
         </Button>
 
-        {/* Tab 2: Extraer Páginas */}
         <Button
           type="button"
           variant={mode === 'individual' ? 'default' : 'ghost'}
@@ -138,24 +119,32 @@ const SplitControlsSidebar: React.FC<SplitControlsSidebarProps> = ({
       {/* ── Sub-modo Selector Pills ── */}
       {isRangeMode && (
         <div className="flex flex-col gap-1.5">
-          <span className="text-xs font-medium text-muted-foreground">Modo de rango:</span>
-          <div className="grid grid-cols-2 gap-2">
-            <Button
+          <label className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+            Modo de división
+          </label>
+          <div className="grid grid-cols-2 gap-1 bg-muted/60 p-1 rounded-lg border border-border/50 text-xs">
+            <button
               type="button"
-              variant={mode === 'custom' ? 'default' : 'outline'}
               onClick={() => onModeChange('custom')}
-              className={`h-9 text-xs font-semibold ${mode === 'custom' ? 'bg-primary text-primary-foreground' : ''}`}
+              className={`py-1.5 px-2 rounded-md font-bold transition-colors ${
+                mode === 'custom'
+                  ? 'bg-background text-foreground shadow-xs'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
             >
-              Personalizado
-            </Button>
-            <Button
+              Rangos Person.
+            </button>
+            <button
               type="button"
-              variant={mode === 'fixed' ? 'default' : 'outline'}
               onClick={() => onModeChange('fixed')}
-              className={`h-9 text-xs font-semibold ${mode === 'fixed' ? 'bg-primary text-primary-foreground' : ''}`}
+              className={`py-1.5 px-2 rounded-md font-bold transition-colors ${
+                mode === 'fixed'
+                  ? 'bg-background text-foreground shadow-xs'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
             >
-              Fijo
-            </Button>
+              Rango Fijo (N págs)
+            </button>
           </div>
         </div>
       )}
@@ -164,17 +153,15 @@ const SplitControlsSidebar: React.FC<SplitControlsSidebarProps> = ({
       {mode === 'custom' && (
         <div className="flex flex-col gap-3">
           {ranges.map((r, idx) => (
-            <Card key={idx} className="p-3 flex flex-col gap-2 shadow-xs border border-border">
+            <Card key={idx} className="p-3 bg-muted/40 border border-border/80 rounded-xl flex flex-col gap-2">
               <div className="flex items-center justify-between">
-                <Badge variant="secondary" className="font-bold">
-                  Rango {idx + 1}
-                </Badge>
+                <span className="text-xs font-bold text-foreground">Rango {idx + 1}</span>
                 <Button
                   type="button"
                   variant="ghost"
                   size="icon"
                   onClick={() => onRemoveRange(idx)}
-                  className="h-6 w-6 text-destructive hover:bg-destructive/10"
+                  className="h-6 w-6 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                   title="Eliminar rango"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
@@ -209,7 +196,6 @@ const SplitControlsSidebar: React.FC<SplitControlsSidebarProps> = ({
             </Card>
           ))}
 
-          {/* Botón único Añadir Rango */}
           <Button
             type="button"
             variant="outline"
@@ -250,6 +236,35 @@ const SplitControlsSidebar: React.FC<SplitControlsSidebarProps> = ({
       {/* ── MODO EXTRAER PÁGINAS INDIVIDUALES ── */}
       {mode === 'individual' && (
         <div className="flex flex-col gap-3">
+          {(onSelectEvenPages || onSelectOddPages) && (
+            <div className="grid grid-cols-2 gap-2">
+              {onSelectEvenPages && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={onSelectEvenPages}
+                  className="text-xs font-bold rounded-xl"
+                  title="Seleccionar únicamente páginas pares (2, 4, 6...)"
+                >
+                  Páginas Pares
+                </Button>
+              )}
+              {onSelectOddPages && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={onSelectOddPages}
+                  className="text-xs font-bold rounded-xl"
+                  title="Seleccionar únicamente páginas impares (1, 3, 5...)"
+                >
+                  Páginas Impares
+                </Button>
+              )}
+            </div>
+          )}
+
           <div className="flex items-start gap-2 p-3 bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800 rounded-xl text-sky-800 dark:text-sky-300 text-xs leading-relaxed">
             <Info className="w-4 h-4 shrink-0 mt-0.5" />
             <span>

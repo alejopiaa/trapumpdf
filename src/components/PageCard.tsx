@@ -11,7 +11,7 @@ interface PageCardProps {
   totalCount: number;
   viewMode?: 'grid' | 'list';
   badgePrefix?: string;
-  onRotate: (id: string) => void;
+  onRotate?: (id: string) => void;
   onDelete?: (id: string) => void;
   onMove: (index: number, direction: 'left' | 'right') => void;
   onDragStart: (e: React.DragEvent, index: number) => void;
@@ -67,7 +67,7 @@ const PageCardComponent: React.FC<PageCardProps> = ({
         </Badge>
 
         <div
-          className="w-12 h-14 bg-muted rounded-md overflow-hidden shrink-0 cursor-pointer border hover:ring-2 hover:ring-primary/50 transition-all flex items-center justify-center"
+          className="w-12 h-14 bg-muted rounded-md overflow-hidden shrink-0 cursor-pointer border hover:ring-2 hover:ring-primary/50 transition-all flex items-center justify-center relative"
           onClick={(e) => { e.stopPropagation(); onPreview && onPreview(page); }}
           title="Haz clic para ver en grande"
         >
@@ -81,9 +81,16 @@ const PageCardComponent: React.FC<PageCardProps> = ({
         </div>
 
         <div className="flex-1 min-w-0">
-          <p className="text-xs font-bold text-foreground truncate" title={page.fileName}>
-            {page.fileName}
-          </p>
+          <div className="flex items-center gap-2">
+            <p className="text-xs font-bold text-foreground truncate" title={page.fileName}>
+              {page.fileName}
+            </p>
+            {page.isBlank && !isExcluded && (
+              <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                ⚠️ En blanco
+              </span>
+            )}
+          </div>
           {isExcluded && (
             <span className="text-[11px] font-bold text-destructive">Página Excluida</span>
           )}
@@ -115,16 +122,18 @@ const PageCardComponent: React.FC<PageCardProps> = ({
             </Button>
           </div>
 
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={(e) => { e.stopPropagation(); onRotate(page.id); }}
-            className="h-7 text-xs gap-1 font-semibold"
-            title="Rotar esta página 90°"
-          >
-            <RotateCw className="w-3 h-3" /> Rotar
-          </Button>
+          {onRotate && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={(e) => { e.stopPropagation(); onRotate(page.id); }}
+              className="h-7 text-xs gap-1 font-semibold"
+              title="Rotar esta página 90°"
+            >
+              <RotateCw className="w-3 h-3" /> Rotar
+            </Button>
+          )}
 
           {isExcluded ? (
             <Button
@@ -190,6 +199,13 @@ const PageCardComponent: React.FC<PageCardProps> = ({
         >
           {badgePrefix} {index + 1}
         </Badge>
+
+        {/* Blank Page Badge */}
+        {page.isBlank && !isExcluded && (
+          <span className="absolute top-3 right-3 font-extrabold shadow-md border bg-amber-500/90 text-white border-amber-400 text-[10px] px-2 py-0.5 rounded-full z-20">
+            ⚠️ En blanco
+          </span>
+        )}
 
         {/* Soft deletion overlay */}
         {isExcluded && (
@@ -257,16 +273,22 @@ const PageCardComponent: React.FC<PageCardProps> = ({
           <ArrowLeft className="w-3.5 h-3.5" />
         </Button>
 
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={(e) => { e.stopPropagation(); onRotate(page.id); }}
-          className="h-7 px-2 text-[11px] font-semibold gap-1"
-          title="Rotar esta página 90°"
-        >
-          <RotateCw className="w-3 h-3" /> Rotar
-        </Button>
+        {onRotate ? (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={(e) => { e.stopPropagation(); onRotate(page.id); }}
+            className="h-7 px-2 text-[11px] font-semibold gap-1"
+            title="Rotar esta página 90°"
+          >
+            <RotateCw className="w-3 h-3" /> Rotar
+          </Button>
+        ) : (
+          <span className="text-[10px] text-muted-foreground font-medium px-2">
+            #{index + 1}
+          </span>
+        )}
 
         <Button
           type="button"
