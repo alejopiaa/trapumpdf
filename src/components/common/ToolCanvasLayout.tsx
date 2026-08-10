@@ -334,7 +334,7 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
       )}
 
       {/* ── Barra Flotante Inferior de Acción ── */}
-      <div className="fixed bottom-3 sm:bottom-6 left-3 right-3 sm:left-6 sm:right-6 z-50 mx-auto max-w-6xl bg-card/95 backdrop-blur-md border-2 border-primary/20 p-3 sm:p-3.5 px-4 sm:px-6 rounded-2xl shadow-2xl flex items-center justify-between gap-3 flex-wrap">
+      <div className="fixed bottom-14 sm:bottom-16 left-3 right-3 sm:left-6 sm:right-6 z-50 mx-auto max-w-6xl bg-card/95 backdrop-blur-md border-2 border-primary/20 p-3 sm:p-3.5 px-4 sm:px-6 rounded-2xl shadow-2xl flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-3">
           <Badge
             variant="default"
