@@ -69,7 +69,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
 
   return (
     <>
-      <div className="w-full max-w-4xl mx-auto py-6 sm:py-8">
+      <div className="w-full max-w-4xl mx-auto pb-6">
         <Card
           className={`p-10 border-2 border-dashed flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-200 min-h-[380px] group ${
             isDragOver

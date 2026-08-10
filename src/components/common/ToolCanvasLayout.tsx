@@ -74,8 +74,8 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
   return (
     /* Contenedor Principal: Centrado con max-w-6xl/7xl cuando existe Sidebar, o max-w-4xl cuando no hay Sidebar */
     <div className={sidebar
-      ? "relative w-full max-w-6xl xl:max-w-7xl mx-auto flex flex-col gap-6 py-6 sm:py-8"
-      : "relative w-full max-w-4xl mx-auto flex flex-col gap-6 py-6 sm:py-8"
+      ? "relative w-full max-w-6xl xl:max-w-7xl mx-auto flex flex-col gap-6 pb-6 sm:pb-8"
+      : "relative w-full max-w-4xl mx-auto flex flex-col gap-6 pb-6 sm:pb-8"
     }>
       
       {/* ── Fila 1: Cabecera Superior del Canvas (Top Toolbar) ── */}
