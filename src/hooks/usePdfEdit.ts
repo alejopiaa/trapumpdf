@@ -116,6 +116,15 @@ export function usePdfEdit() {
     );
   }, []);
 
+  const handleRestoreAllPages = useCallback(() => {
+    setEditGroups((prev) =>
+      prev.map((g) => ({
+        ...g,
+        pages: g.pages.map((p) => ({ ...p, excluded: false, rotation: 0 })),
+      }))
+    );
+  }, []);
+
   const clearEditState = useCallback(() => {
     setEditGroups((prev) => {
       prev.forEach((g) => {
@@ -143,6 +152,7 @@ export function usePdfEdit() {
     handleInvertEditPagesOrder,
     handleResetEditPagesOrder,
     handleRemoveBlankPages,
+    handleRestoreAllPages,
     clearEditState,
   };
 }

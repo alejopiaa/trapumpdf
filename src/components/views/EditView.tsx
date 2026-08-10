@@ -26,6 +26,7 @@ interface EditViewProps {
   onInvertOrder?: () => void;
   onResetOrder?: () => void;
   onRemoveBlankPages?: () => void;
+  onRestoreAllPages?: () => void;
 }
 
 export const EditView: React.FC<EditViewProps> = ({
@@ -47,6 +48,7 @@ export const EditView: React.FC<EditViewProps> = ({
   onInvertOrder,
   onResetOrder,
   onRemoveBlankPages,
+  onRestoreAllPages,
 }) => {
   const [draggedItem, setDraggedItem] = React.useState<{ groupId: string; index: number } | null>(null);
 
@@ -57,6 +59,7 @@ export const EditView: React.FC<EditViewProps> = ({
   const totalPages = editGroups.reduce((acc, g) => acc + g.pages.length, 0);
   const badgeText = `${editGroups.length} ${editGroups.length === 1 ? 'archivo' : 'archivos'} (${totalPages} págs)`;
   const hasBlankPages = editGroups.some((g) => g.pages.some((p) => p.isBlank && !p.excluded));
+  const hasExcludedPages = editGroups.some((g) => g.pages.some((p) => p.excluded));
 
   return (
     <ToolCanvasLayout
@@ -74,6 +77,8 @@ export const EditView: React.FC<EditViewProps> = ({
       onResetOrder={onResetOrder}
       onRemoveBlankPages={onRemoveBlankPages}
       hasBlankPages={hasBlankPages}
+      onRestoreAllPages={onRestoreAllPages}
+      hasExcludedPages={hasExcludedPages}
     >
       <div className="flex flex-col gap-6">
         {editGroups.map((group) => (
