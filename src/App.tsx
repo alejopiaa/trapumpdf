@@ -587,7 +587,9 @@ function App() {
         </div>
       </main>
 
-      <Footer onOpenAbout={() => setShowAboutModal(true)} />
+        <div className="pb-28">
+          <Footer onOpenAbout={() => setShowAboutModal(true)} />
+        </div>
 
       <AboutModal
         isOpen={showAboutModal}
