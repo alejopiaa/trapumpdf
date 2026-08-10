@@ -72,9 +72,9 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
   }, [omittedFiles]);
 
   return (
-    /* Contenedor Principal: Alineado a la izquierda en laptops cuando existe Sidebar, o Centrado si no hay Sidebar */
+    /* Contenedor Principal: Centrado con max-w-6xl/7xl cuando existe Sidebar, o max-w-4xl cuando no hay Sidebar */
     <div className={sidebar
-      ? "relative w-full max-w-6xl xl:max-w-7xl ml-4 lg:ml-6 2xl:mx-auto flex flex-col gap-6 py-6 sm:py-8"
+      ? "relative w-full max-w-6xl xl:max-w-7xl mx-auto flex flex-col gap-6 py-6 sm:py-8"
       : "relative w-full max-w-4xl mx-auto flex flex-col gap-6 py-6 sm:py-8"
     }>
       
@@ -202,10 +202,9 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
       )}
 
       {/* ── Barra Flotante Inferior de Acción ── */}
-      <div className={sidebar
-        ? "fixed bottom-[3.25rem] left-4 lg:left-6 2xl:left-1/2 2xl:-translate-x-1/2 right-4 2xl:right-auto z-50 max-w-6xl xl:max-w-7xl 2xl:w-[calc(100%-3rem)] bg-card/95 backdrop-blur-md border-2 border-primary/20 p-3.5 px-6 rounded-2xl shadow-lg flex items-center justify-between gap-4 flex-wrap"
-        : "fixed bottom-[3.25rem] left-0 right-0 z-50 px-4 max-w-4xl mx-auto bg-card/95 backdrop-blur-md border-2 border-primary/20 p-3.5 px-6 rounded-2xl shadow-lg flex items-center justify-between gap-4 flex-wrap"
-      }>
+      <div className={`fixed bottom-[3.25rem] left-0 right-0 z-50 px-4 mx-auto bg-card/95 backdrop-blur-md border-2 border-primary/20 p-3.5 px-6 rounded-2xl shadow-lg flex items-center justify-between gap-4 flex-wrap ${
+        sidebar ? 'max-w-6xl xl:max-w-7xl' : 'max-w-4xl'
+      }`}>
         <div className="flex items-center gap-3">
           <Badge
             variant="default"

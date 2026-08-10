@@ -69,56 +69,58 @@ export const DropZone: React.FC<DropZoneProps> = ({
 
   return (
     <>
-      <Card
-        className={`p-10 border-2 border-dashed flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-200 min-h-[380px] group ${
-          isDragOver
-            ? 'border-primary bg-primary/5 scale-[1.01] shadow-lg'
-            : 'border-slate-300 dark:border-slate-700 hover:border-primary/60 hover:bg-muted/30'
-        }`}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-        onClick={() => !isLoading && fileInputRef.current?.click()}
-      >
-        <input
-          ref={fileInputRef}
-          type="file"
-          multiple
-          accept={accept}
-          className="hidden"
-          onChange={handleFileChange}
-        />
+      <div className="w-full max-w-4xl mx-auto py-6 sm:py-8">
+        <Card
+          className={`p-10 border-2 border-dashed flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-200 min-h-[380px] group ${
+            isDragOver
+              ? 'border-primary bg-primary/5 scale-[1.01] shadow-lg'
+              : 'border-slate-300 dark:border-slate-700 hover:border-primary/60 hover:bg-muted/30'
+          }`}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          onClick={() => !isLoading && fileInputRef.current?.click()}
+        >
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            accept={accept}
+            className="hidden"
+            onChange={handleFileChange}
+          />
 
-        <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform duration-200">
-          <UploadCloud className="w-8 h-8" />
-        </div>
+          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform duration-200">
+            <UploadCloud className="w-8 h-8" />
+          </div>
 
-        <h3 className="text-lg font-bold text-foreground mb-1">
-          Arrastra y suelta tus archivos aquí
-        </h3>
-        <p className="text-sm text-muted-foreground mb-6 max-w-sm">
-          o haz clic para seleccionar documentos de tu equipo
-        </p>
+          <h3 className="text-lg font-bold text-foreground mb-1">
+            Arrastra y suelta tus archivos aquí
+          </h3>
+          <p className="text-sm text-muted-foreground mb-6 max-w-sm">
+            o haz clic para seleccionar documentos de tu equipo
+          </p>
 
-        <Button type="button" size="lg" className="font-bold shadow-md">
-          Seleccionar Archivos
-        </Button>
+          <Button type="button" size="lg" className="font-bold shadow-md">
+            Seleccionar Archivos
+          </Button>
 
-        <div className="flex items-center gap-2 mt-6 flex-wrap justify-center">
-          <Badge variant="secondary" className="gap-1 font-medium">
-            <FileText className="w-3 h-3" /> PDF
-          </Badge>
-          <Badge variant="secondary" className="gap-1 font-medium">
-            <ImageIcon className="w-3 h-3" /> JPG
-          </Badge>
-          <Badge variant="secondary" className="gap-1 font-medium">
-            <ImageIcon className="w-3 h-3" /> PNG
-          </Badge>
-          <Badge variant="secondary" className="gap-1 font-medium">
-            <ImageIcon className="w-3 h-3" /> WEBP
-          </Badge>
-        </div>
-      </Card>
+          <div className="flex items-center gap-2 mt-6 flex-wrap justify-center">
+            <Badge variant="secondary" className="gap-1 font-medium">
+              <FileText className="w-3 h-3" /> PDF
+            </Badge>
+            <Badge variant="secondary" className="gap-1 font-medium">
+              <ImageIcon className="w-3 h-3" /> JPG
+            </Badge>
+            <Badge variant="secondary" className="gap-1 font-medium">
+              <ImageIcon className="w-3 h-3" /> PNG
+            </Badge>
+            <Badge variant="secondary" className="gap-1 font-medium">
+              <ImageIcon className="w-3 h-3" /> WEBP
+            </Badge>
+          </div>
+        </Card>
+      </div>
 
       {/* Toast Flotante Auto-desaparecible a los 5 segundos */}
       {showToast && omittedFiles && omittedFiles.length > 0 && (
