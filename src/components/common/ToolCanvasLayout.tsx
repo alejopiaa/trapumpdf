@@ -72,8 +72,11 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
   }, [omittedFiles]);
 
   return (
-    /* Cuadro Rojo (Contenedor Canvas Principal Centrado max-w-4xl con padding simétrico) */
-    <div className="relative w-full max-w-4xl mx-auto flex flex-col gap-6 py-6 sm:py-8">
+    /* Contenedor Principal: Alineado a la izquierda en laptops cuando existe Sidebar, o Centrado si no hay Sidebar */
+    <div className={sidebar
+      ? "relative w-full max-w-6xl xl:max-w-7xl ml-4 lg:ml-6 2xl:mx-auto flex flex-col gap-6 py-6 sm:py-8"
+      : "relative w-full max-w-4xl mx-auto flex flex-col gap-6 py-6 sm:py-8"
+    }>
       
       {/* ── Fila 1: Cabecera Superior del Canvas (Top Toolbar) ── */}
       <div className="flex items-center justify-between flex-wrap gap-4 py-1">
@@ -176,23 +179,33 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
         </div>
       </div>
 
-      {/* ── Fila 2: Cuerpo Principal (Caja de Scroll del Canvas + Sidebar Card alineados a top:0) ── */}
-      <div className="relative w-full flex flex-col gap-6">
-        {/* Canvas Scrollbox */}
-        <div className="w-full max-h-[60vh] overflow-y-auto p-4 border border-border/60 rounded-2xl bg-muted/10 shadow-xs">
-          {children}
-        </div>
+      {/* ── Fila 2: Cuerpo Principal (Caja de Scroll del Canvas + Sidebar al lado horizontalmente) ── */}
+      {sidebar ? (
+        <div className="relative w-full flex flex-row items-start gap-6">
+          {/* Canvas Scrollbox */}
+          <div className="flex-1 min-w-0 max-h-[60vh] overflow-y-auto p-4 border border-border/60 rounded-2xl bg-muted/10 shadow-xs">
+            {children}
+          </div>
 
-        {/* Cuadro Verde: Slot del Sidebar Flotante (Alineado píxel a píxel a top:0 con la caja del Canvas) */}
-        {sidebar && (
-          <div className="w-full lg:w-80 shrink-0 lg:absolute lg:left-[calc(100%+1.5rem)] lg:top-0">
+          {/* Sidebar Flotante (Lado a lado en el mismo flujo del layout) */}
+          <div className="w-80 shrink-0">
             {sidebar}
           </div>
-        )}
-      </div>
+        </div>
+      ) : (
+        <div className="relative w-full flex flex-col gap-6">
+          {/* Canvas Scrollbox sin Sidebar */}
+          <div className="w-full max-h-[60vh] overflow-y-auto p-4 border border-border/60 rounded-2xl bg-muted/10 shadow-xs">
+            {children}
+          </div>
+        </div>
+      )}
 
-      {/* ── Barra Flotante Inferior de Acción (Fija a max-w-4xl mx-auto) ── */}
-      <div className="fixed bottom-[3.25rem] left-0 right-0 z-50 px-4 max-w-4xl mx-auto bg-card/95 backdrop-blur-md border-2 border-primary/20 p-3.5 px-6 rounded-2xl shadow-lg flex items-center justify-between gap-4 flex-wrap">
+      {/* ── Barra Flotante Inferior de Acción ── */}
+      <div className={sidebar
+        ? "fixed bottom-[3.25rem] left-4 lg:left-6 2xl:left-1/2 2xl:-translate-x-1/2 right-4 2xl:right-auto z-50 max-w-6xl xl:max-w-7xl 2xl:w-[calc(100%-3rem)] bg-card/95 backdrop-blur-md border-2 border-primary/20 p-3.5 px-6 rounded-2xl shadow-lg flex items-center justify-between gap-4 flex-wrap"
+        : "fixed bottom-[3.25rem] left-0 right-0 z-50 px-4 max-w-4xl mx-auto bg-card/95 backdrop-blur-md border-2 border-primary/20 p-3.5 px-6 rounded-2xl shadow-lg flex items-center justify-between gap-4 flex-wrap"
+      }>
         <div className="flex items-center gap-3">
           <Badge
             variant="default"
