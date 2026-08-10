@@ -44,6 +44,28 @@ export function usePdfMerge() {
     });
   }, []);
 
+  const handleSortMergeFilesAZ = useCallback(() => {
+    setMergeFiles((prev) =>
+      [...prev].sort((a, b) => a.file.name.localeCompare(b.file.name, undefined, { numeric: true }))
+    );
+  }, []);
+
+  const handleSortMergeFilesZA = useCallback(() => {
+    setMergeFiles((prev) =>
+      [...prev].sort((a, b) => b.file.name.localeCompare(a.file.name, undefined, { numeric: true }))
+    );
+  }, []);
+
+  const handleInvertMergeFiles = useCallback(() => {
+    setMergeFiles((prev) => [...prev].reverse());
+  }, []);
+
+  const handleResetMergeFiles = useCallback(() => {
+    setMergeFiles((prev) =>
+      [...prev].sort((a, b) => a.originalIndex - b.originalIndex)
+    );
+  }, []);
+
   const clearMergeState = useCallback(() => {
     setMergeFiles((prev) => {
       prev.forEach((item) => {
@@ -51,8 +73,8 @@ export function usePdfMerge() {
       });
       return [];
     });
-    setMergeViewMode('grid');
     setDraggedMergeIdx(null);
+    setMergeViewMode('grid');
   }, []);
 
   return {
@@ -65,6 +87,10 @@ export function usePdfMerge() {
     handleMoveMergeItem,
     handleDropMerge,
     handleRemoveMergeItem,
+    handleSortMergeFilesAZ,
+    handleSortMergeFilesZA,
+    handleInvertMergeFiles,
+    handleResetMergeFiles,
     clearMergeState,
   };
 }

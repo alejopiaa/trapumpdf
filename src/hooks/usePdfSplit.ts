@@ -108,6 +108,26 @@ export function usePdfSplit() {
     setDraggedPageIdx(null);
   }, []);
 
+  const handleSelectEvenPages = useCallback(() => {
+    setPages((prevPages) => {
+      const evenIds = prevPages
+        .filter((_, idx) => (idx + 1) % 2 === 0)
+        .map((p) => p.id);
+      setSelectedPageIds(new Set(evenIds));
+      return prevPages;
+    });
+  }, []);
+
+  const handleSelectOddPages = useCallback(() => {
+    setPages((prevPages) => {
+      const oddIds = prevPages
+        .filter((_, idx) => (idx + 1) % 2 !== 0)
+        .map((p) => p.id);
+      setSelectedPageIds(new Set(oddIds));
+      return prevPages;
+    });
+  }, []);
+
   return {
     splitMode,
     splitViewMode,
@@ -125,6 +145,8 @@ export function usePdfSplit() {
     handleTogglePageSelection,
     handleSelectAllPages,
     handleDeselectAllPages,
+    handleSelectEvenPages,
+    handleSelectOddPages,
     handleUpdateRange,
     handleAddRange,
     handleRemoveRange,

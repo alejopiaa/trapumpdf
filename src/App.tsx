@@ -503,6 +503,10 @@ function App() {
             setDraggedMergeIdx={pdfMerge.setDraggedMergeIdx}
             onPreview={(t, idx) => openLightbox(t, idx)}
             omittedFiles={omittedFiles}
+            onSortAZ={pdfMerge.handleSortMergeFilesAZ}
+            onSortZA={pdfMerge.handleSortMergeFilesZA}
+            onInvertOrder={pdfMerge.handleInvertMergeFiles}
+            onResetOrder={pdfMerge.handleResetMergeFiles}
           />
         ) : activeTool === 'edit' ? (
           <EditView
@@ -521,6 +525,11 @@ function App() {
             isLoading={isLoading}
             onPreview={(t, gId, pIdx) => openLightbox(t, pIdx, gId)}
             omittedFiles={omittedFiles}
+            onSortAZ={pdfEdit.handleSortEditPagesAZ}
+            onSortZA={pdfEdit.handleSortEditPagesZA}
+            onInvertOrder={pdfEdit.handleInvertEditPagesOrder}
+            onResetOrder={pdfEdit.handleResetEditPagesOrder}
+            onRemoveBlankPages={pdfEdit.handleRemoveBlankPages}
           />
         ) : activeTool === 'split' ? (
           <SplitView
@@ -542,6 +551,8 @@ function App() {
             onTogglePageSelection={pdfSplit.handleTogglePageSelection}
             onSelectAllPages={pdfSplit.handleSelectAllPages}
             onDeselectAllPages={pdfSplit.handleDeselectAllPages}
+            onSelectEvenPages={pdfSplit.handleSelectEvenPages}
+            onSelectOddPages={pdfSplit.handleSelectOddPages}
             onMovePageItem={pdfSplit.handleMovePageItem}
             draggedPageIdx={pdfSplit.draggedPageIdx}
             setDraggedPageIdx={pdfSplit.setDraggedPageIdx}
