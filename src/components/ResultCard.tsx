@@ -1,4 +1,4 @@
-import React from 'react';
+import JSZip from 'jszip';
 import { formatBytes } from '../services/pdfService';
 import type { CompressedResultItem } from '../services/pdfService';
 import { Download, Sparkles, RefreshCw, Zap, Link as LinkIcon, FileText, Wrench, FolderArchive, ArrowRight } from 'lucide-react';
@@ -69,12 +69,25 @@ export const ResultCard: React.FC<ResultCardProps> = ({
     URL.revokeObjectURL(url);
   };
 
-  const handleDownloadAllMultiple = () => {
+  const handleDownloadZip = async () => {
     if (zipResult) {
       downloadBlob(zipResult.blob, zipResult.fileName);
       return;
     }
-    if (!multipleResults) return;
+
+    if (multipleResults && multipleResults.length > 0) {
+      const zip = new JSZip();
+      multipleResults.forEach((item) => {
+        zip.file(item.fileName, item.pdfBytes);
+      });
+      const zipBlob = await zip.generateAsync({ type: 'blob' });
+      const firstBase = outputFileName ? outputFileName.replace(/\.[^/.]+$/, "") : 'archivos_procesados';
+      downloadBlob(zipBlob, `${firstBase}_trapumpdf.zip`);
+    }
+  };
+
+  const handleDownloadSeparated = () => {
+    if (!multipleResults || multipleResults.length === 0) return;
     multipleResults.forEach((item, idx) => {
       setTimeout(() => {
         downloadSinglePdf(item.pdfBytes, item.fileName);
@@ -110,74 +123,24 @@ export const ResultCard: React.FC<ResultCardProps> = ({
         )}
       </div>
 
-      {zipResult ? (
+      {isMultiple ? (
         <div className="w-full flex flex-col gap-3 items-center">
-          {pdfBytes && (
-            <Button
-              size="lg"
-              className="w-full h-12 text-base font-bold shadow-md"
-              onClick={() => downloadSinglePdf(pdfBytes, finalSingleName)}
-            >
-              <Download className="w-5 h-5 mr-2" /> Descargar 1 PDF Unificado
-            </Button>
-          )}
+          <Button
+            size="lg"
+            className="w-full h-12 text-base font-bold shadow-md bg-emerald-600 hover:bg-emerald-700 text-white"
+            onClick={handleDownloadZip}
+          >
+            <FolderArchive className="w-5 h-5 mr-2" /> Descargar Paquete (.ZIP)
+          </Button>
 
           <Button
             size="lg"
-            variant="success"
+            variant="outline"
             className="w-full h-12 text-base font-bold shadow-md"
-            onClick={() => downloadBlob(zipResult.blob, zipResult.fileName)}
+            onClick={handleDownloadSeparated}
           >
-            <FolderArchive className="w-5 h-5 mr-2" /> Descargar Archivos Separados (.ZIP)
+            <Download className="w-5 h-5 mr-2" /> Descargar Archivos Separados
           </Button>
-        </div>
-      ) : isMultiple ? (
-        <div className="w-full flex flex-col gap-4 items-center">
-          <Button
-            size="lg"
-            className="w-full h-12 text-base font-bold shadow-md"
-            onClick={handleDownloadAllMultiple}
-          >
-            <Download className="w-5 h-5 mr-2" /> Descargar Todos los Archivos ({multipleResults!.length})
-          </Button>
-
-          {multipleResults && multipleResults.length > 0 && (
-            <div className="w-full flex flex-col gap-2">
-              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider px-1">
-                Archivos individuales disponibles:
-              </span>
-              <div className="max-h-60 overflow-y-auto flex flex-col gap-2 pr-1">
-                {multipleResults.map((item) => {
-                  const itemSavings = Math.max(0, item.originalSize - item.compressedSize);
-                  const itemPercent = item.originalSize > 0 ? ((itemSavings / item.originalSize) * 100).toFixed(1) : '0';
-
-                  return (
-                    <div
-                      key={item.id}
-                      className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-muted/30 transition-colors"
-                    >
-                      <div className="flex items-center gap-3">
-                        <FileText className="w-6 h-6 text-primary" />
-                        <div className="flex flex-col">
-                          <span className="text-xs font-bold text-foreground">{item.fileName}</span>
-                          <span className="text-[11px] text-muted-foreground">
-                            {formatBytes(item.originalSize)} → <strong className="text-emerald-600 dark:text-emerald-400">{formatBytes(item.compressedSize)}</strong> (-{itemPercent}%)
-                          </span>
-                        </div>
-                      </div>
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        onClick={() => downloadSinglePdf(item.pdfBytes, item.fileName)}
-                      >
-                        <Download className="w-3.5 h-3.5 mr-1" /> Descargar
-                      </Button>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
         </div>
       ) : (
         <Button
