@@ -193,8 +193,8 @@ const PageCardComponent: React.FC<PageCardProps> = ({
         <Badge
           className={
             isExcluded
-              ? 'absolute top-3 left-3 font-bold shadow-md border-2 border-background bg-destructive text-destructive-foreground text-[11px] z-20'
-              : 'absolute top-3 left-3 font-black shadow-md border-2 border-background bg-primary text-primary-foreground text-[11px] px-2.5 py-0.5 rounded-full z-20'
+              ? 'absolute top-2 left-2 font-bold shadow-xs border border-background bg-destructive text-destructive-foreground text-[10px] px-2 py-0.5 rounded-lg z-20 max-w-[80%] truncate'
+              : 'absolute top-2 left-2 font-extrabold shadow-xs border border-background bg-primary text-primary-foreground text-[10px] px-2 py-0.5 rounded-lg z-20 max-w-[80%] truncate'
           }
         >
           {badgePrefix} {index + 1}
@@ -202,8 +202,8 @@ const PageCardComponent: React.FC<PageCardProps> = ({
 
         {/* Blank Page Badge */}
         {page.isBlank && !isExcluded && (
-          <span className="absolute top-3 right-3 font-extrabold shadow-md border bg-amber-500/90 text-white border-amber-400 text-[10px] px-2 py-0.5 rounded-full z-20">
-            ⚠️ En blanco
+          <span className="absolute top-2 right-2 font-bold shadow-xs border bg-amber-500/90 text-white border-amber-400 text-[9px] px-1.5 py-0.5 rounded-md z-20">
+            ⚠️ Blanco
           </span>
         )}
 

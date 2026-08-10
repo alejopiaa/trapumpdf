@@ -27,44 +27,59 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border/80 bg-background/95 backdrop-blur-md transition-colors duration-200">
-      <div className="max-w-7xl mx-auto flex h-20 items-center justify-between px-4 sm:px-8 relative">
-        {/* Brand Logo */}
-        <div
-          className="flex items-center gap-3 cursor-pointer group"
-          onClick={() => onToolSwitch('home')}
-          title="Ir al inicio"
-        >
-          {/* Squircle Isotipo con Micro-Movimiento Periódico Sutil (100% Tailwind v4) */}
-          <div className="w-10 h-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-md shadow-primary/20 animate-logo-nod group-hover:scale-105 transition-transform duration-200">
-            <MonogramTIcon className="w-5.5 h-5.5 text-white" />
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row h-auto md:h-20 items-center justify-between px-4 sm:px-8 py-2 md:py-0 relative gap-2 md:gap-0">
+        {/* Brand Logo & Theme Toggle Row on narrow screens */}
+        <div className="w-full md:w-auto flex items-center justify-between">
+          <div
+            className="flex items-center gap-3 cursor-pointer group"
+            onClick={() => onToolSwitch('home')}
+            title="Ir al inicio"
+          >
+            {/* Squircle Isotipo con Micro-Movimiento Periódico Sutil */}
+            <div className="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-md shadow-primary/20 animate-logo-nod group-hover:scale-105 transition-transform duration-200">
+              <MonogramTIcon className="w-5 h-5 md:w-5.5 md:h-5.5 text-white" />
+            </div>
+            <span className="text-lg md:text-xl font-black tracking-tight text-foreground whitespace-nowrap">
+              TRAPÜM<span className="text-primary">PDF</span>
+            </span>
           </div>
-          <span className="text-xl font-black tracking-tight text-foreground whitespace-nowrap">
-            TRAPÜM<span className="text-primary">PDF</span>
-          </span>
+
+          {/* Theme Toggle Button on narrow screens */}
+          <div className="md:hidden">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={onToggleTheme}
+              title={isDarkMode ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro'}
+              className="rounded-xl h-8 w-8 border-border hover:bg-muted"
+            >
+              {isDarkMode ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-secondary" />}
+            </Button>
+          </div>
         </div>
 
-        {/* Navigation Tabs (Native iOS Segmented Control - Strictly Centered with Symmetrical Padding) */}
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:flex items-center justify-center">
+        {/* Navigation Tabs (Centered on Desktop, Compact Horizontal Bar on Narrow Windows) */}
+        <div className="w-full md:w-auto md:absolute md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 flex items-center justify-center overflow-x-auto no-scrollbar py-1">
           <Tabs value={activeTool} onValueChange={(val) => onToolSwitch(val as any)}>
-            <TabsList className="bg-slate-200/80 dark:bg-slate-800/80 p-1 rounded-full border border-border/60 shadow-inner h-10 gap-1">
-              <TabsTrigger value="merge" className="rounded-full px-4 py-1 text-xs font-extrabold tracking-wide">
+            <TabsList className="bg-slate-200/80 dark:bg-slate-800/80 p-1 rounded-full border border-border/60 shadow-inner h-9 md:h-10 gap-0.5 md:gap-1">
+              <TabsTrigger value="merge" className="rounded-full px-2.5 md:px-4 py-1 text-[11px] md:text-xs font-extrabold tracking-wide whitespace-nowrap">
                 UNIR PDF
               </TabsTrigger>
-              <TabsTrigger value="edit" className="rounded-full px-4 py-1 text-xs font-extrabold tracking-wide">
+              <TabsTrigger value="edit" className="rounded-full px-2.5 md:px-4 py-1 text-[11px] md:text-xs font-extrabold tracking-wide whitespace-nowrap">
                 ORGANIZAR PDF
               </TabsTrigger>
-              <TabsTrigger value="split" className="rounded-full px-4 py-1 text-xs font-extrabold tracking-wide">
+              <TabsTrigger value="split" className="rounded-full px-2.5 md:px-4 py-1 text-[11px] md:text-xs font-extrabold tracking-wide whitespace-nowrap">
                 DIVIDIR PDF
               </TabsTrigger>
-              <TabsTrigger value="compress" className="rounded-full px-4 py-1 text-xs font-extrabold tracking-wide">
+              <TabsTrigger value="compress" className="rounded-full px-2.5 md:px-4 py-1 text-[11px] md:text-xs font-extrabold tracking-wide whitespace-nowrap">
                 COMPRIMIR PDF
               </TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
 
-        {/* Theme Toggle Button */}
-        <div className="md:absolute md:right-4 sm:md:right-6 flex items-center gap-2">
+        {/* Theme Toggle Button on Desktop */}
+        <div className="hidden md:flex items-center gap-2">
           <Button
             variant="outline"
             size="icon"
