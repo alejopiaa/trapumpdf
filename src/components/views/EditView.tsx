@@ -23,8 +23,6 @@ interface EditViewProps {
   isLoading: boolean;
   onPreview: (tool: 'edit', groupIdx: string, pageIdx: number) => void;
   omittedFiles?: OmittedFileItem[];
-  onSortAZ?: () => void;
-  onSortZA?: () => void;
   onInvertOrder?: () => void;
   onResetOrder?: () => void;
   onRemoveBlankPages?: () => void;
@@ -46,8 +44,6 @@ export const EditView: React.FC<EditViewProps> = ({
   isLoading,
   onPreview,
   omittedFiles = [],
-  onSortAZ,
-  onSortZA,
   onInvertOrder,
   onResetOrder,
   onRemoveBlankPages,
@@ -74,8 +70,6 @@ export const EditView: React.FC<EditViewProps> = ({
       onProcess={onProcess}
       isProcessDisabled={isLoading || editGroups.length === 0}
       omittedFiles={omittedFiles}
-      onSortAZ={onSortAZ}
-      onSortZA={onSortZA}
       onInvertOrder={onInvertOrder}
       onResetOrder={onResetOrder}
       onRemoveBlankPages={onRemoveBlankPages}
