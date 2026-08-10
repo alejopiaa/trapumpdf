@@ -109,9 +109,9 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
     <div className="relative w-full max-w-6xl mx-auto flex flex-col gap-6 pb-6 sm:pb-8">
       
       {/* ── Fila 1: Cabecera Superior del Canvas (Top Toolbar) ── */}
-      <div className="flex items-center justify-between flex-wrap gap-2.5 py-1">
-        {/* Izquierda: Badge de información y botones de acción */}
-        <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap min-w-0">
+      <div className="flex items-center justify-between flex-wrap gap-2 py-1">
+        {/* Izquierda: Badge de información y botones de acción en orden original de 1 sola fila */}
+        <div className="flex items-center gap-1.5 sm:gap-2 flex-nowrap overflow-x-auto no-scrollbar py-0.5 max-w-full">
           <Badge
             variant="default"
             className="bg-primary text-primary-foreground font-extrabold text-xs px-3 py-1.5 rounded-full shrink-0 shadow-xs"
@@ -169,24 +169,6 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
             </Button>
           )}
 
-          {/* Botón Detección y Quitado de Páginas en Blanco */}
-          {onRemoveBlankPages && (
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={onRemoveBlankPages}
-              className={`rounded-xl text-xs font-bold gap-1 transition-colors shrink-0 h-8 px-2.5 ${
-                hasBlankPages
-                  ? 'border-amber-500/50 bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20'
-                  : 'text-muted-foreground'
-              }`}
-              title="Detectar y excluir páginas en blanco automáticamente"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Quitar en blanco
-            </Button>
-          )}
-
           {/* Grupo de Botones de Ordenamiento */}
           {(onSortAZ || onSortZA || onInvertOrder || onResetOrder) && (
             <div className="flex items-center gap-0.5 border border-border/80 rounded-xl p-0.5 bg-muted/60 shrink-0 h-8">
@@ -239,6 +221,24 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
                 </Button>
               )}
             </div>
+          )}
+
+          {/* Botón Detección y Quitado de Páginas en Blanco (En su posición original al final) */}
+          {onRemoveBlankPages && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={onRemoveBlankPages}
+              className={`rounded-xl text-xs font-bold gap-1 transition-colors shrink-0 h-8 px-2.5 ${
+                hasBlankPages
+                  ? 'border-amber-500/50 bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20'
+                  : 'text-muted-foreground'
+              }`}
+              title="Detectar y excluir páginas en blanco automáticamente"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Quitar en blanco
+            </Button>
           )}
 
           {extraHeaderButtons}
