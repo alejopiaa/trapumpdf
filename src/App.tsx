@@ -29,6 +29,7 @@ import {
   splitByRanges,
   splitByFixedRange,
   getCleanBaseName,
+  clearPdfjsCache,
 } from './services/pdfService';
 import type { OmittedFileItem } from './services/pdfService';
 
@@ -173,6 +174,7 @@ function App() {
     pdfEdit.clearEditState();
     pdfSplit.clearSplitState();
     pdfCompress.clearCompressState();
+    clearPdfjsCache();
     setOmittedFiles([]);
     setResult(null);
     setErrorMessage(null);
