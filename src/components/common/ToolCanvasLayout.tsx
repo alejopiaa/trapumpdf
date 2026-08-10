@@ -75,6 +75,24 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
   const [showPopover, setShowPopover] = useState(false);
   const [showToast, setShowToast] = useState(false);
 
+  // Auto-switch to list view on narrow windows (< 640px) for optimal readability
+  const [isNarrowWindow, setIsNarrowWindow] = useState<boolean>(
+    () => typeof window !== 'undefined' && window.innerWidth < 640
+  );
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      const narrow = window.innerWidth < 640;
+      setIsNarrowWindow(narrow);
+      if (narrow && viewMode !== 'list' && onViewModeChange) {
+        onViewModeChange('list');
+      }
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [viewMode, onViewModeChange]);
+
   // Trigger 5-second auto-dismissing toast when omittedFiles arrives
   React.useEffect(() => {
     if (omittedFiles && omittedFiles.length > 0) {
@@ -230,21 +248,23 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
         <div className="flex items-center gap-2">
           {onViewModeChange && (
             <div className="flex items-center border border-border rounded-xl p-1 bg-muted">
-              <Button
-                variant={viewMode === 'grid' ? 'secondary' : 'ghost'}
-                size="sm"
-                onClick={() => onViewModeChange('grid')}
-                className="h-7 px-2 rounded-lg"
-                title="Vista de Cuadrícula"
-              >
-                <LayoutGrid className="w-3.5 h-3.5" />
-              </Button>
+              {!isNarrowWindow && (
+                <Button
+                  variant={viewMode === 'grid' ? 'secondary' : 'ghost'}
+                  size="sm"
+                  onClick={() => onViewModeChange('grid')}
+                  className="h-7 px-2 rounded-lg"
+                  title="Vista de Cuadrícula"
+                >
+                  <LayoutGrid className="w-3.5 h-3.5" />
+                </Button>
+              )}
               <Button
                 variant={viewMode === 'list' ? 'secondary' : 'ghost'}
                 size="sm"
                 onClick={() => onViewModeChange('list')}
                 className="h-7 px-2 rounded-lg"
-                title="Vista de Lista"
+                title={isNarrowWindow ? 'Vista de Lista (Activa para ventana estrecha)' : 'Vista de Lista'}
               >
                 <List className="w-3.5 h-3.5" />
               </Button>
