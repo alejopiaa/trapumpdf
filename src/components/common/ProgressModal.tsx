@@ -82,7 +82,7 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
             <div className="relative w-full h-3.5 bg-muted/60 rounded-full overflow-hidden p-0.5 border border-border/40 shadow-inner">
               {/* Relleno con Gradiente y Brillo Shimmer */}
               <div
-                className="h-full rounded-full bg-gradient-to-r from-primary/80 via-primary to-pink-500 transition-all duration-300 ease-out shadow-[0_0_12px_rgba(230,3,128,0.4)] relative overflow-hidden"
+                className="h-full rounded-full bg-gradient-to-r from-primary/80 via-primary to-sky-400 transition-all duration-300 ease-out shadow-[0_0_12px_rgba(2,132,199,0.4)] relative overflow-hidden"
                 style={{ width: `${percent}%` }}
               >
                 {/* Animación Shimmer en movimiento */}
