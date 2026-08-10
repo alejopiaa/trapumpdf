@@ -198,13 +198,14 @@ export const parseFilesToPages = async (
   files: File[],
   onProgress?: (percent: number, statusText: string) => void
 ): Promise<ParseResult<PageItem>> => {
+  const sortedFiles = [...files].sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
   const pages: PageItem[] = [];
   const omittedFiles: OmittedFileItem[] = [];
-  const totalFiles = files.length;
+  const totalFiles = sortedFiles.length;
   let globalIndexCounter = 0;
 
   for (let fileIdx = 0; fileIdx < totalFiles; fileIdx++) {
-    const file = files[fileIdx];
+    const file = sortedFiles[fileIdx];
     const fileId = `file-${Date.now()}-${fileIdx}-${Math.random().toString(36).substring(2, 5)}`;
 
     if (onProgress) {
@@ -348,12 +349,13 @@ export const parseFilesToEditGroups = async (
   files: File[],
   onProgress?: (percent: number, statusText: string) => void
 ): Promise<ParseResult<EditFileGroup>> => {
+  const sortedFiles = [...files].sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
   const groups: EditFileGroup[] = [];
   const omittedFiles: OmittedFileItem[] = [];
-  const totalFiles = files.length;
+  const totalFiles = sortedFiles.length;
 
   for (let i = 0; i < totalFiles; i++) {
-    const file = files[i];
+    const file = sortedFiles[i];
     if (onProgress) {
       onProgress(
         Math.round((i / totalFiles) * 100),
@@ -821,11 +823,12 @@ export async function parseFilesToMergeItems(
   files: File[],
   onProgress?: (progress: number, message: string) => void
 ): Promise<ParseResult<MergeFileItem>> {
+  const sortedFiles = [...files].sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
   const items: MergeFileItem[] = [];
   const omittedFiles: OmittedFileItem[] = [];
 
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
+  for (let i = 0; i < sortedFiles.length; i++) {
+    const file = sortedFiles[i];
     if (onProgress) {
       onProgress(Math.round((i / files.length) * 100), `Generando miniatura ${file.name}...`);
     }
@@ -970,11 +973,12 @@ export async function parseFilesToCompressItems(
   files: File[],
   onProgress?: (progress: number, message: string) => void
 ): Promise<ParseResult<CompressFileItem>> {
+  const sortedFiles = [...files].sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
   const items: CompressFileItem[] = [];
   const omittedFiles: OmittedFileItem[] = [];
 
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
+  for (let i = 0; i < sortedFiles.length; i++) {
+    const file = sortedFiles[i];
     if (onProgress) {
       onProgress(Math.round((i / files.length) * 100), `Cargando ${file.name}...`);
     }
