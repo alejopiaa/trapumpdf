@@ -184,18 +184,25 @@ export const SplitView: React.FC<SplitViewProps> = ({
             );
 
             return (
-              <Card key={rIdx} className="p-4 border-2 border-dashed border-primary/40 bg-card flex flex-col gap-3 rounded-2xl shadow-xs">
-                <div className="flex items-center justify-between border-b border-border pb-2">
-                  <Badge variant="default" className="font-extrabold bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs">
-                    Rango {rIdx + 1}: Páginas {range.start} a {range.end} ({rangePages.length} pág(s))
-                  </Badge>
+              <Card key={rIdx} className="p-3 sm:p-4 border-2 border-dashed border-primary/40 bg-card flex flex-col gap-3 rounded-2xl shadow-xs">
+                <div className="flex items-center justify-between border-b border-border pb-2 flex-wrap gap-2">
+                  <div className="flex items-center gap-2 min-w-0 max-w-[80%] flex-wrap">
+                    <Badge variant="default" className="font-extrabold bg-primary text-primary-foreground px-2.5 py-0.5 rounded-full text-xs shrink-0">
+                      Rango {rIdx + 1}
+                    </Badge>
+                    <span className="text-xs font-bold text-foreground truncate">
+                      Págs {range.start} a {range.end} ({rangePages.length} pág{rangePages.length === 1 ? '' : 's'})
+                    </span>
+                  </div>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => onRemoveRange(rIdx)}
-                    className="h-7 text-xs text-destructive hover:bg-destructive/10 font-bold"
+                    className="h-7 text-xs text-destructive hover:bg-destructive/10 font-bold px-2 rounded-lg shrink-0 ml-auto"
+                    title="Eliminar este rango"
                   >
-                    <Trash2 className="w-3.5 h-3.5 mr-1" /> Eliminar Rango
+                    <Trash2 className="w-3.5 h-3.5 sm:mr-1" />
+                    <span className="hidden sm:inline">Eliminar</span>
                   </Button>
                 </div>
 
@@ -231,11 +238,16 @@ export const SplitView: React.FC<SplitViewProps> = ({
             const blockPages = pages.slice(startIdx, startIdx + fixedSize);
 
             return (
-              <Card key={blockIdx} className="p-4 border border-border bg-card flex flex-col gap-3 rounded-2xl shadow-xs">
-                <div className="flex items-center justify-between border-b border-border pb-2">
-                  <Badge variant="secondary" className="font-extrabold text-xs px-3 py-1 rounded-full">
-                    Archivo {blockIdx + 1}: Páginas {startIdx + 1} a {startIdx + blockPages.length}
-                  </Badge>
+              <Card key={blockIdx} className="p-3 sm:p-4 border border-border bg-card flex flex-col gap-3 rounded-2xl shadow-xs">
+                <div className="flex items-center justify-between border-b border-border pb-2 flex-wrap gap-2">
+                  <div className="flex items-center gap-2 min-w-0 max-w-[80%] flex-wrap">
+                    <Badge variant="secondary" className="font-extrabold text-xs px-2.5 py-0.5 rounded-full shrink-0">
+                      Archivo {blockIdx + 1}
+                    </Badge>
+                    <span className="text-xs font-bold text-foreground truncate">
+                      Págs {startIdx + 1} a {startIdx + blockPages.length} ({blockPages.length} pág{blockPages.length === 1 ? '' : 's'})
+                    </span>
+                  </div>
                 </div>
 
                 <div className={splitViewMode === 'grid' ? 'grid grid-cols-2 sm:grid-cols-3 gap-4 justify-items-center pt-1' : 'flex flex-col gap-2 pt-1'}>
