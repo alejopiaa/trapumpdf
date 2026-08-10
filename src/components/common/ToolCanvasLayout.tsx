@@ -121,7 +121,7 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
         <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap min-w-0">
           <Badge
             variant="outline"
-            className="bg-gradient-to-r from-sky-500/10 via-cyan-500/10 to-blue-500/10 text-sky-700 dark:text-sky-300 border border-sky-500/30 font-extrabold text-xs px-2.5 py-1 rounded-full shrink-0 shadow-xs"
+            className="bg-primary/10 text-primary border border-primary/30 font-extrabold text-xs px-2.5 py-1 rounded-full shrink-0 shadow-xs"
           >
             {badgeText}
           </Badge>
@@ -338,7 +338,7 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
         <div className="flex items-center gap-3">
           <Badge
             variant="outline"
-            className="bg-gradient-to-r from-sky-500/15 via-cyan-500/15 to-blue-500/15 text-sky-700 dark:text-sky-300 border border-sky-500/30 font-extrabold text-xs px-3.5 py-1.5 rounded-full shrink-0 min-w-[90px] text-center inline-flex items-center justify-center shadow-xs"
+            className="bg-primary/10 text-primary border border-primary/30 font-extrabold text-xs px-3.5 py-1.5 rounded-full shrink-0 min-w-[90px] text-center inline-flex items-center justify-center shadow-xs"
           >
             {badgeText}
           </Badge>
@@ -349,7 +349,7 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
         <Button
           onClick={onProcess}
           disabled={isProcessDisabled}
-          className="h-11 px-7 rounded-xl font-extrabold text-sm bg-gradient-to-r from-sky-500 via-cyan-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white shadow-lg shadow-sky-500/25 hover:shadow-sky-500/40 transition-all gap-2 border border-white/20"
+          className="h-11 px-7 rounded-xl font-extrabold text-sm shadow-md hover:shadow-lg transition-all gap-2"
         >
           {processButtonLabel} {processIcon}
         </Button>
