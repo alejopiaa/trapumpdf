@@ -120,8 +120,8 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
         {/* Izquierda: Badge de información y botones de acción en 1 sola fila sin scrollbar */}
         <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap min-w-0">
           <Badge
-            variant="default"
-            className="bg-primary text-primary-foreground font-extrabold text-xs px-2.5 py-1 rounded-full shrink-0 shadow-xs"
+            variant="outline"
+            className="bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-300/80 dark:border-slate-700 font-extrabold text-xs px-2.5 py-1 rounded-full shrink-0 shadow-xs"
           >
             {badgeText}
           </Badge>
@@ -337,8 +337,8 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
       <div className="fixed bottom-14 sm:bottom-16 left-3 right-3 sm:left-6 sm:right-6 z-50 mx-auto max-w-6xl bg-card/95 backdrop-blur-md border-2 border-primary/20 p-3 sm:p-3.5 px-4 sm:px-6 rounded-2xl shadow-2xl flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-3">
           <Badge
-            variant="default"
-            className="bg-primary text-primary-foreground font-extrabold text-xs px-3.5 py-1.5 rounded-full shrink-0 min-w-[100px] text-center inline-flex items-center justify-center shadow-xs"
+            variant="outline"
+            className="bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-300/80 dark:border-slate-700 font-extrabold text-xs px-3.5 py-1.5 rounded-full shrink-0 min-w-[90px] text-center inline-flex items-center justify-center shadow-xs"
           >
             {badgeText}
           </Badge>

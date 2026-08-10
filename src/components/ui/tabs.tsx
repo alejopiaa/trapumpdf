@@ -28,7 +28,7 @@ const TabsList = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
     <div
       ref={ref}
       className={cn(
-        "inline-flex h-11 items-center justify-center rounded-full bg-slate-200/80 dark:bg-slate-800/80 p-1 text-muted-foreground w-full sm:w-auto border border-border/50 shadow-inner gap-1",
+        "inline-flex h-11 items-center justify-center rounded-full bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border border-white/90 dark:border-white/10 shadow-[0_8px_32px_0_rgba(31,38,135,0.08)] p-1 text-muted-foreground w-full sm:w-auto gap-1",
         className
       )}
       {...props}
@@ -56,8 +56,8 @@ const TabsTrigger = React.forwardRef<HTMLButtonElement, TabsTriggerProps>(
         className={cn(
           "inline-flex h-full items-center justify-center whitespace-nowrap rounded-full px-5 text-xs font-black tracking-wide cursor-pointer transition-all duration-200 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 select-none",
           isSelected
-            ? "bg-primary text-primary-foreground shadow-md shadow-primary/20 font-black"
-            : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-primary/10 font-extrabold",
+            ? "bg-slate-900 text-white dark:bg-white dark:text-slate-950 shadow-md border border-slate-800 dark:border-slate-100 font-black scale-[1.02]"
+            : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/60 font-extrabold",
           className
         )}
         {...props}
