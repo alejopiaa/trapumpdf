@@ -1,3 +1,7 @@
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
+import { viteSingleFile } from 'vite-plugin-singlefile'
 import fs from 'fs'
 import path from 'path'
 
@@ -24,7 +28,8 @@ echo ¡Instalacion completada con exito! Acceso directo creado en el Escritorio.
 echo.
 pause
 `
-      const distDir = path.resolve(__dirname, 'dist')
+      const baseDir = typeof import.meta.dirname !== 'undefined' ? import.meta.dirname : __dirname
+      const distDir = path.resolve(baseDir, 'dist')
       if (!fs.existsSync(distDir)) {
         fs.mkdirSync(distDir, { recursive: true })
       }
