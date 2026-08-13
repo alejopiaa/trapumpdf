@@ -5,8 +5,10 @@ import { viteSingleFile } from 'vite-plugin-singlefile'
 import fs from 'fs'
 import path from 'path'
 
+import { fileURLToPath } from 'url'
+
 // Leer version dinamicamente desde package.json
-const baseDir = typeof import.meta.dirname !== 'undefined' ? import.meta.dirname : __dirname
+const baseDir = fileURLToPath(new URL('.', import.meta.url))
 const pkgPath = path.resolve(baseDir, 'package.json')
 const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'))
 const appVersion = pkg.version || '1.1.0'
