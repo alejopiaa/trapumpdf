@@ -13,15 +13,15 @@ function generateInstallerPlugin() {
 title Instalador TrapumPDF
 echo Instalando TrapumPDF en tu equipo...
 
-:: 1. Crear carpeta destino en AppData/Local
-set DESTINO=%LocalAppData%\\TrapumPDF
+:: 1. Definir rutas
+set "DESTINO=%LocalAppData%\\TrapumPDF"
 if not exist "%DESTINO%" mkdir "%DESTINO%"
 
-:: 2. Copiar archivos desde la ubicacion del instalador
-xcopy "%~dp0*" "%DESTINO%\\" /E /Y /Q
+:: 2. Copiar archivos excluyendo el propio instalador .bat
+robocopy "%~dp0." "%DESTINO%" /E /XF "Instalar_TrapumPDF.bat" /NJH /NJS /NDL /NC /NS >nul 2>&1
 
-:: 3. Crear Acceso Directo en el Escritorio del usuario
-powershell -Command "$s=(New-Object -COM WScript.Shell).CreateShortcut([Environment]::GetFolderPath('Desktop') + '\\TrapumPDF.lnk'); $s.TargetPath='%DESTINO%\\index.html'; $s.Save()"
+:: 3. Crear Acceso Directo oficial en el Escritorio con icono
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$desktop = [Environment]::GetFolderPath('Desktop'); $ws = New-Object -ComObject WScript.Shell; $sc = $ws.CreateShortcut(\\"$desktop\\TrapümPDF.lnk\\"); $sc.TargetPath = \\"$env:LocalAppData\\TrapumPDF\\index.html\\"; if (Test-Path \\"$env:LocalAppData\\TrapumPDF\\favicon.ico\\") { $sc.IconLocation = \\"$env:LocalAppData\\TrapumPDF\\favicon.ico\\" }; $sc.Save()"
 
 echo.
 echo ¡Instalacion completada con exito! Acceso directo creado en el Escritorio.
