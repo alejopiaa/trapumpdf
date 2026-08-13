@@ -107,7 +107,7 @@ if not exist "%DESTINO%" mkdir "%DESTINO%"
 robocopy "%~dp0." "%DESTINO%" /E /XF "Instalar_TrapumPDF.bat" /NJH /NJS /NDL /NC /NS >nul 2>&1
 
 :: 3. Crear Acceso Directo oficial en el Escritorio con icono
-powershell -NoProfile -ExecutionPolicy Bypass -Command "$desktop = [Environment]::GetFolderPath('Desktop'); $ws = New-Object -ComObject WScript.Shell; $sc = $ws.CreateShortcut(\\"$desktop\\TrapumPDF.lnk\\"); $sc.TargetPath = \\"$env:LocalAppData\\TrapumPDF\\index.html\\"; if (Test-Path \\"$env:LocalAppData\\TrapumPDF\\app.ico\\") { $sc.IconLocation = \\"$env:LocalAppData\\TrapumPDF\\app.ico\\" } else if (Test-Path \\"$env:LocalAppData\\TrapumPDF\\favicon.ico\\") { $sc.IconLocation = \\"$env:LocalAppData\\TrapumPDF\\favicon.ico\\" }; $sc.Save()"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$desktop = [Environment]::GetFolderPath('Desktop'); $ws = New-Object -ComObject WScript.Shell; $sc = $ws.CreateShortcut(\\"$desktop\\TrapumPDF.lnk\\"); $sc.TargetPath = \\"$env:LocalAppData\\TrapumPDF\\index.html\\"; if (Test-Path \\"$env:LocalAppData\\TrapumPDF\\app.ico\\") { $sc.IconLocation = \\"$env:LocalAppData\\TrapumPDF\\app.ico\\" }; $sc.Save()"
 
 echo.
 echo ¡Instalacion completada con exito! Acceso directo creado en el Escritorio.
