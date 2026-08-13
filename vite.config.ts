@@ -5,13 +5,20 @@ import { viteSingleFile } from 'vite-plugin-singlefile'
 import fs from 'fs'
 import path from 'path'
 
+// Leer version dinamicamente desde package.json
+const baseDir = typeof import.meta.dirname !== 'undefined' ? import.meta.dirname : __dirname
+const pkgPath = path.resolve(baseDir, 'package.json')
+const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'))
+const appVersion = pkg.version || '1.1.0'
+const outputFolderName = `TrapumPDF_v${appVersion}`
+
 function generateInstallerPlugin() {
   return {
     name: 'generate-installer-bat',
     closeBundle() {
       const batContent = `@echo off
-title Instalador TrapumPDF
-echo Instalando TrapumPDF en tu equipo...
+title Instalador TrapumPDF v${appVersion}
+echo Instalando TrapumPDF v${appVersion} en tu equipo...
 
 :: 1. Definir rutas
 set "DESTINO=%LocalAppData%\\TrapumPDF"
@@ -28,12 +35,11 @@ echo ¡Instalacion completada con exito! Acceso directo creado en el Escritorio.
 echo.
 pause
 `
-      const baseDir = typeof import.meta.dirname !== 'undefined' ? import.meta.dirname : __dirname
-      const distDir = path.resolve(baseDir, 'dist')
-      if (!fs.existsSync(distDir)) {
-        fs.mkdirSync(distDir, { recursive: true })
+      const targetDir = path.resolve(baseDir, `dist/${outputFolderName}`)
+      if (!fs.existsSync(targetDir)) {
+        fs.mkdirSync(targetDir, { recursive: true })
       }
-      fs.writeFileSync(path.join(distDir, 'Instalar_TrapumPDF.bat'), batContent, 'utf-8')
+      fs.writeFileSync(path.join(targetDir, 'Instalar_TrapumPDF.bat'), batContent, 'utf-8')
     }
   }
 }
@@ -41,4 +47,8 @@ pause
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [tailwindcss(), react(), viteSingleFile(), generateInstallerPlugin()],
+  build: {
+    outDir: `dist/${outputFolderName}`,
+    emptyOutDir: true,
+  },
 })
