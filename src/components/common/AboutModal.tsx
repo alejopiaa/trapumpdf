@@ -42,7 +42,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
                 TRAPÜM<span className="text-primary">PDF</span>
               </h2>
               <span className="text-[11px] font-extrabold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-                v1.1.0
+                v1.2.0
               </span>
             </div>
             <p className="text-xs text-muted-foreground font-semibold">

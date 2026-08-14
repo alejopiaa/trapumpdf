@@ -15,6 +15,8 @@ import { usePdfEdit } from './hooks/usePdfEdit';
 import { usePdfSplit } from './hooks/usePdfSplit';
 import { usePdfCompress } from './hooks/usePdfCompress';
 import { AboutModal } from './components/common/AboutModal';
+import { AlertCircle } from 'lucide-react';
+import { Button } from './components/ui/button';
 import {
   parseFilesToPages,
   parseFilesToMergeItems,
@@ -112,11 +114,42 @@ function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activeTool, pdfSplit]);
 
+  const [pendingToolSwitch, setPendingToolSwitch] = useState<'home' | 'merge' | 'edit' | 'split' | 'compress' | null>(null);
+
+  const hasActiveFiles = Boolean(
+    (activeTool === 'merge' && pdfMerge.mergeFiles.length > 0) ||
+    (activeTool === 'edit' && pdfEdit.editGroups.length > 0) ||
+    (activeTool === 'split' && pdfSplit.pages.length > 0) ||
+    (activeTool === 'compress' && pdfCompress.compressItems.length > 0)
+  );
+
   const handleToolSwitch = (tool: 'home' | 'merge' | 'edit' | 'split' | 'compress') => {
-    setActiveTool(tool);
-    setResult(null);
-    setErrorMessage(null);
-    setOmittedFiles([]);
+    if (tool === activeTool) return;
+    if (!hasActiveFiles) {
+      setActiveTool(tool);
+      setResult(null);
+      setErrorMessage(null);
+      setOmittedFiles([]);
+      return;
+    }
+    setPendingToolSwitch(tool);
+  };
+
+  const handleConfirmToolSwitch = () => {
+    if (pendingToolSwitch) {
+      handleClearAll();
+      setActiveTool(pendingToolSwitch);
+      setPendingToolSwitch(null);
+    }
+  };
+
+  const handleCancelToolSwitch = () => {
+    setPendingToolSwitch(null);
+  };
+
+  const handleStartNewProcess = () => {
+    handleClearAll();
+    setActiveTool('home');
   };
 
   const [omittedFiles, setOmittedFiles] = useState<OmittedFileItem[]>([]);
@@ -479,7 +512,8 @@ function App() {
             zipResult={result.zipResult}
             outputFileName={result.outputFileName}
             showSavingsBadge={activeTool === 'compress'}
-            onReset={handleClearAll}
+            onReset={handleStartNewProcess}
+            onReconfigureCompress={activeTool === 'compress' ? () => setResult(null) : undefined}
             onContinueCompress={activeTool !== 'compress' ? (bytes) => handleChainToTool('compress', bytes) : undefined}
             onContinueEdit={activeTool !== 'edit' ? (bytes) => handleChainToTool('edit', bytes) : undefined}
             onContinueMerge={activeTool !== 'merge' ? (bytes) => handleChainToTool('merge', bytes) : undefined}
@@ -634,6 +668,33 @@ function App() {
           }
         }}
       />
+
+      {pendingToolSwitch && (
+        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in-0 duration-200">
+          <div className="bg-card border border-border/80 rounded-3xl p-6 max-w-md w-full shadow-2xl flex flex-col gap-4 relative animate-in zoom-in-95 duration-200">
+            <div className="flex items-center gap-3 border-b border-border/60 pb-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0">
+                <AlertCircle className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-foreground">¿Cambiar de herramienta?</h3>
+                <p className="text-xs text-muted-foreground">Tienes archivos cargados en memoria.</p>
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Si cambias de herramienta ahora, los archivos de la tarea actual se descartarán para liberar memoria RAM. ¿Deseas continuar?
+            </p>
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <Button variant="outline" size="sm" onClick={handleCancelToolSwitch}>
+                Permanecer aquí
+              </Button>
+              <Button variant="destructive" size="sm" onClick={handleConfirmToolSwitch}>
+                Descartar y cambiar
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

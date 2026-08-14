@@ -16,7 +16,7 @@ interface EditViewProps {
   onRotatePage: (groupId: string, pageId: string) => void;
   onToggleExcluded: (groupId: string, pageId: string) => void;
   onMovePage?: (groupId: string, pageIdx: number, direction: 'left' | 'right') => void;
-  onDropPage?: (groupId: string, sourceIdx: number, targetIdx: number) => void;
+  onDropPage?: (groupId: string, sourceIdx: number, targetIdx: number, position?: 'before' | 'after') => void;
   onRemoveGroup: (groupId: string) => void;
   onClearAll: () => void;
   onProcess: () => void;
@@ -133,7 +133,7 @@ export const EditView: React.FC<EditViewProps> = ({
                     setDraggedItem({ groupId: group.id, index: pIdx });
                   }}
                   onDragOver={(e) => e.preventDefault()}
-                  onDrop={(e) => {
+                  onDrop={(e, _targetIdx, position) => {
                     e.preventDefault();
                     e.stopPropagation();
                     setDraggedItem(null);
@@ -142,7 +142,7 @@ export const EditView: React.FC<EditViewProps> = ({
                       if (raw) {
                         const parsed = JSON.parse(raw);
                         if (parsed.groupId === group.id && typeof parsed.index === 'number' && onDropPage) {
-                          onDropPage(group.id, parsed.index, pIdx);
+                          onDropPage(group.id, parsed.index, pIdx, position);
                         }
                       }
                     } catch (err) {
