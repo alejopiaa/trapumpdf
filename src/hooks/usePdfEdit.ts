@@ -106,7 +106,7 @@ export function usePdfEdit() {
     setEditGroups((prev) =>
       prev.map((g) => ({
         ...g,
-        pages: [...g.pages].sort((a, b) => a.originalIndex - b.originalIndex),
+        pages: [...g.pages].sort((a, b) => (a.originalIndex ?? 0) - (b.originalIndex ?? 0)),
       }))
     );
   }, []);

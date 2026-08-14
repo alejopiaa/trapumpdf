@@ -13,10 +13,10 @@ interface PageCardProps {
   badgePrefix?: string;
   onRotate?: (id: string) => void;
   onDelete?: (id: string) => void;
-  onMove: (index: number, direction: 'left' | 'right') => void;
-  onDragStart: (e: React.DragEvent, index: number) => void;
-  onDragOver: (e: React.DragEvent, index: number) => void;
-  onDrop: (e: React.DragEvent, index: number, position?: 'before' | 'after') => void;
+  onMove?: (index: number, direction: 'left' | 'right') => void;
+  onDragStart?: (e: React.DragEvent, index: number) => void;
+  onDragOver?: (e: React.DragEvent, index: number) => void;
+  onDrop?: (e: React.DragEvent, index: number, position?: 'before' | 'after') => void;
   isDragging?: boolean;
   onRestore?: (id: string) => void;
   onPreview?: (page: PageItem) => void;
@@ -54,7 +54,7 @@ const PageCardComponent: React.FC<PageCardProps> = ({
       const isLeft = e.clientX - rect.left < rect.width / 2;
       setDropIndicator(isLeft ? 'left' : 'right');
     }
-    onDragOver(e, index);
+    onDragOver?.(e, index);
   };
 
   const handleDragLeave = () => {
@@ -66,14 +66,14 @@ const PageCardComponent: React.FC<PageCardProps> = ({
     e.stopPropagation();
     const position = (dropIndicator === 'right' || dropIndicator === 'bottom') ? 'after' : 'before';
     setDropIndicator(null);
-    onDrop(e, index, position);
+    onDrop?.(e, index, position);
   };
 
   if (viewMode === 'list') {
     return (
       <Card
         draggable
-        onDragStart={(e) => onDragStart(e, index)}
+        onDragStart={(e) => onDragStart?.(e, index)}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
@@ -140,7 +140,7 @@ const PageCardComponent: React.FC<PageCardProps> = ({
               variant="ghost"
               size="icon"
               disabled={index === 0}
-              onClick={(e) => { e.stopPropagation(); onMove(index, 'left'); }}
+              onClick={(e) => { e.stopPropagation(); onMove?.(index, 'left'); }}
               className="h-7 w-7 text-muted-foreground"
               title="Mover arriba"
             >
@@ -151,7 +151,7 @@ const PageCardComponent: React.FC<PageCardProps> = ({
               variant="ghost"
               size="icon"
               disabled={index === totalCount - 1}
-              onClick={(e) => { e.stopPropagation(); onMove(index, 'right'); }}
+              onClick={(e) => { e.stopPropagation(); onMove?.(index, 'right'); }}
               className="h-7 w-7 text-muted-foreground"
               title="Mover abajo"
             >
@@ -203,7 +203,7 @@ const PageCardComponent: React.FC<PageCardProps> = ({
   return (
     <Card
       draggable
-      onDragStart={(e) => onDragStart(e, index)}
+      onDragStart={(e) => onDragStart?.(e, index)}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
@@ -312,7 +312,7 @@ const PageCardComponent: React.FC<PageCardProps> = ({
           variant="ghost"
           size="icon"
           disabled={index === 0}
-          onClick={(e) => { e.stopPropagation(); onMove(index, 'left'); }}
+          onClick={(e) => { e.stopPropagation(); onMove?.(index, 'left'); }}
           className="h-7 w-7 text-muted-foreground"
           title="Mover hacia la izquierda"
         >
@@ -341,7 +341,7 @@ const PageCardComponent: React.FC<PageCardProps> = ({
           variant="ghost"
           size="icon"
           disabled={index === totalCount - 1}
-          onClick={(e) => { e.stopPropagation(); onMove(index, 'right'); }}
+          onClick={(e) => { e.stopPropagation(); onMove?.(index, 'right'); }}
           className="h-7 w-7 text-muted-foreground"
           title="Mover hacia la derecha"
         >

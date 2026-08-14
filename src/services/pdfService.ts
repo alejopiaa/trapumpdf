@@ -69,8 +69,8 @@ export interface CompressFileItem {
 
 export interface CompressionOptions {
   level: 'none' | 'recommended' | 'high' | 'custom';
-  jpegQuality: number; // 0.1 to 1.0
-  scaleFactor: number; // 0.3 to 1.0
+  jpegQuality?: number; // 0.1 to 1.0
+  scaleFactor?: number; // 0.3 to 1.0
 }
 
 export interface OmittedFileItem {
@@ -182,18 +182,17 @@ export const releaseBlobUrls = (urls: (string | undefined)[]) => {
   urls.forEach((url) => revokeThumbnailUrl(url));
 };
 
-/**
- * Destroys all cached PDF.js document proxies and clears the internal cache map to free RAM.
- */
+const pdfjsGlobalDocMap = new Map<any, any>();
+
 export const clearPdfjsCache = () => {
-  pdfjsDocMap.forEach((doc) => {
+  pdfjsGlobalDocMap.forEach((doc) => {
     try {
-      doc.destroy();
+      doc?.destroy?.();
     } catch (e) {
       console.warn('Error destruyendo proxy de PDF.js:', e);
     }
   });
-  pdfjsDocMap.clear();
+  pdfjsGlobalDocMap.clear();
 };
 
 /**
@@ -482,12 +481,13 @@ export async function mergeAndCompressPages(
       }
     } else {
       try {
+        const scale = options.scaleFactor ?? 1.0;
         let canvasWidth = pageItem.width;
         let canvasHeight = pageItem.height;
 
-        if (options.scaleFactor < 1.0) {
-          canvasWidth = Math.round(pageItem.width * options.scaleFactor);
-          canvasHeight = Math.round(pageItem.height * options.scaleFactor);
+        if (scale < 1.0) {
+          canvasWidth = Math.round(pageItem.width * scale);
+          canvasHeight = Math.round(pageItem.height * scale);
         }
 
         let canvas: HTMLCanvasElement | OffscreenCanvas;
@@ -745,7 +745,7 @@ export async function compressPdfFilesDirectIndividual(
  */
 export async function exportEditGroupsAsZip(
   groups: EditFileGroup[],
-  options: CompressionOptions,
+  options: CompressionOptions = { level: 'none' },
   onProgress?: (percent: number, statusText: string) => void
 ): Promise<{ zipBlob: Blob; zipFileName: string; compressedResults: CompressedResultItem[] }> {
   const zip = new JSZip();
@@ -832,7 +832,7 @@ export async function processEditGroups(
     zip.file(exportName, pdfBytes);
 
     // Embed into master unified PDF
-    const filePdfDoc = await PDFDocument.load(pdfBytes.buffer);
+    const filePdfDoc = await PDFDocument.load(pdfBytes);
     const pageIndices = filePdfDoc.getPageIndices();
     const copiedPages = await masterUnifiedDoc.copyPages(filePdfDoc, pageIndices);
     copiedPages.forEach(p => masterUnifiedDoc.addPage(p));
@@ -866,7 +866,7 @@ export async function processEditGroups(
  */
 export async function splitByPages(
   pages: PageItem[],
-  options: CompressionOptions,
+  options: CompressionOptions = { level: 'none' },
   onProgress?: (percent: number, status: string) => void
 ): Promise<Array<{ fileName: string; pdfBytes: Uint8Array; originalSizeBytes: number; compressedSize: number }>> {
   const results = [];
@@ -896,7 +896,7 @@ export async function splitByPages(
 export async function splitByRanges(
   pages: PageItem[],
   ranges: Array<{ start: number; end: number }>,
-  options: CompressionOptions,
+  options: CompressionOptions = { level: 'none' },
   onProgress?: (percent: number, status: string) => void
 ): Promise<Array<{ fileName: string; pdfBytes: Uint8Array; originalSizeBytes: number; compressedSize: number }>> {
   const results = [];
@@ -926,7 +926,7 @@ export async function splitByRanges(
 export async function splitByFixedRange(
   pages: PageItem[],
   blockSize: number,
-  options: CompressionOptions,
+  options: CompressionOptions = { level: 'none' },
   onProgress?: (percent: number, status: string) => void
 ): Promise<Array<{ fileName: string; pdfBytes: Uint8Array; originalSizeBytes: number; compressedSize: number }>> {
   const results = [];
@@ -1139,7 +1139,7 @@ export async function parseFilesToCompressItems(
         canvas.height = viewport.height;
         const ctx = canvas.getContext('2d');
         if (ctx) {
-          await page.render({ canvasContext: ctx, viewport }).promise;
+          await (page.render({ canvasContext: ctx, viewport } as any)).promise;
           thumbnailUrl = await canvasToBlobUrl(canvas, 0.85);
         }
         success = true;

@@ -84,10 +84,16 @@ export const MergeView: React.FC<MergeViewProps> = ({
               key={fileItem.id}
               page={{
                 id: fileItem.id,
+                fileId: fileItem.id,
+                fileName: fileItem.fileName || fileItem.file.name,
+                fileType: fileItem.file.type.startsWith('image') ? 'image' : 'pdf',
                 pageIndex: 0,
-                thumbnailUrl: fileItem.thumbnailUrl,
+                originalIndex: idx,
+                totalPagesInFile: fileItem.pageCount,
                 rotation: 0,
-                fileName: fileItem.file.name,
+                thumbnailUrl: fileItem.thumbnailUrl || '',
+                width: 595,
+                height: 842,
               }}
               index={idx}
               totalCount={mergeFiles.length}
@@ -118,10 +124,16 @@ export const MergeView: React.FC<MergeViewProps> = ({
               key={fileItem.id}
               page={{
                 id: fileItem.id,
+                fileId: fileItem.id,
+                fileName: fileItem.fileName || fileItem.file.name,
+                fileType: fileItem.file.type.startsWith('image') ? 'image' : 'pdf',
                 pageIndex: 0,
-                thumbnailUrl: fileItem.thumbnailUrl,
+                originalIndex: idx,
+                totalPagesInFile: fileItem.pageCount,
                 rotation: 0,
-                fileName: fileItem.file.name,
+                thumbnailUrl: fileItem.thumbnailUrl || '',
+                width: 595,
+                height: 842,
               }}
               index={idx}
               totalCount={mergeFiles.length}

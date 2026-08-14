@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { LayoutGrid, List, Trash2, ArrowRight, AlertTriangle, X, ArrowDownAZ, ArrowUpAZ, ArrowLeftRight, RotateCcw, Sparkles } from 'lucide-react';
+import { LayoutGrid, List, Trash2, ArrowRight, AlertTriangle, X, ArrowLeftRight, RotateCcw, Sparkles } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 

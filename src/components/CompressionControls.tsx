@@ -104,14 +104,14 @@ export const CompressionControls: React.FC<CompressionControlsProps> = ({ option
           <div className="flex flex-col gap-1">
             <div className="flex justify-between text-xs font-medium">
               <span>Calidad JPEG</span>
-              <span className="font-bold">{Math.round(options.jpegQuality * 100)}%</span>
+              <span className="font-bold">{Math.round((options.jpegQuality ?? 0.8) * 100)}%</span>
             </div>
             <input
               type="range"
               min="0.15"
               max="0.95"
               step="0.05"
-              value={options.jpegQuality}
+              value={options.jpegQuality ?? 0.8}
               className="w-full accent-primary h-1.5 bg-muted rounded-lg appearance-none cursor-pointer"
               onChange={(e) =>
                 onChange({ ...options, jpegQuality: parseFloat(e.target.value) })
@@ -122,14 +122,14 @@ export const CompressionControls: React.FC<CompressionControlsProps> = ({ option
           <div className="flex flex-col gap-1">
             <div className="flex justify-between text-xs font-medium">
               <span>Escala</span>
-              <span className="font-bold">{Math.round(options.scaleFactor * 100)}%</span>
+              <span className="font-bold">{Math.round((options.scaleFactor ?? 0.85) * 100)}%</span>
             </div>
             <input
               type="range"
               min="0.3"
               max="1.0"
               step="0.05"
-              value={options.scaleFactor}
+              value={options.scaleFactor ?? 0.85}
               className="w-full accent-primary h-1.5 bg-muted rounded-lg appearance-none cursor-pointer"
               onChange={(e) =>
                 onChange({ ...options, scaleFactor: parseFloat(e.target.value) })
