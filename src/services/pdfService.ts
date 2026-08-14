@@ -224,63 +224,80 @@ export const parseFilesToPages = async (
     }
 
     if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+      let pdfDoc: any = null;
       try {
         const arrayBuffer = await file.arrayBuffer();
         const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer.slice(0) });
-        const pdfDoc = await loadingTask.promise;
+        pdfDoc = await loadingTask.promise;
         const totalPages = pdfDoc.numPages;
 
-        for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+        // Process thumbnails in concurrent batches of 4 pages
+        const BATCH_SIZE = 4;
+        for (let startPage = 1; startPage <= totalPages; startPage += BATCH_SIZE) {
+          const endPage = Math.min(startPage + BATCH_SIZE - 1, totalPages);
+          const batchPromises = [];
+
+          for (let pageNum = startPage; pageNum <= endPage; pageNum++) {
+            batchPromises.push((async (pNum) => {
+              const page = await pdfDoc.getPage(pNum);
+              // Scale 0.95 gives ~350px width: retina-crisp for 175px cards and saves 55% RAM/render time
+              const viewport = page.getViewport({ scale: 0.95 });
+
+              const canvas = document.createElement('canvas');
+              const context = canvas.getContext('2d');
+              canvas.width = viewport.width;
+              canvas.height = viewport.height;
+
+              if (context) {
+                await (page.render({
+                  canvasContext: context,
+                  viewport: viewport,
+                } as any)).promise;
+              }
+
+              let isBlank = false;
+              try {
+                const textContent = await page.getTextContent();
+                const hasText = textContent.items.some((item: any) => item.str && item.str.trim().length > 0);
+                if (!hasText) {
+                  isBlank = isCanvasBlank(canvas);
+                }
+              } catch {
+                isBlank = isCanvasBlank(canvas);
+              }
+
+              const thumbnailUrl = await canvasToBlobUrl(canvas, 0.85);
+
+              return {
+                id: `${fileId}-p${pNum}`,
+                fileId,
+                fileName: file.name,
+                fileType: 'pdf' as const,
+                pageIndex: pNum - 1,
+                originalIndex: 0,
+                totalPagesInFile: totalPages,
+                rotation: 0,
+                thumbnailUrl,
+                width: viewport.width,
+                height: viewport.height,
+                isBlank,
+                pdfArrayBuffer: arrayBuffer,
+              };
+            })(pageNum));
+          }
+
+          const batchResults = await Promise.all(batchPromises);
+          for (const pageItem of batchResults) {
+            pageItem.originalIndex = globalIndexCounter++;
+            pages.push(pageItem);
+          }
+
           if (onProgress) {
             onProgress(
-              Math.round(((fileIdx + pageNum / totalPages) / totalFiles) * 100),
-              `Generando miniatura ${pageNum} de ${totalPages} de ${file.name}...`
+              Math.round(((fileIdx + endPage / totalPages) / totalFiles) * 100),
+              `Generando miniaturas (${endPage}/${totalPages}) de ${file.name}...`
             );
           }
-
-          const page = await pdfDoc.getPage(pageNum);
-          const viewport = page.getViewport({ scale: 1.6 });
-
-          const canvas = document.createElement('canvas');
-          const context = canvas.getContext('2d');
-          canvas.width = viewport.width;
-          canvas.height = viewport.height;
-
-          if (context) {
-            await page.render({
-              canvasContext: context,
-              viewport: viewport,
-            } as any).promise;
-          }
-
-          let isBlank = false;
-          try {
-            const textContent = await page.getTextContent();
-            const hasText = textContent.items.some((item: any) => item.str && item.str.trim().length > 0);
-            if (!hasText) {
-              isBlank = isCanvasBlank(canvas);
-            }
-          } catch (e) {
-            isBlank = isCanvasBlank(canvas);
-          }
-
-          const thumbnailUrl = await canvasToBlobUrl(canvas, 0.85);
-
-          pages.push({
-            id: `${fileId}-p${pageNum}`,
-            fileId,
-            fileName: file.name,
-            fileType: 'pdf',
-            pageIndex: pageNum - 1,
-            originalIndex: globalIndexCounter++,
-            totalPagesInFile: totalPages,
-            rotation: 0,
-            thumbnailUrl,
-            width: viewport.width,
-            height: viewport.height,
-            isBlank,
-            pdfArrayBuffer: arrayBuffer,
-          });
         }
       } catch (err: any) {
         console.error(`Error leyendo el archivo PDF ${file.name}:`, err);
@@ -289,6 +306,14 @@ export const parseFilesToPages = async (
           name: file.name,
           reason: isPassword ? '🔒 Protegido con contraseña' : '❌ Formato no admitido o archivo dañado',
         });
+      } finally {
+        if (pdfDoc) {
+          try {
+            await pdfDoc.destroy();
+          } catch (destroyErr) {
+            console.warn('Advertencia al destruir pdfDoc proxy:', destroyErr);
+          }
+        }
       }
     } else if (file.type.startsWith('image/')) {
       try {
@@ -558,6 +583,13 @@ export async function mergeAndCompressPages(
     }
   }
 
+  // Cleanup all pdfjsDoc proxies from the map
+  for (const doc of pdfjsDocMap.values()) {
+    try {
+      await (doc as any).destroy?.();
+    } catch {}
+  }
+
   const pdfBytes = await mergedDoc.save({ useObjectStreams: true });
   return {
     pdfBytes,
@@ -609,10 +641,13 @@ export async function compressSinglePdfFile(
   const arrayBuffer = await file.arrayBuffer();
 
   const srcPdfDoc = await PDFDocument.load(arrayBuffer.slice(0), { ignoreEncryption: true });
-  const pdfjsDoc = await pdfjsLib.getDocument({ data: arrayBuffer.slice(0) }).promise;
-  const numPages = pdfjsDoc.numPages;
+  let pdfjsDoc: any = null;
 
-  const outputDoc = await PDFDocument.create();
+  try {
+    pdfjsDoc = await pdfjsLib.getDocument({ data: arrayBuffer.slice(0) }).promise;
+    const numPages = pdfjsDoc.numPages;
+
+    const outputDoc = await PDFDocument.create();
 
   for (let pIdx = 0; pIdx < numPages; pIdx++) {
     if (onProgress) {
@@ -678,21 +713,28 @@ export async function compressSinglePdfFile(
     }
   }
 
-  const generatedBytes = await outputDoc.save({ useObjectStreams: true });
+    const generatedBytes = await outputDoc.save({ useObjectStreams: true });
 
-  let finalBytes = generatedBytes;
-  let finalSize = generatedBytes.byteLength;
+    let finalBytes = generatedBytes;
+    let finalSize = generatedBytes.byteLength;
 
-  if (generatedBytes.byteLength >= originalSizeBytes && originalSizeBytes > 0) {
-    finalBytes = new Uint8Array(arrayBuffer);
-    finalSize = originalSizeBytes;
+    if (generatedBytes.byteLength >= originalSizeBytes && originalSizeBytes > 0) {
+      finalBytes = new Uint8Array(arrayBuffer);
+      finalSize = originalSizeBytes;
+    }
+
+    return {
+      pdfBytes: finalBytes,
+      originalSizeBytes,
+      compressedSize: finalSize,
+    };
+  } finally {
+    if (pdfjsDoc) {
+      try {
+        await pdfjsDoc.destroy();
+      } catch {}
+    }
   }
-
-  return {
-    pdfBytes: finalBytes,
-    originalSizeBytes,
-    compressedSize: finalSize,
-  };
 }
 
 /**
@@ -983,25 +1025,26 @@ export async function parseFilesToMergeItems(
     let success = false;
 
     if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+      let pdfDoc: any = null;
       try {
         const arrayBuffer = await file.arrayBuffer();
         const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer.slice(0) });
-        const pdfDoc = await loadingTask.promise;
+        pdfDoc = await loadingTask.promise;
         pageCount = pdfDoc.numPages;
 
         if (pageCount > 0) {
           const page = await pdfDoc.getPage(1);
-          const viewport = page.getViewport({ scale: 1.6 });
+          const viewport = page.getViewport({ scale: 0.95 });
           const canvas = document.createElement('canvas');
           canvas.width = viewport.width;
           canvas.height = viewport.height;
           const context = canvas.getContext('2d');
 
           if (context) {
-            await page.render({
+            await (page.render({
               canvasContext: context,
               viewport: viewport,
-            } as any).promise;
+            } as any)).promise;
             thumbnailUrl = await canvasToBlobUrl(canvas, 0.85);
           }
         }
@@ -1013,6 +1056,12 @@ export async function parseFilesToMergeItems(
           name: file.name,
           reason: isPassword ? '🔒 Protegido con contraseña' : '❌ Formato no admitido o archivo dañado',
         });
+      } finally {
+        if (pdfDoc) {
+          try {
+            await pdfDoc.destroy();
+          } catch {}
+        }
       }
     } else if (file.type.startsWith('image/')) {
       try {
@@ -1133,10 +1182,11 @@ export async function parseFilesToCompressItems(
     let success = false;
 
     if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+      let pdfDoc: any = null;
       try {
         const arrayBuffer = await file.arrayBuffer();
         const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer.slice(0) });
-        const pdfDoc = await loadingTask.promise;
+        pdfDoc = await loadingTask.promise;
         pageCount = pdfDoc.numPages;
 
         const page = await pdfDoc.getPage(1);
@@ -1157,6 +1207,12 @@ export async function parseFilesToCompressItems(
           name: file.name,
           reason: isPassword ? '🔒 Protegido con contraseña' : '❌ Formato no admitido o archivo dañado',
         });
+      } finally {
+        if (pdfDoc) {
+          try {
+            await pdfDoc.destroy();
+          } catch {}
+        }
       }
     } else {
       omittedFiles.push({

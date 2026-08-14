@@ -3,6 +3,7 @@ import { LayoutGrid, List, Trash2, ArrowRight, AlertTriangle, X, ArrowLeftRight,
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Card } from '../ui/card';
+import { CanvasErrorBoundary } from './CanvasErrorBoundary';
 
 export interface ToolCanvasLayoutProps {
   /** Texto del badge superior (ej: "1 archivo", "3 archivos (12 págs)") */
@@ -218,7 +219,9 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
         
         {/* Left Column: Expansive Canvas with dedicated scroll */}
         <div className="w-full h-full min-w-0 max-h-[calc(100vh-170px)] overflow-y-auto p-4 sm:p-5 border border-border/80 rounded-2xl bg-muted/10 shadow-xs">
-          {children}
+          <CanvasErrorBoundary>
+            {children}
+          </CanvasErrorBoundary>
         </div>
 
         {/* Right Column: Unified Action Sidebar */}
