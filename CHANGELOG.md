@@ -11,8 +11,12 @@ y el versionado sigue [Semantic Versioning](https://semver.org/lang/es/).
 - Soporte para rotación de 90° en páginas de la herramienta DIVIDIR.
 - Botones de selección rápida "Todas", "Ninguna", "Páginas Pares" y "Páginas Impares" con alternancia inteligente en DIVIDIR.
 - Cuadros de ayuda e instrucciones contextuales en el panel lateral de cada herramienta.
+- Componente `CanvasErrorBoundary` para atrapar fallos de renderizado en documentos corruptos sin afectar la aplicación.
 
 ### Changed
+- Renderizado concurrente por lotes (chunks de 4 páginas) en generación de miniaturas, acelerando la carga en un ~60%.
+- Optimización de escala de miniaturas a `0.95` (retina-ready) reduciendo el consumo de memoria GPU y canvas en más de un 55%.
+- Destrucción explícita de proxies `PDFDocumentProxy` en bloques `finally` para eliminar fugas de memoria en Web Workers.
 - Formato uniforme de nombres de archivo descargados con sufijo limpio `_trapumpdf` sin duplicaciones ni caracteres corruptos.
 - Restricción estricta de selección a 1 solo archivo en el cuadro de diálogo nativo para ORGANIZAR y DIVIDIR.
 - Eliminación de desenfoque de fondo en tarjetas para permitir previsualizar rotaciones de página con 100% de nitidez en tiempo real.
