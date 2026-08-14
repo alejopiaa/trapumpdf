@@ -153,6 +153,7 @@ export const SplitView: React.FC<SplitViewProps> = ({
                 index={idx}
                 totalCount={pages.length}
                 viewMode={splitViewMode}
+                isDragging={draggedPageIdx === idx}
                 onDelete={() => onTogglePageSelection(page.id)}
                 onRestore={() => onTogglePageSelection(page.id)}
                 onDragStart={(e) => {

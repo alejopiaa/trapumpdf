@@ -77,10 +77,16 @@ export const CompressView: React.FC<CompressViewProps> = ({
               key={item.id}
               page={{
                 id: item.id,
+                fileId: item.id,
+                fileName: item.fileName || item.file.name,
+                fileType: 'pdf',
                 pageIndex: 0,
-                thumbnailUrl: item.thumbnailUrl,
+                originalIndex: idx,
+                totalPagesInFile: item.pageCount,
                 rotation: 0,
-                fileName: item.file.name,
+                thumbnailUrl: item.thumbnailUrl || '',
+                width: 595,
+                height: 842,
               }}
               index={idx}
               totalCount={compressItems.length}
@@ -115,10 +121,16 @@ export const CompressView: React.FC<CompressViewProps> = ({
               key={item.id}
               page={{
                 id: item.id,
+                fileId: item.id,
+                fileName: item.fileName || item.file.name,
+                fileType: 'pdf',
                 pageIndex: 0,
-                thumbnailUrl: item.thumbnailUrl,
+                originalIndex: idx,
+                totalPagesInFile: item.pageCount,
                 rotation: 0,
-                fileName: item.file.name,
+                thumbnailUrl: item.thumbnailUrl || '',
+                width: 595,
+                height: 842,
               }}
               index={idx}
               totalCount={compressItems.length}
