@@ -100,7 +100,6 @@ export const MergeView: React.FC<MergeViewProps> = ({
               viewMode="grid"
               badgePrefix="Archivo"
               isDragging={draggedMergeIdx === idx}
-              onRotate={() => {}}
               onDelete={() => onRemoveItem(idx)}
               onMove={(i, dir) => onMoveItem(i, dir)}
               onDragStart={(e) => {
@@ -140,7 +139,6 @@ export const MergeView: React.FC<MergeViewProps> = ({
               viewMode="list"
               badgePrefix="Archivo"
               isDragging={draggedMergeIdx === idx}
-              onRotate={() => {}}
               onDelete={() => onRemoveItem(idx)}
               onMove={(i, dir) => onMoveItem(i, dir)}
               onDragStart={(e) => {

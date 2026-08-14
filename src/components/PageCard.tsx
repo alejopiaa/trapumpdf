@@ -270,43 +270,45 @@ const PageCardComponent: React.FC<PageCardProps> = ({
           </div>
         )}
 
-        {/* Floating Quick Action Overlay on Hover */}
+        {/* Floating Quick Action Overlay on Hover (Clear & Crisp - NO BLUR) */}
         {isHovered && !isExcluded && !isDragging && (
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center gap-1.5 z-20 animate-in fade-in-0">
-            <Button
-              type="button"
-              variant="secondary"
-              size="icon"
-              className="h-7 w-7 rounded-full shadow-md hover:scale-110 transition-transform bg-background/90 text-foreground hover:bg-background"
-              onClick={(e) => { e.stopPropagation(); onPreview && onPreview(page); }}
-              title="Ver en grande"
-            >
-              <ZoomIn className="w-3.5 h-3.5" />
-            </Button>
-            {onRotate && (
+          <div className="absolute inset-0 bg-transparent flex items-center justify-center gap-1.5 z-20 animate-in fade-in-0 pointer-events-none">
+            <div className="flex items-center gap-1.5 bg-background/90 dark:bg-card/90 border border-border/80 p-1 rounded-full shadow-lg pointer-events-auto">
               <Button
                 type="button"
-                variant="secondary"
+                variant="ghost"
                 size="icon"
-                className="h-7 w-7 rounded-full shadow-md hover:scale-110 transition-transform bg-background/90 text-foreground hover:bg-background"
-                onClick={(e) => { e.stopPropagation(); onRotate(page.id); }}
-                title="Rotar 90°"
+                className="h-7 w-7 rounded-full text-foreground hover:bg-primary hover:text-primary-foreground transition-all"
+                onClick={(e) => { e.stopPropagation(); onPreview && onPreview(page); }}
+                title="Ver en grande"
               >
-                <RotateCw className="w-3.5 h-3.5" />
+                <ZoomIn className="w-3.5 h-3.5" />
               </Button>
-            )}
-            {onDelete && (
-              <Button
-                type="button"
-                variant="destructive"
-                size="icon"
-                className="h-7 w-7 rounded-full shadow-md hover:scale-110 transition-transform"
-                onClick={(e) => { e.stopPropagation(); onDelete(page.id); }}
-                title="Quitar página"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-              </Button>
-            )}
+              {onRotate && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 rounded-full text-foreground hover:bg-primary hover:text-primary-foreground transition-all"
+                  onClick={(e) => { e.stopPropagation(); onRotate(page.id); }}
+                  title="Rotar 90°"
+                >
+                  <RotateCw className="w-3.5 h-3.5" />
+                </Button>
+              )}
+              {onDelete && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 rounded-full text-destructive hover:bg-destructive hover:text-destructive-foreground transition-all"
+                  onClick={(e) => { e.stopPropagation(); onDelete(page.id); }}
+                  title="Quitar página"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </Button>
+              )}
+            </div>
           </div>
         )}
       </div>

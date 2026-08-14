@@ -17,6 +17,8 @@ interface SplitControlsSidebarProps {
   selectedCount: number;
   onSelectEvenPages?: () => void;
   onSelectOddPages?: () => void;
+  onSelectAllPages?: () => void;
+  onDeselectAllPages?: () => void;
 }
 
 const SplitControlsSidebar: React.FC<SplitControlsSidebarProps> = ({
@@ -32,6 +34,8 @@ const SplitControlsSidebar: React.FC<SplitControlsSidebarProps> = ({
   selectedCount,
   onSelectEvenPages,
   onSelectOddPages,
+  onSelectAllPages,
+  onDeselectAllPages,
 }) => {
   const isRangeMode = mode === 'custom' || mode === 'fixed';
 
@@ -208,34 +212,56 @@ const SplitControlsSidebar: React.FC<SplitControlsSidebarProps> = ({
       {/* ── MODO EXTRAER PÁGINAS INDIVIDUALES ── */}
       {mode === 'individual' && (
         <div className="flex flex-col gap-3">
-          {(onSelectEvenPages || onSelectOddPages) && (
-            <div className="grid grid-cols-2 gap-2">
-              {onSelectEvenPages && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={onSelectEvenPages}
-                  className="text-xs font-bold rounded-xl"
-                  title="Seleccionar únicamente páginas pares (2, 4, 6...)"
-                >
-                  Páginas Pares
-                </Button>
-              )}
-              {onSelectOddPages && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={onSelectOddPages}
-                  className="text-xs font-bold rounded-xl"
-                  title="Seleccionar únicamente páginas impares (1, 3, 5...)"
-                >
-                  Páginas Impares
-                </Button>
-              )}
-            </div>
-          )}
+          <div className="grid grid-cols-2 gap-2">
+            {onSelectAllPages && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={onSelectAllPages}
+                className="text-xs font-bold rounded-xl"
+                title="Seleccionar todas las páginas"
+              >
+                Todas
+              </Button>
+            )}
+            {onDeselectAllPages && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={onDeselectAllPages}
+                className="text-xs font-bold rounded-xl text-muted-foreground hover:text-foreground"
+                title="Deseleccionar todas las páginas"
+              >
+                Ninguna
+              </Button>
+            )}
+            {onSelectEvenPages && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={onSelectEvenPages}
+                className="text-xs font-bold rounded-xl"
+                title="Alternar selección de páginas pares (2, 4, 6...)"
+              >
+                Páginas Pares
+              </Button>
+            )}
+            {onSelectOddPages && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={onSelectOddPages}
+                className="text-xs font-bold rounded-xl"
+                title="Alternar selección de páginas impares (1, 3, 5...)"
+              >
+                Páginas Impares
+              </Button>
+            )}
+          </div>
 
           <div className="flex items-start gap-2 p-3 bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800 rounded-xl text-sky-800 dark:text-sky-300 text-xs leading-relaxed">
             <Info className="w-4 h-4 shrink-0 mt-0.5" />

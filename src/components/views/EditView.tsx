@@ -12,7 +12,6 @@ interface EditViewProps {
   editViewMode: 'grid' | 'list';
   setEditViewMode: (mode: 'grid' | 'list') => void;
   onFilesSelected: (files: File[]) => void;
-  onAddFilesClick: () => void;
   onRotatePage: (groupId: string, pageId: string) => void;
   onToggleExcluded: (groupId: string, pageId: string) => void;
   onMovePage?: (groupId: string, pageIdx: number, direction: 'left' | 'right') => void;
@@ -34,7 +33,6 @@ export const EditView: React.FC<EditViewProps> = ({
   editViewMode,
   setEditViewMode,
   onFilesSelected,
-  onAddFilesClick,
   onRotatePage,
   onToggleExcluded,
   onMovePage,
@@ -53,18 +51,18 @@ export const EditView: React.FC<EditViewProps> = ({
   const [draggedItem, setDraggedItem] = React.useState<{ groupId: string; index: number } | null>(null);
 
   if (editGroups.length === 0) {
-    return <DropZone onFilesSelected={onFilesSelected} omittedFiles={omittedFiles} multiple accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/*" isLoading={isLoading} />;
+    return <DropZone onFilesSelected={onFilesSelected} omittedFiles={omittedFiles} multiple={false} accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/*" isLoading={isLoading} />;
   }
 
   const totalPages = editGroups.reduce((acc, g) => acc + g.pages.length, 0);
-  const badgeText = `${editGroups.length} ${editGroups.length === 1 ? 'archivo' : 'archivos'} (${totalPages} págs)`;
+  const badgeText = `${totalPages} ${totalPages === 1 ? 'página' : 'páginas'}`;
   const hasBlankPages = editGroups.some((g) => g.pages.some((p) => p.isBlank && !p.excluded));
   const hasExcludedPages = editGroups.some((g) => g.pages.some((p) => p.excluded));
 
   return (
     <ToolCanvasLayout
       badgeText={badgeText}
-      onAddFilesClick={onAddFilesClick}
+      onAddFilesClick={undefined}
       viewMode={editViewMode}
       onViewModeChange={setEditViewMode}
       onClearAll={onClearAll}
