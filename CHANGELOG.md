@@ -7,8 +7,25 @@ y el versionado sigue [Semantic Versioning](https://semver.org/lang/es/).
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-08-14
+
 ### Added
 - Detección automática y exclusión de páginas en blanco en documentos PDF.
+- Motor de compresión híbrido con optimización estructural de objetos y flujos nativos `pdf-lib`.
+- Botón para re-ajustar nivel de compresión en la pantalla final conservando los archivos cargados.
+- Modal de confirmación al alternar herramientas para evitar acumulación de archivos y fugas de memoria RAM.
+- Indicador visual de inserción luminoso (*Drop Indicator*) en reordenamiento de páginas por arrastre.
+- Generación automática de instalador portable `.bat` y empaquetado en carpetas versionadas `dist/TrapumPDF_vX.X.X`.
+
+### Changed
+- Procesamiento directo de compresión sin generación redundante de miniaturas, acelerando el proceso a 1-2 segundos.
+- Eliminación de conversiones a Base64 en compresión de imágenes mediante buffers nativos `OffscreenCanvas` y `Blob`.
+- Preservación íntegra de texto vectorial y búsqueda interactiva (`Ctrl + F`) en documentos comprimidos.
+
+### Fixed
+- Corrección del botón "Descargar Archivos Separados" en la pantalla de resultados tras exportación masiva.
+- Corrección de inoperatividad en el botón de reinicio para redirigir limpiamente a la pantalla principal.
+- Corrección de parpadeo (*flickering*) y cálculo de posición de inserción (antes/después) al soltar páginas entre tarjetas.
 
 ## [1.1.0] - 2026-08-10
 

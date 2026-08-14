@@ -16,7 +16,7 @@ interface PageCardProps {
   onMove: (index: number, direction: 'left' | 'right') => void;
   onDragStart: (e: React.DragEvent, index: number) => void;
   onDragOver: (e: React.DragEvent, index: number) => void;
-  onDrop: (e: React.DragEvent, index: number) => void;
+  onDrop: (e: React.DragEvent, index: number, position?: 'before' | 'after') => void;
   isDragging?: boolean;
   onRestore?: (id: string) => void;
   onPreview?: (page: PageItem) => void;
@@ -39,19 +39,54 @@ const PageCardComponent: React.FC<PageCardProps> = ({
   onPreview,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [dropIndicator, setDropIndicator] = useState<'left' | 'right' | 'top' | 'bottom' | null>(null);
   const isExcluded = page.excluded;
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.dataTransfer.dropEffect = 'move';
+    const rect = e.currentTarget.getBoundingClientRect();
+    if (viewMode === 'list') {
+      const isTop = e.clientY - rect.top < rect.height / 2;
+      setDropIndicator(isTop ? 'top' : 'bottom');
+    } else {
+      const isLeft = e.clientX - rect.left < rect.width / 2;
+      setDropIndicator(isLeft ? 'left' : 'right');
+    }
+    onDragOver(e, index);
+  };
+
+  const handleDragLeave = () => {
+    setDropIndicator(null);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const position = (dropIndicator === 'right' || dropIndicator === 'bottom') ? 'after' : 'before';
+    setDropIndicator(null);
+    onDrop(e, index, position);
+  };
 
   if (viewMode === 'list') {
     return (
       <Card
         draggable
         onDragStart={(e) => onDragStart(e, index)}
-        onDragOver={(e) => onDragOver(e, index)}
-        onDrop={(e) => onDrop(e, index)}
-        className={`flex items-center gap-2 sm:gap-3 p-2 sm:p-3 transition-all cursor-grab active:cursor-grabbing max-w-full overflow-hidden ${
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+        className={`relative flex items-center gap-2 sm:gap-3 p-2 sm:p-3 transition-all cursor-grab active:cursor-grabbing max-w-full overflow-hidden ${
           isDragging ? 'opacity-40 scale-98 border-dashed border-primary' : ''
         } ${isExcluded ? 'opacity-50 bg-destructive/5 border-destructive/30' : 'hover:border-primary/50'}`}
       >
+        {dropIndicator === 'top' && (
+          <div className="absolute left-0 right-0 top-0 h-1.5 bg-primary z-50 rounded-full shadow-[0_0_8px_rgba(2,132,199,0.8)] pointer-events-none" />
+        )}
+        {dropIndicator === 'bottom' && (
+          <div className="absolute left-0 right-0 bottom-0 h-1.5 bg-primary z-50 rounded-full shadow-[0_0_8px_rgba(2,132,199,0.8)] pointer-events-none" />
+        )}
         <div className="text-muted-foreground hover:text-foreground p-0.5 shrink-0" title="Arrastra para reordenar">
           <GripVertical className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
         </div>
@@ -169,14 +204,21 @@ const PageCardComponent: React.FC<PageCardProps> = ({
     <Card
       draggable
       onDragStart={(e) => onDragStart(e, index)}
-      onDragOver={(e) => onDragOver(e, index)}
-      onDrop={(e) => onDrop(e, index)}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className={`relative overflow-hidden flex flex-col w-full max-w-[200px] mx-auto rounded-2xl border border-border/80 bg-card shadow-xs hover:shadow-md transition-all duration-200 cursor-grab active:cursor-grabbing ${
         isDragging ? 'opacity-40 scale-95 border-dashed border-primary' : ''
       } ${isExcluded ? 'opacity-60 bg-destructive/5 border-destructive/30' : 'hover:border-primary/50'}`}
     >
+      {dropIndicator === 'left' && (
+        <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-primary z-50 rounded-full shadow-[0_0_8px_rgba(2,132,199,0.8)] pointer-events-none" />
+      )}
+      {dropIndicator === 'right' && (
+        <div className="absolute right-0 top-0 bottom-0 w-1.5 bg-primary z-50 rounded-full shadow-[0_0_8px_rgba(2,132,199,0.8)] pointer-events-none" />
+      )}
       {/* Thumbnail Area */}
       <div
         className="relative aspect-[3/4] w-full bg-muted/30 flex items-center justify-center p-2 cursor-pointer overflow-hidden group"
