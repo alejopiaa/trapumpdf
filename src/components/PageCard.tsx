@@ -352,6 +352,7 @@ export const PageCard = React.memo(PageCardComponent, (prevProps, nextProps) => 
     prevProps.page.id === nextProps.page.id &&
     prevProps.page.rotation === nextProps.page.rotation &&
     prevProps.page.excluded === nextProps.page.excluded &&
+    prevProps.page.thumbnailUrl === nextProps.page.thumbnailUrl &&
     prevProps.index === nextProps.index &&
     prevProps.totalCount === nextProps.totalCount &&
     prevProps.viewMode === nextProps.viewMode &&
