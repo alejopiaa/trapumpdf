@@ -137,8 +137,8 @@ function App() {
     setPendingToolSwitch(tool);
   };
 
-  const handleConfirmToolSwitch = () => {
-    const nextTool = pendingToolSwitchRef.current || pendingToolSwitch;
+  const handleConfirmToolSwitch = (forcedTool?: 'home' | 'merge' | 'edit' | 'split' | 'compress' | null) => {
+    const nextTool = forcedTool || pendingToolSwitch || pendingToolSwitchRef.current;
     pendingToolSwitchRef.current = null;
     setPendingToolSwitch(null);
     if (nextTool) {
@@ -702,7 +702,7 @@ function App() {
               <Button type="button" variant="outline" size="sm" onClick={handleCancelToolSwitch}>
                 Permanecer aquí
               </Button>
-              <Button type="button" variant="destructive" size="sm" onClick={handleConfirmToolSwitch}>
+              <Button type="button" variant="destructive" size="sm" onClick={() => handleConfirmToolSwitch(pendingToolSwitch)}>
                 Descartar y cambiar
               </Button>
             </div>
