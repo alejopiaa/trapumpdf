@@ -118,6 +118,8 @@ export const SplitView: React.FC<SplitViewProps> = ({
       selectedCount={selectedCount}
       onSelectEvenPages={onSelectEvenPages}
       onSelectOddPages={onSelectOddPages}
+      onSelectAllPages={onSelectAllPages}
+      onDeselectAllPages={onDeselectAllPages}
     />
   );
 

@@ -93,7 +93,6 @@ export const CompressView: React.FC<CompressViewProps> = ({
               viewMode="grid"
               badgePrefix="Archivo"
               isDragging={draggedCompressIdx === idx}
-              onRotate={() => {}}
               onDelete={() => onRemoveItem(idx)}
               onMove={(i, dir) => onMoveItem(i, dir)}
               onDragStart={(e) => {
@@ -137,7 +136,6 @@ export const CompressView: React.FC<CompressViewProps> = ({
               viewMode="list"
               badgePrefix="Archivo"
               isDragging={draggedCompressIdx === idx}
-              onRotate={() => {}}
               onDelete={() => onRemoveItem(idx)}
               onMove={(i, dir) => onMoveItem(i, dir)}
               onDragStart={(e) => {

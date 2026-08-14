@@ -145,9 +145,9 @@ function App() {
         pdfCompress.setCompressItems((prev) => [...prev, ...newItems]);
         setOmittedFiles(fileOmitted);
       } else if (activeTool === 'edit') {
-        const { items: newGroups, omittedFiles: fileOmitted } = await parseFilesToEditGroups(files, updateProgress);
+        const { items: newGroups, omittedFiles: fileOmitted } = await parseFilesToEditGroups([files[0]], updateProgress);
         if (cancelRef.current) return;
-        pdfEdit.setEditGroups((prev) => [...prev, ...newGroups]);
+        pdfEdit.setEditGroups(newGroups);
         setOmittedFiles(fileOmitted);
       } else if (activeTool === 'split') {
         const { items: newPages, omittedFiles: fileOmitted } = await parseFilesToPages([files[0]], updateProgress);
@@ -461,7 +461,7 @@ function App() {
       <input
         ref={addFilesInputRef}
         type="file"
-        multiple={activeTool !== 'split'}
+        multiple={activeTool !== 'split' && activeTool !== 'edit'}
         accept={activeTool === 'compress' ? '.pdf,application/pdf' : '.pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp'}
         className="hidden"
         onChange={handleAddFilesChange}
@@ -531,7 +531,6 @@ function App() {
             editViewMode={pdfEdit.editViewMode}
             setEditViewMode={pdfEdit.setEditViewMode}
             onFilesSelected={handleFilesSelected}
-            onAddFilesClick={() => addFilesInputRef.current?.click()}
             onRotatePage={pdfEdit.handleRotateEditPage}
             onToggleExcluded={pdfEdit.handleToggleEditPageExcluded}
             onMovePage={pdfEdit.handleMoveEditPage}
