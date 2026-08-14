@@ -113,7 +113,13 @@ export function usePdfSplit() {
       const evenIds = prevPages
         .filter((_, idx) => (idx + 1) % 2 === 0)
         .map((p) => p.id);
-      setSelectedPageIds(new Set(evenIds));
+      setSelectedPageIds((prevSelected) => {
+        const isAlreadyAllEven =
+          evenIds.length > 0 &&
+          prevSelected.size === evenIds.length &&
+          evenIds.every((id) => prevSelected.has(id));
+        return isAlreadyAllEven ? new Set() : new Set(evenIds);
+      });
       return prevPages;
     });
   }, []);
@@ -123,7 +129,13 @@ export function usePdfSplit() {
       const oddIds = prevPages
         .filter((_, idx) => (idx + 1) % 2 !== 0)
         .map((p) => p.id);
-      setSelectedPageIds(new Set(oddIds));
+      setSelectedPageIds((prevSelected) => {
+        const isAlreadyAllOdd =
+          oddIds.length > 0 &&
+          prevSelected.size === oddIds.length &&
+          oddIds.every((id) => prevSelected.has(id));
+        return isAlreadyAllOdd ? new Set() : new Set(oddIds);
+      });
       return prevPages;
     });
   }, []);
