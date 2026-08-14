@@ -80,11 +80,11 @@ export const EditView: React.FC<EditViewProps> = ({
       onRestoreAllPages={onRestoreAllPages}
       hasExcludedPages={hasExcludedPages}
     >
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-5">
         {editGroups.map((group) => (
-          <Card key={group.id} className="p-4 border border-border bg-card flex flex-col gap-4 rounded-2xl shadow-xs">
-            <div className="flex items-center justify-between border-b border-border pb-3 flex-wrap gap-2">
-              <span className="font-extrabold text-sm text-foreground truncate max-w-md">
+          <Card key={group.id} className="p-3 sm:p-4 border border-border/80 bg-card/60 flex flex-col gap-3 rounded-2xl shadow-2xs">
+            <div className="flex items-center justify-between border-b border-border/60 pb-2.5 flex-wrap gap-2">
+              <span className="font-extrabold text-xs sm:text-sm text-foreground truncate max-w-md">
                 📄 {group.fileName} ({group.pages.length} páginas)
               </span>
               <Button
@@ -114,7 +114,7 @@ export const EditView: React.FC<EditViewProps> = ({
                   console.error('Error on container drop:', err);
                 }
               }}
-              className={editViewMode === 'grid' ? 'grid grid-cols-2 sm:grid-cols-3 gap-4 justify-items-center p-2 min-h-[120px]' : 'flex flex-col gap-2 p-2 min-h-[120px]'}
+              className={editViewMode === 'grid' ? 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-3 justify-items-center p-1 min-h-[100px]' : 'flex flex-col gap-2 p-1 min-h-[100px]'}
             >
               {group.pages.map((page, pIdx) => (
                 <PageCard

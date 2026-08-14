@@ -10,6 +10,10 @@ y el versionado sigue [Semantic Versioning](https://semver.org/lang/es/).
 ## [1.2.0] - 2026-08-14
 
 ### Added
+- Rediseño Workspace-First con visualización expansiva de miniaturas de 5 a 7 columnas simultáneas.
+- Panel lateral de control unificado y persistente en CSS Grid con cálculo matemático `minmax(0, 1fr) 320px`, inmune a desbordes en 1366×768.
+- Auto-colapso inteligente del Hero Banner al cargar documentos para maximizar el área de trabajo vertical.
+- Tarjetas `PageCard` de alta densidad con micro-acciones en hover (Zoom, Rotar, Quitar) y barra inferior ultracompacta.
 - Detección automática y exclusión de páginas en blanco en documentos PDF.
 - Motor de compresión híbrido con optimización estructural de objetos y flujos nativos `pdf-lib`.
 - Botón para re-ajustar nivel de compresión en la pantalla final conservando los archivos cargados.

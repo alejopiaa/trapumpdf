@@ -71,7 +71,7 @@ export const CompressView: React.FC<CompressViewProps> = ({
       sidebar={sidebarContent}
     >
       {compressViewMode === 'grid' ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 justify-items-center">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-3 justify-items-center">
           {compressItems.map((item, idx) => (
             <PageCard
               key={item.id}

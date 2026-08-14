@@ -143,7 +143,7 @@ export const SplitView: React.FC<SplitViewProps> = ({
       sidebar={sidebarContent}
     >
       {splitMode === 'individual' && (
-        <div className={splitViewMode === 'grid' ? 'grid grid-cols-2 sm:grid-cols-3 gap-4 justify-items-center' : 'flex flex-col gap-2'}>
+        <div className={splitViewMode === 'grid' ? 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-3 justify-items-center' : 'flex flex-col gap-2'}>
           {pages.map((page, idx) => {
             const isSelected = selectedPageIds.has(page.id);
             return (
@@ -207,7 +207,7 @@ export const SplitView: React.FC<SplitViewProps> = ({
                   </Button>
                 </div>
 
-                <div className={splitViewMode === 'grid' ? 'grid grid-cols-2 sm:grid-cols-3 gap-4 justify-items-center pt-1' : 'flex flex-col gap-2 pt-1'}>
+                <div className={splitViewMode === 'grid' ? 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-3 justify-items-center pt-1' : 'flex flex-col gap-2 pt-1'}>
                   {rangePages.map((page) => {
                     const globalIdx = pages.findIndex((p) => p.id === page.id);
                     return (
@@ -251,7 +251,7 @@ export const SplitView: React.FC<SplitViewProps> = ({
                   </div>
                 </div>
 
-                <div className={splitViewMode === 'grid' ? 'grid grid-cols-2 sm:grid-cols-3 gap-4 justify-items-center pt-1' : 'flex flex-col gap-2 pt-1'}>
+                <div className={splitViewMode === 'grid' ? 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-3 justify-items-center pt-1' : 'flex flex-col gap-2 pt-1'}>
                   {blockPages.map((page) => {
                     const globalIdx = pages.findIndex((p) => p.id === page.id);
                     return (
