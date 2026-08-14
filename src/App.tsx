@@ -15,7 +15,7 @@ import { usePdfEdit } from './hooks/usePdfEdit';
 import { usePdfSplit } from './hooks/usePdfSplit';
 import { usePdfCompress } from './hooks/usePdfCompress';
 import { AboutModal } from './components/common/AboutModal';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, X } from 'lucide-react';
 import { Button } from './components/ui/button';
 import {
   parseFilesToPages,
@@ -136,10 +136,11 @@ function App() {
   };
 
   const handleConfirmToolSwitch = () => {
-    if (pendingToolSwitch) {
+    const nextTool = pendingToolSwitch;
+    setPendingToolSwitch(null);
+    if (nextTool) {
       handleClearAll();
-      setActiveTool(pendingToolSwitch);
-      setPendingToolSwitch(null);
+      setActiveTool(nextTool);
     }
   };
 
@@ -672,7 +673,16 @@ function App() {
       {pendingToolSwitch && (
         <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in-0 duration-200">
           <div className="bg-card border border-border/80 rounded-3xl p-6 max-w-md w-full shadow-2xl flex flex-col gap-4 relative animate-in zoom-in-95 duration-200">
-            <div className="flex items-center gap-3 border-b border-border/60 pb-3">
+            <button
+              type="button"
+              onClick={handleCancelToolSwitch}
+              className="absolute top-5 right-5 text-muted-foreground hover:text-foreground rounded-xl p-1.5 hover:bg-muted transition-colors cursor-pointer"
+              title="Cerrar"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-3 border-b border-border/60 pb-3 pr-8">
               <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0">
                 <AlertCircle className="w-5 h-5" />
               </div>
@@ -685,10 +695,10 @@ function App() {
               Si cambias de herramienta ahora, los archivos de la tarea actual se descartarán para liberar memoria RAM. ¿Deseas continuar?
             </p>
             <div className="flex items-center justify-end gap-2 pt-2">
-              <Button variant="outline" size="sm" onClick={handleCancelToolSwitch}>
+              <Button type="button" variant="outline" size="sm" onClick={handleCancelToolSwitch}>
                 Permanecer aquí
               </Button>
-              <Button variant="destructive" size="sm" onClick={handleConfirmToolSwitch}>
+              <Button type="button" variant="destructive" size="sm" onClick={handleConfirmToolSwitch}>
                 Descartar y cambiar
               </Button>
             </div>
