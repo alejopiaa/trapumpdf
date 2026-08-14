@@ -568,6 +568,7 @@ function App() {
             onDeselectAllPages={pdfSplit.handleDeselectAllPages}
             onSelectEvenPages={pdfSplit.handleSelectEvenPages}
             onSelectOddPages={pdfSplit.handleSelectOddPages}
+            onRotatePage={pdfSplit.handleRotatePage}
             onMovePageItem={pdfSplit.handleMovePageItem}
             draggedPageIdx={pdfSplit.draggedPageIdx}
             setDraggedPageIdx={pdfSplit.setDraggedPageIdx}

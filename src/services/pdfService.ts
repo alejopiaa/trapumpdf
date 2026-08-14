@@ -88,7 +88,11 @@ export interface ParseResult<T> {
  */
 export function getCleanBaseName(fileName?: string): string {
   if (!fileName) return 'documento';
-  return fileName.replace(/\.[^/.]+$/, "");
+  // Strip file extension
+  let base = fileName.replace(/\.[^/.]+$/, "");
+  // Strip any trailing _trapumpdf to avoid duplicates like Acta_trapumpdf_trapumpdf
+  base = base.replace(/_trapumpdf$/i, "");
+  return base;
 }
 
 /**
@@ -858,6 +862,7 @@ export async function processEditGroups(
     compressedSize: unifiedPdfBytes.byteLength,
   };
 }
+
 // ----- Split functionality -----
 
 /**
@@ -877,7 +882,7 @@ export async function splitByPages(
     const page = pages[i];
     if (onProgress) onProgress(Math.round((i / total) * 100), `Dividiendo página ${i + 1}/${total}...`);
     const { pdfBytes, originalSizeBytes } = await mergeAndCompressPages([page], options);
-    const fileName = `${baseName}_p${page.pageIndex + 1}_trapumpdf.pdf`;
+    const fileName = `${baseName}_pagina_${page.pageIndex + 1}_trapumpdf.pdf`;
     results.push({
       fileName,
       pdfBytes,
@@ -908,7 +913,9 @@ export async function splitByRanges(
     if (onProgress) onProgress(Math.round((i / totalRanges) * 100), `Procesando rango ${start}-${end}...`);
     const rangePages = pages.filter(p => p.pageIndex + 1 >= start && p.pageIndex + 1 <= end);
     const { pdfBytes, originalSizeBytes } = await mergeAndCompressPages(rangePages, options);
-    const fileName = `${baseName}_r${start}-${end}_trapumpdf.pdf`;
+    const fileName = start === end
+      ? `${baseName}_pagina_${start}_trapumpdf.pdf`
+      : `${baseName}_paginas_${start}-${end}_trapumpdf.pdf`;
     results.push({
       fileName,
       pdfBytes,
@@ -940,7 +947,7 @@ export async function splitByFixedRange(
     const blockPages = pages.slice(startIdx, endIdx);
     if (onProgress) onProgress(Math.round((i / totalBlocks) * 100), `Creando bloque ${i + 1}/${totalBlocks}...`);
     const { pdfBytes, originalSizeBytes } = await mergeAndCompressPages(blockPages, options);
-    const fileName = `${baseName}_p${i + 1}_trapumpdf.pdf`;
+    const fileName = `${baseName}_parte_${i + 1}_trapumpdf.pdf`;
     results.push({
       fileName,
       pdfBytes,

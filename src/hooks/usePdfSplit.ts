@@ -27,14 +27,19 @@ export function usePdfSplit() {
   }, []);
 
   const handleSelectAllPages = useCallback(() => {
-    setPages((prevPages) => {
-      setSelectedPageIds(new Set(prevPages.map((p) => p.id)));
-      return prevPages;
-    });
-  }, []);
+    setSelectedPageIds(new Set(pages.map((p) => p.id)));
+  }, [pages]);
 
   const handleDeselectAllPages = useCallback(() => {
     setSelectedPageIds(new Set());
+  }, []);
+
+  const handleRotatePage = useCallback((pageId: string) => {
+    setPages((prev) =>
+      prev.map((p) =>
+        p.id === pageId ? { ...p, rotation: ((p.rotation || 0) + 90) % 360 } : p
+      )
+    );
   }, []);
 
   const handleUpdateRange = useCallback((idx: number, range: { start: number; end: number }) => {
@@ -109,36 +114,30 @@ export function usePdfSplit() {
   }, []);
 
   const handleSelectEvenPages = useCallback(() => {
-    setPages((prevPages) => {
-      const evenIds = prevPages
-        .filter((_, idx) => (idx + 1) % 2 === 0)
-        .map((p) => p.id);
-      setSelectedPageIds((prevSelected) => {
-        const isAlreadyAllEven =
-          evenIds.length > 0 &&
-          prevSelected.size === evenIds.length &&
-          evenIds.every((id) => prevSelected.has(id));
-        return isAlreadyAllEven ? new Set() : new Set(evenIds);
-      });
-      return prevPages;
+    const evenIds = pages
+      .filter((_, idx) => (idx + 1) % 2 === 0)
+      .map((p) => p.id);
+    setSelectedPageIds((prev) => {
+      const isAlreadyEven =
+        evenIds.length > 0 &&
+        prev.size === evenIds.length &&
+        evenIds.every((id) => prev.has(id));
+      return isAlreadyEven ? new Set() : new Set(evenIds);
     });
-  }, []);
+  }, [pages]);
 
   const handleSelectOddPages = useCallback(() => {
-    setPages((prevPages) => {
-      const oddIds = prevPages
-        .filter((_, idx) => (idx + 1) % 2 !== 0)
-        .map((p) => p.id);
-      setSelectedPageIds((prevSelected) => {
-        const isAlreadyAllOdd =
-          oddIds.length > 0 &&
-          prevSelected.size === oddIds.length &&
-          oddIds.every((id) => prevSelected.has(id));
-        return isAlreadyAllOdd ? new Set() : new Set(oddIds);
-      });
-      return prevPages;
+    const oddIds = pages
+      .filter((_, idx) => (idx + 1) % 2 !== 0)
+      .map((p) => p.id);
+    setSelectedPageIds((prev) => {
+      const isAlreadyOdd =
+        oddIds.length > 0 &&
+        prev.size === oddIds.length &&
+        oddIds.every((id) => prev.has(id));
+      return isAlreadyOdd ? new Set() : new Set(oddIds);
     });
-  }, []);
+  }, [pages]);
 
   return {
     splitMode,
@@ -159,11 +158,12 @@ export function usePdfSplit() {
     handleDeselectAllPages,
     handleSelectEvenPages,
     handleSelectOddPages,
-    handleUpdateRange,
-    handleAddRange,
-    handleRemoveRange,
+    handleRotatePage,
     handleMovePageItem,
     handleDropPage,
+    handleAddRange,
+    handleRemoveRange,
+    handleUpdateRange,
     clearSplitState,
   };
 }
