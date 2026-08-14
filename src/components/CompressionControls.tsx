@@ -138,6 +138,12 @@ export const CompressionControls: React.FC<CompressionControlsProps> = ({ option
           </div>
         </Card>
       )}
+
+      {/* Instruction Tip Box */}
+      <div className="flex items-start gap-2.5 p-3 bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800 rounded-xl text-sky-800 dark:text-sky-300 text-xs leading-relaxed">
+        <span className="text-xs shrink-0 mt-0.5">ℹ️</span>
+        <span>Elige el nivel que prefieras. La opción <strong>Recomendada</strong> reduce el peso manteniendo nitidez y texto seleccionable.</span>
+      </div>
     </Card>
   );
 };

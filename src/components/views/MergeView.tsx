@@ -68,7 +68,7 @@ export const MergeView: React.FC<MergeViewProps> = ({
       viewMode={mergeViewMode}
       onViewModeChange={setMergeViewMode}
       onClearAll={onClearAll}
-      actionSubtitle="Combina tus archivos en un solo documento ordenado."
+      actionSubtitle="Para cambiar el orden de tus PDFs, arrastra y suelta los archivos como quieras. También puedes ordenarlos de la A a la Z."
       processButtonLabel="Procesar archivos"
       onProcess={onProcess}
       isProcessDisabled={isLoading || mergeFiles.length === 0}
