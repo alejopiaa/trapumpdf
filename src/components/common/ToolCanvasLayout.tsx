@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { LayoutGrid, List, Trash2, ArrowRight, AlertTriangle, X, ArrowLeftRight, RotateCcw, Sparkles } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
+import { Card } from '../ui/card';
 
 export interface ToolCanvasLayoutProps {
   /** Texto del badge superior (ej: "1 archivo", "3 archivos (12 págs)") */
@@ -18,7 +19,7 @@ export interface ToolCanvasLayoutProps {
   onClearAll?: () => void;
   /** Etiqueta del botón de limpiar (ej: "Limpiar todo" o "Quitar archivo") */
   clearAllLabel?: string;
-  /** Subtítulo explicativo en la barra flotante inferior */
+  /** Subtítulo explicativo en la barra lateral */
   actionSubtitle: string;
   /** Texto del botón principal de procesamiento (ej: "Procesar archivos") */
   processButtonLabel: string;
@@ -32,7 +33,7 @@ export interface ToolCanvasLayoutProps {
   extraHeaderButtons?: React.ReactNode;
   /** Lista de archivos omitidos por error/contraseña (opcional) */
   omittedFiles?: Array<{ name: string; reason: string }>;
-  /** Componente de controles lateral (Sidebar flotante a la derecha en DIVIDIR y COMPRIMIR) */
+  /** Componente de controles lateral personalizado (DIVIDIR y COMPRIMIR) */
   sidebar?: React.ReactNode;
   /** Controles de ordenamiento opcionales (A-Z, Z-A, Invertir, Restaurar) */
   onSortAZ?: () => void;
@@ -82,15 +83,10 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
   const [showPopover, setShowPopover] = useState(false);
   const [showToast, setShowToast] = useState(false);
 
-  // Auto-switch to list view on narrow windows (< 640px) for optimal readability
-  const [isNarrowWindow, setIsNarrowWindow] = useState<boolean>(
-    () => typeof window !== 'undefined' && window.innerWidth < 640
-  );
-
+  // Auto-switch to list view on narrow windows (< 640px)
   React.useEffect(() => {
     const handleResize = () => {
       const narrow = window.innerWidth < 640;
-      setIsNarrowWindow(narrow);
       if (narrow && viewMode !== 'list' && onViewModeChange) {
         onViewModeChange('list');
       }
@@ -100,63 +96,76 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
     return () => window.removeEventListener('resize', handleResize);
   }, [viewMode, onViewModeChange]);
 
-  // Trigger 5-second auto-dismissing toast when omittedFiles arrives
+  // Toast for omitted files
   React.useEffect(() => {
     if (omittedFiles && omittedFiles.length > 0) {
       setShowToast(true);
-      const timer = setTimeout(() => {
-        setShowToast(false);
-      }, 5000);
+      const timer = setTimeout(() => setShowToast(false), 5000);
       return () => clearTimeout(timer);
     }
   }, [omittedFiles]);
 
   return (
-    /* Contenedor Principal: Ancho máximo uniforme max-w-6xl para evitar saltos o desplazamientos de layout */
-    <div className="relative w-full max-w-6xl mx-auto flex flex-col gap-6 pb-6 sm:pb-8">
+    <div className="relative w-full flex flex-col gap-3 min-h-[calc(100vh-140px)]">
       
-      {/* ── Fila 1: Cabecera Superior del Canvas (Top Toolbar) ── */}
-      <div className="flex items-center justify-between flex-wrap gap-2 py-1">
-        {/* Izquierda: Badge de información y botones de acción en 1 sola fila sin scrollbar */}
-        <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap min-w-0">
+      {/* ── Top Slim Toolbar ── */}
+      <div className="flex items-center justify-between flex-wrap gap-2 px-1">
+        {/* Left Side: Badge & Add Files */}
+        <div className="flex items-center gap-2 flex-wrap">
           <Badge
             variant="outline"
-            className="bg-primary/10 text-primary border border-primary/30 font-extrabold text-xs px-2.5 py-1 rounded-full shrink-0 shadow-xs"
+            className="bg-primary/10 text-primary border border-primary/30 font-extrabold text-xs px-3 py-1 rounded-full shadow-xs"
           >
             {badgeText}
           </Badge>
 
-          {/* Pastilla no bloqueante de archivos omitidos con clic/hover */}
-          {omittedFiles && omittedFiles.length > 0 && (
-            <div className="relative inline-block shrink-0">
-              <Badge
-                onClick={() => setShowPopover(!showPopover)}
-                className="bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 font-extrabold text-xs px-2 py-1 rounded-full cursor-pointer hover:bg-amber-500/25 transition-all flex items-center gap-1 shadow-xs select-none"
-              >
-                <span>⚠️ {omittedFiles.length} {omittedFiles.length === 1 ? 'omitido' : 'omitidos'}</span>
-              </Badge>
+          {onAddFilesClick && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onAddFilesClick}
+              className="text-xs font-bold gap-1.5 rounded-xl border-dashed border-primary/40 text-primary hover:bg-primary/5 hover:border-primary"
+            >
+              {addFilesLabel}
+            </Button>
+          )}
 
-              {/* Popover desplegable bajo demanda */}
+          {extraHeaderButtons}
+
+          {/* Omitted Files Popover Trigger */}
+          {omittedFiles && omittedFiles.length > 0 && (
+            <div className="relative">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowPopover(!showPopover)}
+                className="text-amber-600 dark:text-amber-400 border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/40 text-xs font-bold gap-1.5 rounded-xl shadow-xs"
+              >
+                <AlertTriangle className="w-3.5 h-3.5" />
+                <span>{omittedFiles.length} {omittedFiles.length === 1 ? 'omitido' : 'omitidos'}</span>
+              </Button>
+
               {showPopover && (
-                <div className="absolute left-0 top-full mt-2 z-50 w-80 bg-popover border border-border p-3.5 rounded-2xl shadow-2xl text-xs space-y-2 animate-in fade-in-0 duration-150">
-                  <div className="font-extrabold text-foreground border-b border-border/60 pb-2 flex items-center justify-between">
-                    <span>Archivos omitidos ({omittedFiles.length})</span>
+                <div className="absolute left-0 top-full mt-2 w-72 sm:w-80 bg-card border border-border/80 rounded-2xl p-4 shadow-2xl z-50 animate-in fade-in-0 zoom-in-95">
+                  <div className="flex items-center justify-between pb-2 border-b border-border/60">
+                    <span className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                      <AlertTriangle className="w-4 h-4 text-amber-500" />
+                      Archivos No Procesados
+                    </span>
                     <button
                       onClick={() => setShowPopover(false)}
-                      className="text-muted-foreground hover:text-foreground p-0.5 rounded-lg"
+                      className="text-muted-foreground hover:text-foreground p-0.5 rounded-md"
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
                   </div>
-                  <div className="max-h-48 overflow-y-auto space-y-1.5 pr-1">
-                    {omittedFiles.map((file, i) => (
-                      <div key={i} className="flex flex-col text-[11px] bg-muted/40 p-2 rounded-xl border border-border/40 gap-0.5">
-                        <span className="font-bold truncate text-foreground" title={file.name}>
-                          📄 {file.name}
+                  <div className="flex flex-col gap-2 pt-2 max-h-48 overflow-y-auto">
+                    {omittedFiles.map((file, idx) => (
+                      <div key={idx} className="flex flex-col gap-0.5 text-xs bg-muted/40 p-2 rounded-xl">
+                        <span className="font-semibold text-foreground truncate" title={file.name}>
+                          {file.name}
                         </span>
-                        <span className="text-amber-600 dark:text-amber-400 font-semibold text-[10px]">
-                          {file.reason}
-                        </span>
+                        <span className="text-muted-foreground text-[11px]">{file.reason}</span>
                       </div>
                     ))}
                   </div>
@@ -164,134 +173,27 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
               )}
             </div>
           )}
-
-          {onAddFilesClick && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onAddFilesClick}
-              className="rounded-xl text-xs font-bold shrink-0 h-8 px-2"
-            >
-              {addFilesLabel}
-            </Button>
-          )}
-
-          {/* Grupo de Botones de Ordenamiento */}
-          {(onSortAZ || onSortZA || onInvertOrder || onResetOrder) && (
-            <div className="flex items-center gap-0.5 border border-border/80 rounded-xl p-0.5 bg-muted/60 shrink-0 h-8">
-              {onSortAZ && (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={onSortAZ}
-                  className="h-7 px-2 text-xs font-black rounded-lg hover:bg-background text-foreground tracking-wide"
-                  title="Ordenar de A a Z"
-                >
-                  A → Z
-                </Button>
-              )}
-              {onSortZA && (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={onSortZA}
-                  className="h-7 px-2 text-xs font-black rounded-lg hover:bg-background text-foreground tracking-wide"
-                  title="Ordenar de Z a A"
-                >
-                  Z → A
-                </Button>
-              )}
-              {onInvertOrder && (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={onInvertOrder}
-                  className="h-7 px-2 text-xs font-bold gap-1 rounded-lg hover:bg-background text-foreground"
-                  title="Invertir secuencia de páginas (N → 1)"
-                >
-                  <ArrowLeftRight className="w-3.5 h-3.5" /> Invertir
-                </Button>
-              )}
-              {onResetOrder && (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={onResetOrder}
-                  className="h-7 px-2 text-xs font-bold gap-1 rounded-lg hover:bg-background text-muted-foreground"
-                  title="Reorganizar al orden de carga inicial"
-                >
-                  <RotateCcw className="w-3.5 h-3.5" /> Orden Original
-                </Button>
-              )}
-            </div>
-          )}
-
-          {/* Botón Detección y Quitado de Páginas en Blanco */}
-          {onRemoveBlankPages && (
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={onRemoveBlankPages}
-              className={`rounded-xl text-xs font-bold gap-1 transition-colors shrink-0 h-8 px-2 ${
-                hasBlankPages
-                  ? 'border-amber-500/50 bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20'
-                  : 'text-muted-foreground'
-              }`}
-              title="Detectar y excluir páginas en blanco automáticamente"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              <span>Quitar en blanco</span>
-            </Button>
-          )}
-
-          {/* Botón Restaurar Todas las Páginas Excluidas */}
-          {onRestoreAllPages && (
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setShowRestoreConfirm(true)}
-              className={`rounded-xl text-xs font-bold gap-1 transition-colors shrink-0 h-8 px-2.5 ${
-                hasExcludedPages
-                  ? 'border-emerald-500/50 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20'
-                  : 'text-muted-foreground'
-              }`}
-              title="Restaurar todas las páginas excluidas al estado inicial"
-            >
-              <RotateCcw className="w-3.5 h-3.5 text-emerald-500" />
-              <span>Restaurar páginas</span>
-            </Button>
-          )}
-
-          {extraHeaderButtons}
         </div>
 
-        {/* Derecha: Selector de Cuadrícula/Lista y Botón Limpiar */}
+        {/* Right Side: View Mode Switch & Clear All */}
         <div className="flex items-center gap-2">
           {onViewModeChange && (
-            <div className="flex items-center border border-border rounded-xl p-1 bg-muted">
-              {!isNarrowWindow && (
-                <Button
-                  variant={viewMode === 'grid' ? 'secondary' : 'ghost'}
-                  size="sm"
-                  onClick={() => onViewModeChange('grid')}
-                  className="h-7 px-2 rounded-lg"
-                  title="Vista de Cuadrícula"
-                >
-                  <LayoutGrid className="w-3.5 h-3.5" />
-                </Button>
-              )}
+            <div className="flex items-center bg-muted/60 p-0.5 rounded-xl border border-border/60">
               <Button
-                variant={viewMode === 'list' ? 'secondary' : 'ghost'}
-                size="sm"
+                variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                size="icon"
+                onClick={() => onViewModeChange('grid')}
+                className="h-7 w-7 rounded-lg text-xs"
+                title="Vista de cuadrícula"
+              >
+                <LayoutGrid className="w-3.5 h-3.5" />
+              </Button>
+              <Button
+                variant={viewMode === 'list' ? 'default' : 'ghost'}
+                size="icon"
                 onClick={() => onViewModeChange('list')}
-                className="h-7 px-2 rounded-lg"
-                title={isNarrowWindow ? 'Vista de Lista (Activa para ventana estrecha)' : 'Vista de Lista'}
+                className="h-7 w-7 rounded-lg text-xs"
+                title="Vista de lista"
               >
                 <List className="w-3.5 h-3.5" />
               </Button>
@@ -303,56 +205,149 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
               variant="ghost"
               size="sm"
               onClick={() => setShowClearConfirm(true)}
-              className="text-destructive hover:bg-destructive/10 rounded-xl text-xs font-bold"
+              className="text-destructive hover:bg-destructive/10 rounded-xl text-xs font-bold h-8 px-2.5"
             >
-              <Trash2 className="w-4 h-4 mr-1" /> {clearAllLabel}
+              <Trash2 className="w-3.5 h-3.5 mr-1" /> {clearAllLabel}
             </Button>
           )}
         </div>
       </div>
 
-      {/* ── Fila 2: Cuerpo Principal (Caja de Scroll del Canvas + Sidebar al lado horizontalmente) ── */}
-      {sidebar ? (
-        <div className="relative w-full flex flex-row items-start gap-6">
-          {/* Canvas Scrollbox */}
-          <div className="flex-1 min-w-0 max-h-[60vh] overflow-y-auto p-4 border border-border/60 rounded-2xl bg-muted/10 shadow-xs">
-            {children}
-          </div>
+      {/* ── Main Workspace: 2-Column CSS Grid (minmax(0, 1fr) + 320px Sidebar) ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-4 w-full flex-1 items-start min-h-0">
+        
+        {/* Left Column: Expansive Canvas with dedicated scroll */}
+        <div className="w-full h-full min-w-0 max-h-[calc(100vh-170px)] overflow-y-auto p-4 sm:p-5 border border-border/80 rounded-2xl bg-muted/10 shadow-xs">
+          {children}
+        </div>
 
-          {/* Sidebar Flotante (Lado a lado en el mismo flujo del layout) */}
-          <div className="w-80 shrink-0">
-            {sidebar}
-          </div>
-        </div>
-      ) : (
-        <div className="relative w-full flex flex-col gap-6">
-          {/* Canvas Scrollbox sin Sidebar */}
-          <div className="w-full max-h-[60vh] overflow-y-auto p-4 border border-border/60 rounded-2xl bg-muted/10 shadow-xs">
-            {children}
-          </div>
-        </div>
-      )}
+        {/* Right Column: Unified Action Sidebar */}
+        <div className="w-full lg:w-80 flex flex-col gap-4">
+          {sidebar ? (
+            /* Custom Sidebar for Split / Compress */
+            <div className="flex flex-col gap-4">
+              {sidebar}
+              <Button
+                onClick={onProcess}
+                disabled={isProcessDisabled}
+                className="w-full h-12 rounded-xl font-extrabold text-sm shadow-md hover:shadow-lg transition-all gap-2"
+              >
+                {processButtonLabel} {processIcon}
+              </Button>
+            </div>
+          ) : (
+            /* Default Smart Sidebar for Edit / Merge */
+            <Card className="p-4 sm:p-5 rounded-2xl border border-border/80 bg-card shadow-xs flex flex-col gap-4">
+              <div className="flex items-center justify-between border-b border-border/60 pb-3">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-primary" />
+                  Acciones Rápidas
+                </h3>
+              </div>
 
-      {/* ── Barra Flotante Inferior de Acción ── */}
-      <div className="fixed bottom-14 sm:bottom-16 left-3 right-3 sm:left-6 sm:right-6 z-50 mx-auto max-w-6xl bg-card/95 backdrop-blur-md border-2 border-primary/20 p-3 sm:p-3.5 px-4 sm:px-6 rounded-2xl shadow-2xl flex items-center justify-between gap-3 flex-wrap">
-        <div className="flex items-center gap-3">
-          <Badge
-            variant="outline"
-            className="bg-primary/10 text-primary border border-primary/30 font-extrabold text-xs px-3.5 py-1.5 rounded-full shrink-0 min-w-[90px] text-center inline-flex items-center justify-center shadow-xs"
-          >
-            {badgeText}
-          </Badge>
-          <span className="text-xs text-muted-foreground font-semibold hidden sm:inline">
-            {actionSubtitle}
-          </span>
+              {/* Action Buttons Grid */}
+              <div className="flex flex-col gap-2">
+                {onInvertOrder && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={onInvertOrder}
+                    className="w-full justify-start text-xs font-bold rounded-xl gap-2 h-9"
+                    title="Invertir el orden de las páginas"
+                  >
+                    <ArrowLeftRight className="w-3.5 h-3.5 text-primary" />
+                    Invertir Orden
+                  </Button>
+                )}
+
+                {onSortAZ && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={onSortAZ}
+                    className="w-full justify-start text-xs font-bold rounded-xl gap-2 h-9"
+                    title="Ordenar de la A a la Z"
+                  >
+                    <span className="text-xs font-black text-primary">A-Z</span>
+                    Ordenar A → Z
+                  </Button>
+                )}
+
+                {onSortZA && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={onSortZA}
+                    className="w-full justify-start text-xs font-bold rounded-xl gap-2 h-9"
+                    title="Ordenar de la Z a la A"
+                  >
+                    <span className="text-xs font-black text-primary">Z-A</span>
+                    Ordenar Z → A
+                  </Button>
+                )}
+
+                {onRemoveBlankPages && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={onRemoveBlankPages}
+                    disabled={!hasBlankPages}
+                    className="w-full justify-start text-xs font-bold rounded-xl gap-2 h-9 border-amber-500/30 hover:bg-amber-50 dark:hover:bg-amber-950/30 text-amber-700 dark:text-amber-400 disabled:opacity-50"
+                    title={hasBlankPages ? 'Excluir páginas en blanco detectadas' : 'No se detectaron páginas en blanco'}
+                  >
+                    <span>⚠️</span>
+                    Quitar en blanco
+                  </Button>
+                )}
+
+                {onRestoreAllPages && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowRestoreConfirm(true)}
+                    disabled={!hasExcludedPages}
+                    className="w-full justify-start text-xs font-bold rounded-xl gap-2 h-9 border-emerald-500/30 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 disabled:opacity-50"
+                    title="Restaurar todas las páginas excluidas"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                    Restaurar Páginas
+                  </Button>
+                )}
+
+                {onResetOrder && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={onResetOrder}
+                    className="w-full justify-start text-xs font-semibold rounded-xl text-muted-foreground hover:text-foreground h-8"
+                  >
+                    Restablecer orden original
+                  </Button>
+                )}
+              </div>
+
+              {/* Subtitle / Tip Box */}
+              <div className="p-3 bg-muted/40 rounded-xl text-[11px] text-muted-foreground leading-relaxed">
+                {actionSubtitle}
+              </div>
+
+              {/* Prominent CTA Process Button */}
+              <Button
+                onClick={onProcess}
+                disabled={isProcessDisabled}
+                className="w-full h-12 rounded-xl font-extrabold text-sm shadow-md hover:shadow-lg transition-all gap-2 mt-2"
+              >
+                {processButtonLabel} {processIcon}
+              </Button>
+            </Card>
+          )}
         </div>
-        <Button
-          onClick={onProcess}
-          disabled={isProcessDisabled}
-          className="h-11 px-7 rounded-xl font-extrabold text-sm shadow-md hover:shadow-lg transition-all gap-2"
-        >
-          {processButtonLabel} {processIcon}
-        </Button>
       </div>
 
       {/* ── Modal de Confirmación para Limpiar Todo ── */}
@@ -375,7 +370,7 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
                   ¿Limpiar todos los archivos?
                 </h3>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Esta acción quitará todos los documentos cargados de esta herramienta. Tendrás que volver a seleccionarlos si deseas procesarlos.
+                  Esta acción quitará todos los documentos cargados de esta herramienta.
                 </p>
               </div>
             </div>
@@ -405,7 +400,7 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
         </div>
       )}
 
-      {/* ── Modal de Confirmación para Restaurar Todas las Páginas ── */}
+      {/* ── Modal de Confirmación para Restaurar Páginas ── */}
       {showRestoreConfirm && (
         <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in-0 duration-200">
           <div className="bg-card border border-border/80 rounded-2xl p-6 max-w-md w-full shadow-2xl flex flex-col gap-5 relative animate-in zoom-in-95 duration-200">
@@ -425,7 +420,7 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
                   ¿Restaurar todas las páginas?
                 </h3>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Se volverán a incluir todas las páginas excluidas y se restablecerán sus rotaciones al estado original.
+                  Se volverán a incluir todas las páginas excluidas.
                 </p>
               </div>
             </div>
@@ -440,7 +435,7 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
                 Cancelar
               </Button>
               <Button
-                variant="success"
+                variant="default"
                 size="sm"
                 onClick={() => {
                   setShowRestoreConfirm(false);
@@ -455,9 +450,9 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
         </div>
       )}
 
-      {/* ── Toast Flotante Auto-desaparecible a los 5 segundos ── */}
+      {/* ── Toast Flotante ── */}
       {showToast && omittedFiles && omittedFiles.length > 0 && (
-        <div className="fixed bottom-24 right-6 z-50 flex items-center gap-3 bg-card/95 backdrop-blur-md border border-amber-500/40 text-foreground p-3.5 px-4 rounded-2xl shadow-2xl animate-in slide-in-from-bottom-5 duration-200">
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-card/95 backdrop-blur-md border border-amber-500/40 text-foreground p-3 px-4 rounded-2xl shadow-2xl animate-in slide-in-from-bottom-5 duration-200">
           <div className="flex items-center gap-2 text-xs font-semibold">
             <span className="text-amber-500 text-sm shrink-0">⚠️</span>
             <span>Se {omittedFiles.length === 1 ? 'omitió 1 archivo' : `omitieron ${omittedFiles.length} archivos`}.</span>
@@ -468,15 +463,14 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
               setShowPopover(true);
               setShowToast(false);
             }}
-            className="text-xs font-extrabold text-amber-600 dark:text-amber-400 underline hover:opacity-80 transition-opacity whitespace-nowrap"
+            className="text-xs font-extrabold text-amber-600 dark:text-amber-400 underline hover:opacity-80 transition-opacity"
           >
-            Ver detalle
+            Detalle
           </button>
           <button
             type="button"
             onClick={() => setShowToast(false)}
             className="text-muted-foreground hover:text-foreground rounded-lg p-1 transition-colors"
-            title="Cerrar aviso"
           >
             <X className="w-3.5 h-3.5" />
           </button>
