@@ -209,132 +209,125 @@ const PageCardComponent: React.FC<PageCardProps> = ({
       onDrop={handleDrop}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={`relative overflow-hidden flex flex-col w-full max-w-[200px] mx-auto rounded-2xl border border-border/80 bg-card shadow-xs hover:shadow-md transition-all duration-200 cursor-grab active:cursor-grabbing ${
-        isDragging ? 'opacity-40 scale-95 border-dashed border-primary' : ''
-      } ${isExcluded ? 'opacity-60 bg-destructive/5 border-destructive/30' : 'hover:border-primary/50'}`}
+      className={`relative overflow-hidden flex flex-col w-full max-w-[175px] mx-auto rounded-xl border border-border/80 bg-card shadow-xs hover:shadow-md transition-all duration-200 cursor-grab active:cursor-grabbing select-none group ${
+        isDragging ? 'opacity-40 scale-95 border-dashed border-primary ring-2 ring-primary/40' : ''
+      } ${isExcluded ? 'opacity-60 bg-destructive/5 border-destructive/30' : 'hover:border-primary/60'}`}
     >
       {dropIndicator === 'left' && (
-        <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-primary z-50 rounded-full shadow-[0_0_8px_rgba(2,132,199,0.8)] pointer-events-none" />
+        <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-primary z-50 rounded-full shadow-[0_0_8px_rgba(2,132,199,0.9)] pointer-events-none" />
       )}
       {dropIndicator === 'right' && (
-        <div className="absolute right-0 top-0 bottom-0 w-1.5 bg-primary z-50 rounded-full shadow-[0_0_8px_rgba(2,132,199,0.8)] pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-1.5 bg-primary z-50 rounded-full shadow-[0_0_8px_rgba(2,132,199,0.9)] pointer-events-none" />
       )}
-      {/* Thumbnail Area */}
+
+      {/* Main Thumbnail Container (Aspect 3:4) */}
       <div
-        className="relative aspect-[3/4] w-full bg-muted/30 flex items-center justify-center p-2 cursor-pointer overflow-hidden group"
+        className="relative aspect-[3/4] w-full bg-muted/20 flex items-center justify-center p-1.5 cursor-pointer overflow-hidden"
         onClick={() => onPreview && onPreview(page)}
-        title="Haz clic para ver en grande (Lightbox)"
+        title="Haz clic para previsualizar en grande (Lightbox)"
       >
         <img
           src={page.thumbnailUrl}
           alt={`${badgePrefix} ${index + 1}`}
           draggable={false}
-          className="max-h-full max-w-full object-contain shadow-xs transition-transform duration-200 pointer-events-none select-none"
+          className="max-h-full max-w-full object-contain shadow-xs transition-transform duration-200 pointer-events-none"
           style={{ transform: `rotate(${page.rotation}deg)` }}
         />
 
-        {/* Position Badge */}
+        {/* Position / Page Number Badge (Top-Left) */}
         <Badge
           className={
             isExcluded
-              ? 'absolute top-2 left-2 font-bold shadow-xs border border-background bg-destructive text-destructive-foreground text-[10px] px-2 py-0.5 rounded-lg z-20 max-w-[80%] truncate'
-              : 'absolute top-2 left-2 font-extrabold shadow-xs border border-background bg-primary text-primary-foreground text-[10px] px-2 py-0.5 rounded-lg z-20 max-w-[80%] truncate'
+              ? 'absolute top-1.5 left-1.5 font-bold shadow-xs border border-background/60 bg-destructive text-destructive-foreground text-[10px] px-1.5 py-0.5 rounded-md z-20 pointer-events-none'
+              : 'absolute top-1.5 left-1.5 font-extrabold shadow-xs border border-background/60 bg-primary/90 text-primary-foreground text-[10px] px-1.5 py-0.5 rounded-md z-20 pointer-events-none backdrop-blur-xs'
           }
         >
           {badgePrefix} {index + 1}
         </Badge>
 
-        {/* Blank Page Badge */}
+        {/* Blank Page Indicator (Top-Right) */}
         {page.isBlank && !isExcluded && (
-          <span className="absolute top-2 right-2 font-bold shadow-xs border bg-amber-500/90 text-white border-amber-400 text-[9px] px-1.5 py-0.5 rounded-md z-20">
+          <span className="absolute top-1.5 right-1.5 font-bold shadow-xs border bg-amber-500/90 text-white border-amber-400 text-[9px] px-1.5 py-0.5 rounded-md z-20 pointer-events-none">
             ⚠️ Blanco
           </span>
         )}
 
         {/* Soft deletion overlay */}
         {isExcluded && (
-          <div className="absolute inset-0 bg-destructive/80 text-destructive-foreground backdrop-blur-xs flex flex-col items-center justify-center p-3 text-center gap-2 z-30 animate-in fade-in-0">
-            <span className="text-xs font-bold leading-snug">
-              {page.isBlank ? 'Página en Blanco Excluida' : 'Página Excluida'}
+          <div className="absolute inset-0 bg-destructive/85 text-destructive-foreground backdrop-blur-xs flex flex-col items-center justify-center p-2 text-center gap-1.5 z-30 animate-in fade-in-0">
+            <span className="text-[11px] font-bold leading-tight">
+              {page.isBlank ? 'En Blanco' : 'Excluida'}
             </span>
             <Button
               type="button"
               variant="secondary"
               size="sm"
               onClick={(e) => { e.stopPropagation(); onRestore && onRestore(page.id); }}
-              className="h-7 text-xs font-bold gap-1 shadow-sm"
+              className="h-6 text-[10px] font-bold px-2 gap-1 shadow-sm"
             >
               <RotateCcw className="w-3 h-3" /> Restaurar
             </Button>
           </div>
         )}
 
-        {/* Clean Hover Overlay Actions */}
+        {/* Floating Quick Action Overlay on Hover */}
         {isHovered && !isExcluded && !isDragging && (
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center gap-2 z-20 animate-in fade-in-0">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center gap-1.5 z-20 animate-in fade-in-0">
             <Button
               type="button"
               variant="secondary"
               size="icon"
-              className="h-8 w-8 rounded-full shadow-md hover:scale-110 transition-transform"
+              className="h-7 w-7 rounded-full shadow-md hover:scale-110 transition-transform bg-background/90 text-foreground hover:bg-background"
               onClick={(e) => { e.stopPropagation(); onPreview && onPreview(page); }}
               title="Ver en grande"
             >
-              <ZoomIn className="w-4 h-4" />
+              <ZoomIn className="w-3.5 h-3.5" />
             </Button>
+            {onRotate && (
+              <Button
+                type="button"
+                variant="secondary"
+                size="icon"
+                className="h-7 w-7 rounded-full shadow-md hover:scale-110 transition-transform bg-background/90 text-foreground hover:bg-background"
+                onClick={(e) => { e.stopPropagation(); onRotate(page.id); }}
+                title="Rotar 90°"
+              >
+                <RotateCw className="w-3.5 h-3.5" />
+              </Button>
+            )}
             {onDelete && (
               <Button
                 type="button"
                 variant="destructive"
                 size="icon"
-                className="h-8 w-8 rounded-full shadow-md hover:scale-110 transition-transform"
+                className="h-7 w-7 rounded-full shadow-md hover:scale-110 transition-transform"
                 onClick={(e) => { e.stopPropagation(); onDelete(page.id); }}
                 title="Quitar página"
               >
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="w-3.5 h-3.5" />
               </Button>
             )}
           </div>
         )}
       </div>
 
-      {/* File Info */}
-      <div className="px-3 py-1.5 border-t bg-card">
-        <p className="text-[11px] font-semibold text-muted-foreground truncate text-center" title={page.fileName}>
-          {page.fileName}
-        </p>
-      </div>
-
-      {/* Actions Bar */}
-      <div className="p-1.5 border-t bg-muted/20 flex items-center justify-between gap-1">
+      {/* Slim Compact Bottom Bar */}
+      <div className="px-1.5 py-1 border-t bg-muted/20 flex items-center justify-between gap-1 text-[10px]">
         <Button
           type="button"
           variant="ghost"
           size="icon"
           disabled={index === 0}
           onClick={(e) => { e.stopPropagation(); onMove?.(index, 'left'); }}
-          className="h-7 w-7 text-muted-foreground"
-          title="Mover hacia la izquierda"
+          className="h-6 w-6 text-muted-foreground hover:text-foreground"
+          title="Mover izquierda"
         >
-          <ArrowLeft className="w-3.5 h-3.5" />
+          <ArrowLeft className="w-3 h-3" />
         </Button>
 
-        {onRotate ? (
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={(e) => { e.stopPropagation(); onRotate(page.id); }}
-            className="h-7 px-2 text-[11px] font-semibold gap-1"
-            title="Rotar esta página 90°"
-          >
-            <RotateCw className="w-3 h-3" /> Rotar
-          </Button>
-        ) : (
-          <span className="text-[10px] text-muted-foreground font-medium px-2">
-            #{index + 1}
-          </span>
-        )}
+        <span className="text-[10px] text-muted-foreground font-semibold truncate max-w-[80px]" title={page.fileName}>
+          {page.fileName}
+        </span>
 
         <Button
           type="button"
@@ -342,10 +335,10 @@ const PageCardComponent: React.FC<PageCardProps> = ({
           size="icon"
           disabled={index === totalCount - 1}
           onClick={(e) => { e.stopPropagation(); onMove?.(index, 'right'); }}
-          className="h-7 w-7 text-muted-foreground"
-          title="Mover hacia la derecha"
+          className="h-6 w-6 text-muted-foreground hover:text-foreground"
+          title="Mover derecha"
         >
-          <ArrowRight className="w-3.5 h-3.5" />
+          <ArrowRight className="w-3 h-3" />
         </Button>
       </div>
     </Card>

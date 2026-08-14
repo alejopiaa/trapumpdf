@@ -448,6 +448,12 @@ function App() {
     }
   };
 
+  const hasActiveFiles =
+    (activeTool === 'merge' && pdfMerge.mergeFiles.length > 0) ||
+    (activeTool === 'edit' && pdfEdit.editGroups.length > 0) ||
+    (activeTool === 'split' && pdfSplit.pages.length > 0) ||
+    (activeTool === 'compress' && pdfCompress.compressItems.length > 0);
+
   return (
     <div className="h-screen overflow-hidden bg-background text-foreground flex flex-col font-sans selection:bg-primary/20">
       <div className="h-1 bg-gradient-to-r from-sky-500 via-cyan-400 to-indigo-600 w-full" />
@@ -468,11 +474,12 @@ function App() {
         onToggleTheme={() => setIsDarkMode(!isDarkMode)}
       />
 
-      <main ref={mainRef} className="flex-1 overflow-y-auto w-full">
-        <HeroBanner activeTool={activeTool} />
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 pt-8 sm:pt-10 pb-10">
+      <main ref={mainRef} className="flex-1 overflow-y-auto w-full flex flex-col">
+        {!hasActiveFiles && !result && <HeroBanner activeTool={activeTool} />}
+        
+        <div className={`w-full flex-1 flex flex-col ${hasActiveFiles && !result ? 'px-3 sm:px-6 pt-3 pb-4 max-w-[1920px] mx-auto' : 'max-w-7xl mx-auto px-4 sm:px-8 pt-8 sm:pt-10 pb-10'}`}>
         {errorMessage && (
-          <div className="mb-6 p-4 rounded-2xl bg-destructive/10 border border-destructive/30 text-destructive text-sm font-bold flex items-center justify-between">
+          <div className="mb-4 p-3.5 rounded-2xl bg-destructive/10 border border-destructive/30 text-destructive text-sm font-bold flex items-center justify-between">
             <span>⚠️ {errorMessage}</span>
             <button onClick={() => setErrorMessage(null)} className="text-xs underline hover:no-underline">
               Cerrar
