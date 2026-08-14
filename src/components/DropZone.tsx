@@ -16,6 +16,7 @@ interface DropZoneProps {
 export const DropZone: React.FC<DropZoneProps> = ({
   onFilesSelected,
   isLoading,
+  multiple = true,
   accept = '.pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/*',
   omittedFiles = [],
 }) => {
@@ -55,14 +56,14 @@ export const DropZone: React.FC<DropZoneProps> = ({
 
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       const droppedFiles = Array.from(e.dataTransfer.files);
-      onFilesSelected(droppedFiles);
+      onFilesSelected(multiple ? droppedFiles : [droppedFiles[0]]);
     }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const selectedFiles = Array.from(e.target.files);
-      onFilesSelected(selectedFiles);
+      onFilesSelected(multiple ? selectedFiles : [selectedFiles[0]]);
       e.target.value = '';
     }
   };
@@ -84,7 +85,7 @@ export const DropZone: React.FC<DropZoneProps> = ({
           <input
             ref={fileInputRef}
             type="file"
-            multiple
+            multiple={multiple}
             accept={accept}
             className="hidden"
             onChange={handleFileChange}
@@ -95,14 +96,14 @@ export const DropZone: React.FC<DropZoneProps> = ({
           </div>
 
           <h3 className="text-lg font-bold text-foreground mb-1">
-            Arrastra y suelta tus archivos aquí
+            {multiple ? 'Arrastra y suelta tus archivos aquí' : 'Arrastra y suelta tu archivo aquí'}
           </h3>
           <p className="text-sm text-muted-foreground mb-6 max-w-sm">
-            o haz clic para seleccionar documentos de tu equipo
+            {multiple ? 'o haz clic para seleccionar documentos de tu equipo' : 'o haz clic para seleccionar un documento de tu equipo'}
           </p>
 
           <Button type="button" size="lg" className="font-bold shadow-md">
-            Seleccionar Archivos
+            {multiple ? 'Seleccionar Archivos' : 'Seleccionar Archivo'}
           </Button>
 
           <div className="flex items-center gap-2 mt-6 flex-wrap justify-center">

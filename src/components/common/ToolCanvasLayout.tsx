@@ -332,9 +332,10 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
                 )}
               </div>
 
-              {/* Subtitle / Tip Box */}
-              <div className="p-3 bg-muted/40 rounded-xl text-[11px] text-muted-foreground leading-relaxed">
-                {actionSubtitle}
+              {/* Instruction / Tip Box */}
+              <div className="flex items-start gap-2.5 p-3.5 bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800 rounded-xl text-sky-800 dark:text-sky-300 text-xs leading-relaxed">
+                <span className="text-sm shrink-0">ℹ️</span>
+                <span>{actionSubtitle}</span>
               </div>
 
               {/* Prominent CTA Process Button */}
