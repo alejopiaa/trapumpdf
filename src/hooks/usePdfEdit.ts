@@ -58,14 +58,18 @@ export function usePdfEdit() {
     );
   }, []);
 
-  const handleDropEditPage = useCallback((groupId: string, sourceIdx: number, targetIdx: number) => {
+  const handleDropEditPage = useCallback((groupId: string, sourceIdx: number, targetIdx: number, position?: 'before' | 'after') => {
     setEditGroups((prev) =>
       prev.map((g) => {
         if (g.id !== groupId) return g;
         if (sourceIdx < 0 || sourceIdx >= g.pages.length || targetIdx < 0 || targetIdx >= g.pages.length) return g;
         const updated = [...g.pages];
         const [moved] = updated.splice(sourceIdx, 1);
-        updated.splice(targetIdx, 0, moved);
+        let insertIdx = position === 'after' ? targetIdx + 1 : targetIdx;
+        if (sourceIdx < insertIdx) insertIdx--;
+        if (insertIdx < 0) insertIdx = 0;
+        if (insertIdx > updated.length) insertIdx = updated.length;
+        updated.splice(insertIdx, 0, moved);
         return { ...g, pages: updated };
       })
     );

@@ -490,10 +490,18 @@ export async function mergeAndCompressPages(
           canvasHeight = Math.round(pageItem.height * options.scaleFactor);
         }
 
-        const canvas = document.createElement('canvas');
-        canvas.width = canvasWidth;
-        canvas.height = canvasHeight;
-        const ctx = canvas.getContext('2d');
+        let canvas: HTMLCanvasElement | OffscreenCanvas;
+        let ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D | null;
+
+        if (typeof OffscreenCanvas !== 'undefined') {
+          canvas = new OffscreenCanvas(canvasWidth, canvasHeight);
+          ctx = canvas.getContext('2d');
+        } else {
+          canvas = document.createElement('canvas');
+          canvas.width = canvasWidth;
+          canvas.height = canvasHeight;
+          ctx = canvas.getContext('2d');
+        }
 
         if (!ctx) throw new Error('No se pudo inicializar el contexto 2D de renderizado.');
 
@@ -510,10 +518,10 @@ export async function mergeAndCompressPages(
           const desiredScale = (canvasWidth / unscaledViewport.width);
           const viewport = pdfPage.getViewport({ scale: desiredScale });
 
-          await pdfPage.render({
+          await (pdfPage.render({
             canvasContext: ctx,
             viewport: viewport,
-          } as any).promise;
+          } as any)).promise;
         } else if (pageItem.fileType === 'image' && pageItem.imageFile) {
           const imageUrl = URL.createObjectURL(pageItem.imageFile);
           const img = new Image();
@@ -522,18 +530,11 @@ export async function mergeAndCompressPages(
             img.onerror = reject;
             img.src = imageUrl;
           });
-          ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight);
+          (ctx as any).drawImage(img, 0, 0, canvasWidth, canvasHeight);
           URL.revokeObjectURL(imageUrl);
         }
 
-        const compressedDataUrl = canvas.toDataURL('image/jpeg', options.jpegQuality);
-        const base64Data = compressedDataUrl.split(',')[1];
-        const binaryString = atob(base64Data);
-        const imageBytes = new Uint8Array(binaryString.length);
-        for (let j = 0; j < binaryString.length; j++) {
-          imageBytes[j] = binaryString.charCodeAt(j);
-        }
-
+        const imageBytes = await canvasToJpegBytes(canvas, options.jpegQuality || 0.7);
         const embeddedJpg = await mergedDoc.embedJpg(imageBytes);
         const newPage = mergedDoc.addPage([canvasWidth, canvasHeight]);
 
@@ -553,12 +554,140 @@ export async function mergeAndCompressPages(
     }
   }
 
-  const pdfBytes = await mergedDoc.save();
+  const pdfBytes = await mergedDoc.save({ useObjectStreams: true });
   return {
     pdfBytes,
     originalSizeBytes,
     originalSize: originalSizeBytes,
     compressedSize: pdfBytes.byteLength,
+  };
+}
+
+/**
+ * Helper to convert canvas directly to Uint8Array JPEG bytes without Base64/atob strings
+ */
+async function canvasToJpegBytes(
+  canvas: HTMLCanvasElement | OffscreenCanvas,
+  quality: number
+): Promise<Uint8Array> {
+  if (typeof OffscreenCanvas !== 'undefined' && canvas instanceof OffscreenCanvas) {
+    const blob = await canvas.convertToBlob({ type: 'image/jpeg', quality });
+    const arrayBuffer = await blob.arrayBuffer();
+    return new Uint8Array(arrayBuffer);
+  } else {
+    const htmlCanvas = canvas as HTMLCanvasElement;
+    return new Promise((resolve, reject) => {
+      htmlCanvas.toBlob(
+        async (blob) => {
+          if (!blob) {
+            reject(new Error('Canvas toBlob falló al generar imagen.'));
+            return;
+          }
+          const arrayBuffer = await blob.arrayBuffer();
+          resolve(new Uint8Array(arrayBuffer));
+        },
+        'image/jpeg',
+        quality
+      );
+    });
+  }
+}
+
+/**
+ * Compresses a single PDF file directly with intelligent hybrid vector/raster stream optimization
+ */
+export async function compressSinglePdfFile(
+  file: File,
+  options: CompressionOptions,
+  onProgress?: (progress: number, status: string) => void
+): Promise<{ pdfBytes: Uint8Array; originalSizeBytes: number; compressedSize: number }> {
+  const originalSizeBytes = file.size;
+  const arrayBuffer = await file.arrayBuffer();
+
+  const srcPdfDoc = await PDFDocument.load(arrayBuffer.slice(0), { ignoreEncryption: true });
+  const pdfjsDoc = await pdfjsLib.getDocument({ data: arrayBuffer.slice(0) }).promise;
+  const numPages = pdfjsDoc.numPages;
+
+  const outputDoc = await PDFDocument.create();
+
+  for (let pIdx = 0; pIdx < numPages; pIdx++) {
+    if (onProgress) {
+      onProgress(
+        Math.round(((pIdx + 1) / numPages) * 100),
+        `Optimizando página ${pIdx + 1} de ${numPages}...`
+      );
+    }
+
+    const pdfPage = await pdfjsDoc.getPage(pIdx + 1);
+    let hasVectorText = false;
+    try {
+      const textContent = await pdfPage.getTextContent();
+      hasVectorText = textContent.items.some((it: any) => it.str && it.str.trim().length > 0);
+    } catch {
+      hasVectorText = false;
+    }
+
+    // Keep vector streams if options.level is 'low' or 'recommended' and page contains text
+    // Only re-sample if explicitly requested 'high' compression or page is purely a scanned image
+    const shouldKeepVector = options.level !== 'high' && hasVectorText;
+
+    if (shouldKeepVector) {
+      const [copiedPage] = await outputDoc.copyPages(srcPdfDoc, [pIdx]);
+      outputDoc.addPage(copiedPage);
+    } else {
+      const unscaledViewport = pdfPage.getViewport({ scale: 1.0 });
+      const scale = options.scaleFactor || 0.85;
+      const targetWidth = Math.round(unscaledViewport.width * scale);
+      const targetHeight = Math.round(unscaledViewport.height * scale);
+      const viewport = pdfPage.getViewport({ scale: targetWidth / unscaledViewport.width });
+
+      let canvas: HTMLCanvasElement | OffscreenCanvas;
+      let ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D | null;
+
+      if (typeof OffscreenCanvas !== 'undefined') {
+        canvas = new OffscreenCanvas(targetWidth, targetHeight);
+        ctx = canvas.getContext('2d');
+      } else {
+        canvas = document.createElement('canvas');
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
+        ctx = canvas.getContext('2d');
+      }
+
+      if (!ctx) {
+        const [copiedPage] = await outputDoc.copyPages(srcPdfDoc, [pIdx]);
+        outputDoc.addPage(copiedPage);
+        continue;
+      }
+
+      await (pdfPage.render({ canvasContext: ctx, viewport } as any)).promise;
+      const imageBytes = await canvasToJpegBytes(canvas, options.jpegQuality || 0.7);
+      const embeddedJpg = await outputDoc.embedJpg(imageBytes);
+
+      const newPage = outputDoc.addPage([targetWidth, targetHeight]);
+      newPage.drawImage(embeddedJpg, {
+        x: 0,
+        y: 0,
+        width: targetWidth,
+        height: targetHeight,
+      });
+    }
+  }
+
+  const generatedBytes = await outputDoc.save({ useObjectStreams: true });
+
+  let finalBytes = generatedBytes;
+  let finalSize = generatedBytes.byteLength;
+
+  if (generatedBytes.byteLength >= originalSizeBytes && originalSizeBytes > 0) {
+    finalBytes = new Uint8Array(arrayBuffer);
+    finalSize = originalSizeBytes;
+  }
+
+  return {
+    pdfBytes: finalBytes,
+    originalSizeBytes,
+    compressedSize: finalSize,
   };
 }
 
@@ -582,22 +711,16 @@ export async function compressPdfFilesDirectIndividual(
       );
     }
 
-    const { items: pages } = await parseFilesToPages([file]);
-    const { pdfBytes: generatedBytes, originalSizeBytes } = await mergeAndCompressPages(pages, options);
-    
-    // Safety check: Never output a PDF that is larger than the original input file
-    let finalPdfBytes = generatedBytes;
-    let finalCompressedSize = generatedBytes.byteLength;
-
-    if (generatedBytes.byteLength >= originalSizeBytes && originalSizeBytes > 0) {
-      try {
-        const arrayBuffer = await file.arrayBuffer();
-        finalPdfBytes = new Uint8Array(arrayBuffer);
-        finalCompressedSize = originalSizeBytes;
-      } catch (e) {
-        console.warn('Fallback to generated bytes:', e);
+    const { pdfBytes, originalSizeBytes, compressedSize } = await compressSinglePdfFile(
+      file,
+      options,
+      (pagePercent, pageText) => {
+        if (onProgress) {
+          const overall = Math.round(((i + pagePercent / 100) / totalFiles) * 100);
+          onProgress(overall, `[${i + 1}/${totalFiles}] ${pageText}`);
+        }
       }
-    }
+    );
 
     const baseName = getCleanBaseName(file.name);
 
@@ -605,8 +728,8 @@ export async function compressPdfFilesDirectIndividual(
       id: `comp-res-${i}-${Date.now()}`,
       fileName: `${baseName}_trapumpdf.pdf`,
       originalSize: originalSizeBytes,
-      compressedSize: finalCompressedSize,
-      pdfBytes: finalPdfBytes,
+      compressedSize: compressedSize,
+      pdfBytes,
     });
   }
 

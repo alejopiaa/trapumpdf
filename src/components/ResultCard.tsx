@@ -15,6 +15,7 @@ interface ResultCardProps {
   outputFileName?: string;
   showSavingsBadge?: boolean;
   onReset: () => void;
+  onReconfigureCompress?: () => void;
   onContinueCompress?: (bytes?: Uint8Array) => void;
   onContinueEdit?: (bytes?: Uint8Array) => void;
   onContinueMerge?: (bytes?: Uint8Array) => void;
@@ -29,6 +30,7 @@ export const ResultCard: React.FC<ResultCardProps> = ({
   outputFileName,
   showSavingsBadge = false,
   onReset,
+  onReconfigureCompress,
   onContinueCompress,
   onContinueEdit,
   onContinueMerge,
@@ -158,6 +160,17 @@ export const ResultCard: React.FC<ResultCardProps> = ({
           onClick={() => pdfBytes && downloadSinglePdf(pdfBytes, finalSingleName)}
         >
           <Download className="w-5 h-5 mr-2" /> Descargar PDF Final
+        </Button>
+      )}
+
+      {onReconfigureCompress && (
+        <Button
+          variant="outline"
+          size="lg"
+          className="w-full h-12 text-base font-bold shadow-md border-amber-500/40 text-foreground hover:bg-amber-500/10 hover:border-amber-500 gap-2"
+          onClick={onReconfigureCompress}
+        >
+          <Wrench className="w-5 h-5 text-amber-500" /> Modificar nivel de compresión
         </Button>
       )}
 
