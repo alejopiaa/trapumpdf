@@ -66,7 +66,7 @@ export const EditView: React.FC<EditViewProps> = ({
       viewMode={editViewMode}
       onViewModeChange={setEditViewMode}
       onClearAll={onClearAll}
-      actionSubtitle="Reordena o excluye páginas para exportar."
+      actionSubtitle="Pasa el cursor sobre una página para rotarla o quitarla. Arrastra las páginas para ordenarlas como prefieras."
       processButtonLabel="Procesar archivos"
       onProcess={onProcess}
       isProcessDisabled={isLoading || editGroups.length === 0}

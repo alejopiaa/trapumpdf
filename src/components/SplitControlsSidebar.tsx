@@ -180,6 +180,13 @@ const SplitControlsSidebar: React.FC<SplitControlsSidebarProps> = ({
           >
             <Plus className="w-4 h-4" /> Añadir Rango
           </Button>
+
+          <div className="flex items-start gap-2 p-3 bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800 rounded-xl text-sky-800 dark:text-sky-300 text-xs leading-relaxed">
+            <Info className="w-4 h-4 shrink-0 mt-0.5" />
+            <span>
+              Escribe las páginas de inicio y fin de cada rango que quieras extraer.
+            </span>
+          </div>
         </div>
       )}
 
