@@ -114,6 +114,7 @@ function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activeTool, pdfSplit]);
 
+  const pendingToolSwitchRef = useRef<'home' | 'merge' | 'edit' | 'split' | 'compress' | null>(null);
   const [pendingToolSwitch, setPendingToolSwitch] = useState<'home' | 'merge' | 'edit' | 'split' | 'compress' | null>(null);
 
   const hasActiveFiles = Boolean(
@@ -132,11 +133,13 @@ function App() {
       setOmittedFiles([]);
       return;
     }
+    pendingToolSwitchRef.current = tool;
     setPendingToolSwitch(tool);
   };
 
   const handleConfirmToolSwitch = () => {
-    const nextTool = pendingToolSwitch;
+    const nextTool = pendingToolSwitchRef.current || pendingToolSwitch;
+    pendingToolSwitchRef.current = null;
     setPendingToolSwitch(null);
     if (nextTool) {
       handleClearAll();
@@ -145,6 +148,7 @@ function App() {
   };
 
   const handleCancelToolSwitch = () => {
+    pendingToolSwitchRef.current = null;
     setPendingToolSwitch(null);
   };
 
