@@ -31,7 +31,6 @@ export const ProgressModal: React.FC<ProgressModalProps> = ({
     <Dialog open={isOpen} onOpenChange={() => {}}>
       <DialogContent
         className="w-[420px] max-w-[92vw] sm:w-[420px] p-0 overflow-hidden border border-border/80 rounded-3xl bg-card/95 backdrop-blur-xl shadow-2xl shadow-primary/10 animate-in zoom-in-95 duration-200"
-        onPointerDownOutside={(e) => e.preventDefault()}
       >
         {/* Glow de fondo superior */}
         <div className="absolute top-0 inset-x-0 h-28 bg-gradient-to-b from-primary/15 via-primary/5 to-transparent pointer-events-none" />

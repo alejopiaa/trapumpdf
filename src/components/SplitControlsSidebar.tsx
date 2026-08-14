@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
-import { Layers, Scissors, Grid3X3, Plus, Trash2, Info, CheckCircle2 } from 'lucide-react';
+import React from 'react';
+import { Layers, Scissors, Plus, Trash2, Info, CheckCircle2 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { Input } from './ui/input';
-import { Badge } from './ui/badge';
 
 interface SplitControlsSidebarProps {
   mode: 'individual' | 'custom' | 'fixed';
@@ -34,30 +33,7 @@ const SplitControlsSidebar: React.FC<SplitControlsSidebarProps> = ({
   onSelectEvenPages,
   onSelectOddPages,
 }) => {
-  const [startPage, setStartPage] = useState('');
-  const [endPage, setEndPage] = useState('');
-
   const isRangeMode = mode === 'custom' || mode === 'fixed';
-  const lastEnd = ranges.length > 0 ? ranges[ranges.length - 1].end : 0;
-  const defaultStartHint = lastEnd > 0 && lastEnd < totalPages ? lastEnd + 1 : 1;
-  const defaultEndHint = totalPages > 0 ? totalPages : '';
-
-  const handleAddRange = () => {
-    let start = parseInt(startPage, 10);
-    let end = parseInt(endPage, 10);
-
-    if (isNaN(start)) start = defaultStartHint;
-    if (isNaN(end)) end = totalPages > 0 ? totalPages : start;
-
-    if (start < 1) start = 1;
-    if (totalPages > 0 && start > totalPages) start = totalPages;
-    if (totalPages > 0 && end > totalPages) end = totalPages;
-    if (end < start) end = start;
-
-    onAddRange({ start, end });
-    setStartPage('');
-    setEndPage('');
-  };
 
   const handleRangeInputChange = (idx: number, field: 'start' | 'end', value: string) => {
     if (!onUpdateRange) return;
@@ -69,10 +45,6 @@ const SplitControlsSidebar: React.FC<SplitControlsSidebarProps> = ({
       [field]: val,
     };
     onUpdateRange(idx, updated);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') handleAddRange();
   };
 
   const generatedPdfsFixed =

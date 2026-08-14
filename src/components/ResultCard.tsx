@@ -1,7 +1,7 @@
 import JSZip from 'jszip';
 import { formatBytes } from '../services/pdfService';
 import type { CompressedResultItem } from '../services/pdfService';
-import { Download, Sparkles, RefreshCw, Zap, Link as LinkIcon, FileText, Wrench, FolderArchive, ArrowRight } from 'lucide-react';
+import { Download, Sparkles, RefreshCw, Zap, Link as LinkIcon, Wrench, FolderArchive, ArrowRight } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';

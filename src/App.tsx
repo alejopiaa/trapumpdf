@@ -24,7 +24,6 @@ import {
   mergeAndCompressFileItems,
   compressPdfFilesDirectIndividual,
   exportEditGroupsAsZip,
-  processEditGroups,
   splitByPages,
   splitByRanges,
   splitByFixedRange,
@@ -96,14 +95,14 @@ function App() {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'a') {
         if (activeTool === 'split' && pdfSplit.pages.length > 0) {
           e.preventDefault();
-          pdfSplit.selectAllPages();
+          pdfSplit.handleSelectAllPages();
         }
       }
 
       if (e.key === 'Delete' || e.key === 'Backspace') {
         if (activeTool === 'split' && pdfSplit.selectedPageIds.size > 0) {
           e.preventDefault();
-          pdfSplit.deleteSelectedPages();
+          pdfSplit.handleDeselectAllPages();
         }
       }
     };
@@ -233,7 +232,7 @@ function App() {
         if (pdfEdit.editGroups.length === 0) {
           throw new Error('Debes cargar al menos un documento para organizar.');
         }
-        if (pdfEdit.editGroups.length === 1) {
+        if (pdfEdit.editGroups.length === 1 || exportMode === 'single') {
           const group = pdfEdit.editGroups[0];
           const activePages = group.pages.filter((p) => !p.excluded);
           if (activePages.length === 0) {
@@ -249,7 +248,7 @@ function App() {
             outputFileName: `${baseName}_trapumpdf.pdf`,
           });
         } else {
-          const zipRes = await exportEditGroupsAsZip(pdfEdit.editGroups, updateProgress);
+          const zipRes = await exportEditGroupsAsZip(pdfEdit.editGroups, undefined, updateProgress);
           if (cancelRef.current) return;
           setResult({
             zipResult: { blob: zipRes.zipBlob, fileName: zipRes.zipFileName },
@@ -267,7 +266,7 @@ function App() {
           if (selectedPages.length === 0) {
             throw new Error('Debes seleccionar al menos una página para extraer.');
           }
-          const res = await splitByPages(selectedPages, updateProgress);
+          const res = await splitByPages(selectedPages, undefined, updateProgress);
           if (cancelRef.current) return;
           if (res.length === 1) {
             setResult({
@@ -296,7 +295,7 @@ function App() {
           if (validRanges.length === 0) {
             throw new Error('Debes ingresar al menos un rango de páginas válido.');
           }
-          const res = await splitByRanges(pdfSplit.pages, validRanges, updateProgress);
+          const res = await splitByRanges(pdfSplit.pages, validRanges, undefined, updateProgress);
           if (cancelRef.current) return;
           if (res.length === 1) {
             setResult({
@@ -322,7 +321,7 @@ function App() {
           if (pdfSplit.fixedSize <= 0) {
             throw new Error('El tamaño de rango debe ser mayor a 0.');
           }
-          const res = await splitByFixedRange(pdfSplit.pages, pdfSplit.fixedSize, updateProgress);
+          const res = await splitByFixedRange(pdfSplit.pages, pdfSplit.fixedSize, undefined, updateProgress);
           if (cancelRef.current) return;
           if (res.length === 1) {
             setResult({
@@ -349,9 +348,9 @@ function App() {
         if (pdfMerge.mergeFiles.length === 0) {
           throw new Error('Debes seleccionar al menos un archivo para unir.');
         }
-        const res = await mergeAndCompressFileItems(pdfMerge.mergeFiles, updateProgress);
+        const res = await mergeAndCompressFileItems(pdfMerge.mergeFiles, undefined, updateProgress);
         if (cancelRef.current) return;
-        const firstFileName = pdfMerge.mergeFiles[0]?.name || 'documento';
+        const firstFileName = pdfMerge.mergeFiles[0]?.fileName || 'documento';
         const baseName = getCleanBaseName(firstFileName);
         setResult({
           ...res,
