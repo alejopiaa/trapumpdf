@@ -13,7 +13,7 @@ y el versionado sigue [Semantic Versioning](https://semver.org/lang/es/).
 - Detección automática y exclusión de páginas en blanco en documentos PDF.
 - Motor de compresión híbrido con optimización estructural de objetos y flujos nativos `pdf-lib`.
 - Botón para re-ajustar nivel de compresión en la pantalla final conservando los archivos cargados.
-- Modal de confirmación al alternar herramientas para evitar acumulación de archivos y fugas de memoria RAM.
+- Liberación automática de memoria RAM y descarte de archivos al alternar herramientas en el menú superior.
 - Indicador visual de inserción luminoso (*Drop Indicator*) en reordenamiento de páginas por arrastre.
 - Generación automática de instalador portable `.bat` y empaquetado en carpetas versionadas `dist/TrapumPDF_vX.X.X`.
 

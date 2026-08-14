@@ -15,8 +15,6 @@ import { usePdfEdit } from './hooks/usePdfEdit';
 import { usePdfSplit } from './hooks/usePdfSplit';
 import { usePdfCompress } from './hooks/usePdfCompress';
 import { AboutModal } from './components/common/AboutModal';
-import { AlertCircle, X } from 'lucide-react';
-import { Button } from './components/ui/button';
 import {
   parseFilesToPages,
   parseFilesToMergeItems,
@@ -114,47 +112,22 @@ function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activeTool, pdfSplit]);
 
-  const pendingToolSwitchRef = useRef<'home' | 'merge' | 'edit' | 'split' | 'compress' | null>(null);
-  const [pendingToolSwitch, setPendingToolSwitch] = useState<'home' | 'merge' | 'edit' | 'split' | 'compress' | null>(null);
-
-  const hasActiveFiles = Boolean(
-    (activeTool === 'merge' && pdfMerge.mergeFiles.length > 0) ||
-    (activeTool === 'edit' && pdfEdit.editGroups.length > 0) ||
-    (activeTool === 'split' && pdfSplit.pages.length > 0) ||
-    (activeTool === 'compress' && pdfCompress.compressItems.length > 0)
-  );
-
   const handleToolSwitch = (tool: 'home' | 'merge' | 'edit' | 'split' | 'compress') => {
     if (tool === activeTool) return;
-    if (!hasActiveFiles) {
-      setActiveTool(tool);
-      setResult(null);
-      setErrorMessage(null);
-      setOmittedFiles([]);
-      return;
+    // Liberar activamente la memoria RAM y descartar archivos al alternar herramientas
+    handleClearAll();
+    setActiveTool(tool);
+    if (mainRef.current) {
+      mainRef.current.scrollTop = 0;
     }
-    pendingToolSwitchRef.current = tool;
-    setPendingToolSwitch(tool);
-  };
-
-  const handleConfirmToolSwitch = (forcedTool?: 'home' | 'merge' | 'edit' | 'split' | 'compress' | null) => {
-    const nextTool = forcedTool || pendingToolSwitch || pendingToolSwitchRef.current;
-    pendingToolSwitchRef.current = null;
-    setPendingToolSwitch(null);
-    if (nextTool) {
-      handleClearAll();
-      setActiveTool(nextTool);
-    }
-  };
-
-  const handleCancelToolSwitch = () => {
-    pendingToolSwitchRef.current = null;
-    setPendingToolSwitch(null);
   };
 
   const handleStartNewProcess = () => {
     handleClearAll();
     setActiveTool('home');
+    if (mainRef.current) {
+      mainRef.current.scrollTop = 0;
+    }
   };
 
   const [omittedFiles, setOmittedFiles] = useState<OmittedFileItem[]>([]);
@@ -673,42 +646,6 @@ function App() {
           }
         }}
       />
-
-      {pendingToolSwitch && (
-        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in-0 duration-200">
-          <div className="bg-card border border-border/80 rounded-3xl p-6 max-w-md w-full shadow-2xl flex flex-col gap-4 relative animate-in zoom-in-95 duration-200">
-            <button
-              type="button"
-              onClick={handleCancelToolSwitch}
-              className="absolute top-5 right-5 text-muted-foreground hover:text-foreground rounded-xl p-1.5 hover:bg-muted transition-colors cursor-pointer"
-              title="Cerrar"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <div className="flex items-center gap-3 border-b border-border/60 pb-3 pr-8">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0">
-                <AlertCircle className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="text-base font-bold text-foreground">¿Cambiar de herramienta?</h3>
-                <p className="text-xs text-muted-foreground">Tienes archivos cargados en memoria.</p>
-              </div>
-            </div>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Si cambias de herramienta ahora, los archivos de la tarea actual se descartarán para liberar memoria RAM. ¿Deseas continuar?
-            </p>
-            <div className="flex items-center justify-end gap-2 pt-2">
-              <Button type="button" variant="outline" size="sm" onClick={handleCancelToolSwitch}>
-                Permanecer aquí
-              </Button>
-              <Button type="button" variant="destructive" size="sm" onClick={() => handleConfirmToolSwitch(pendingToolSwitch)}>
-                Descartar y cambiar
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
