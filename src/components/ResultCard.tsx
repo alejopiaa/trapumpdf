@@ -1,5 +1,5 @@
 import JSZip from 'jszip';
-import { formatBytes } from '../services/pdfService';
+import { formatBytes, getCleanBaseName } from '../services/pdfService';
 import type { CompressedResultItem } from '../services/pdfService';
 import { Download, Sparkles, RefreshCw, Zap, Link as LinkIcon, Wrench, FolderArchive, ArrowRight } from 'lucide-react';
 import { Button } from './ui/button';
@@ -84,7 +84,9 @@ export const ResultCard: React.FC<ResultCardProps> = ({
         zip.file(item.fileName, item.pdfBytes);
       });
       const zipBlob = await zip.generateAsync({ type: 'blob' });
-      const firstBase = outputFileName ? outputFileName.replace(/\.[^/.]+$/, "") : 'archivos_procesados';
+      const firstBase = outputFileName
+        ? getCleanBaseName(outputFileName)
+        : (multipleResults[0]?.fileName ? getCleanBaseName(multipleResults[0].fileName) : 'archivos_procesados');
       downloadBlob(zipBlob, `${firstBase}_trapumpdf.zip`);
     }
   };

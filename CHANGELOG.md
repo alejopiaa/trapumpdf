@@ -5,7 +5,20 @@ Todos los cambios notables de este proyecto se documentan en este archivo.
 El formato sigue el estándar [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y el versionado sigue [Semantic Versioning](https://semver.org/lang/es/).
 
-## [Unreleased]
+## [1.3.0] - 2026-08-14
+
+### Added
+- Soporte para rotación de 90° en páginas de la herramienta DIVIDIR.
+- Botones de selección rápida "Todas", "Ninguna", "Páginas Pares" y "Páginas Impares" con alternancia inteligente en DIVIDIR.
+- Cuadros de ayuda e instrucciones contextuales en el panel lateral de cada herramienta.
+
+### Changed
+- Formato uniforme de nombres de archivo descargados con sufijo limpio `_trapumpdf` sin duplicaciones ni caracteres corruptos.
+- Restricción estricta de selección a 1 solo archivo en el cuadro de diálogo nativo para ORGANIZAR y DIVIDIR.
+- Eliminación de desenfoque de fondo en tarjetas para permitir previsualizar rotaciones de página con 100% de nitidez en tiempo real.
+
+### Fixed
+- Corrección de la selección de páginas pares e impares en DIVIDIR para evitar exclusión inadvertida de páginas.
 
 ## [1.2.0] - 2026-08-14
 

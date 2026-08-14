@@ -27,6 +27,7 @@ interface SplitViewProps {
   onDeselectAllPages: () => void;
   onSelectEvenPages?: () => void;
   onSelectOddPages?: () => void;
+  onRotatePage: (pageId: string) => void;
   onMovePageItem: (idx: number, direction: 'left' | 'right') => void;
   draggedPageIdx: number | null;
   setDraggedPageIdx: (idx: number | null) => void;
@@ -58,6 +59,7 @@ export const SplitView: React.FC<SplitViewProps> = ({
   onDeselectAllPages,
   onSelectEvenPages,
   onSelectOddPages,
+  onRotatePage,
   onMovePageItem,
   draggedPageIdx,
   setDraggedPageIdx,
@@ -156,6 +158,7 @@ export const SplitView: React.FC<SplitViewProps> = ({
                 totalCount={pages.length}
                 viewMode={splitViewMode}
                 isDragging={draggedPageIdx === idx}
+                onRotate={() => onRotatePage(page.id)}
                 onDelete={() => onTogglePageSelection(page.id)}
                 onRestore={() => onTogglePageSelection(page.id)}
                 onDragStart={(e) => {
@@ -219,6 +222,7 @@ export const SplitView: React.FC<SplitViewProps> = ({
                         index={globalIdx}
                         totalCount={pages.length}
                         viewMode={splitViewMode}
+                        onRotate={() => onRotatePage(page.id)}
                         onMove={(i, dir) => onMovePageItem(i, dir)}
                         onDragStart={() => setDraggedPageIdx(globalIdx)}
                         onDragOver={(e) => e.preventDefault()}
@@ -263,6 +267,7 @@ export const SplitView: React.FC<SplitViewProps> = ({
                         index={globalIdx}
                         totalCount={pages.length}
                         viewMode={splitViewMode}
+                        onRotate={() => onRotatePage(page.id)}
                         onMove={(i, dir) => onMovePageItem(i, dir)}
                         onDragStart={() => setDraggedPageIdx(globalIdx)}
                         onDragOver={(e) => e.preventDefault()}
