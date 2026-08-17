@@ -10,66 +10,55 @@ y el versionado sigue [Semantic Versioning](https://semver.org/lang/es/).
 ## [1.2.0] - 2026-08-14
 
 ### Added
-- Rediseño Workspace-First con visualización expansiva de miniaturas de 5 a 7 columnas simultáneas.
-- Panel lateral de control unificado y persistente en CSS Grid con cálculo matemático `minmax(0, 1fr) 320px`, inmune a desbordes en 1366×768.
-- Auto-colapso inteligente del Hero Banner al cargar documentos para maximizar el área de trabajo vertical.
-- Tarjetas `PageCard` de alta densidad con micro-acciones en hover (Zoom, Rotar, Quitar) y barra inferior ultracompacta.
-- Soporte para rotación de 90° en páginas de la herramienta DIVIDIR.
-- Botones de selección rápida "Todas", "Ninguna", "Páginas Pares" y "Páginas Impares" con alternancia inteligente en DIVIDIR.
-- Cuadros de ayuda e instrucciones contextuales en el panel lateral de cada herramienta.
-- Componente `CanvasErrorBoundary` para atrapar fallos de renderizado en documentos corruptos sin afectar la aplicación.
-- Detección automática y exclusión de páginas en blanco en documentos PDF.
-- Motor de compresión híbrido con optimización estructural de objetos y flujos nativos `pdf-lib`.
-- Botón para re-ajustar nivel de compresión en la pantalla final conservando los archivos cargados.
-- Liberación automática de memoria RAM y descarte de archivos al alternar herramientas en el menú superior.
-- Indicador visual de inserción luminoso (*Drop Indicator*) en reordenamiento de páginas por arrastre.
-- Generación automática de instalador portable `.bat` y empaquetado en carpetas versionadas `dist/TrapumPDF_vX.X.X`.
+- Soporte para rotar páginas individuales en la herramienta Dividir.
+- Botones de selección rápida de páginas pares, impares, todas o ninguna en la herramienta Dividir.
+- Detección automática y opción para excluir páginas en blanco en documentos PDF.
+- Botón para reajustar los niveles de compresión sin recargar los archivos.
+- Indicador visual para la posición exacta de inserción al arrastrar páginas.
+- Sistema de tolerancia a fallos para aislar errores en documentos dañados sin interrumpir la aplicación.
 
 ### Changed
-- Renderizado concurrente por lotes (chunks de 4 páginas) en generación de miniaturas, acelerando la carga en un ~60%.
-- Optimización de escala de miniaturas a `0.95` (retina-ready) reduciendo el consumo de memoria GPU y canvas en más de un 55%.
-- Destrucción explícita de proxies `PDFDocumentProxy` en bloques `finally` para eliminar fugas de memoria en Web Workers.
-- Procesamiento directo de compresión sin generación redundante de miniaturas, acelerando el proceso a 1-2 segundos.
-- Eliminación de conversiones a Base64 en compresión de imágenes mediante buffers nativos `OffscreenCanvas` y `Blob`.
-- Preservación íntegra de texto vectorial y búsqueda interactiva (`Ctrl + F`) en documentos comprimidos.
-- Formato uniforme de nombres de archivo descargados con sufijo limpio `_trapumpdf` sin duplicaciones ni caracteres corruptos.
-- Restricción estricta de selección a 1 solo archivo en el cuadro de diálogo nativo para ORGANIZAR y DIVIDIR.
-- Eliminación de desenfoque de fondo en tarjetas para permitir previsualizar rotaciones de página con 100% de nitidez en tiempo real.
+- Rediseño de la interfaz centrado en el espacio de trabajo con visualización expandida de miniaturas en cuadrícula.
+- Paneles laterales de control unificados para todas las herramientas con cuadros de instrucciones contextuales.
+- Optimización en la velocidad de carga de miniaturas para documentos extensos.
+- Motor de compresión mejorado para preservar texto editable y búsqueda interactiva.
+- Gestión de memoria optimizada para liberar recursos del navegador al finalizar tareas o alternar herramientas.
 
 ### Fixed
-- Corrección de la selección de páginas pares e impares en DIVIDIR para evitar exclusión inadvertida de páginas.
-- Corrección del botón "Descargar Archivos Separados" en la pantalla de resultados tras exportación masiva.
-- Corrección de inoperatividad en el botón de reinicio para redirigir limpiamente a la pantalla principal.
-- Corrección de parpadeo (*flickering*) y cálculo de posición de inserción (antes/después) al soltar páginas entre tarjetas.
+- Corrección en la selección de páginas pares e impares en la herramienta Dividir.
+- Corrección en la generación de nombres de archivo para conservar el nombre original con sufijo `_trapumpdf` sin duplicaciones ni caracteres anómalos.
+- Corrección en el diálogo de selección de archivos para restringir a un único documento en Organizar y Dividir.
+- Corrección en la descarga de archivos individuales separados desde la pantalla de resultados.
+- Corrección de comportamiento al reiniciar la aplicación tras procesar un documento.
+- Corrección de parpadeo visual al mover páginas entre tarjetas en el lienzo.
 
 ## [1.1.0] - 2026-08-10
 
 ### Added
-- Liberación activa de memoria RAM al limpiar o vaciar archivos.
-- Indicador de tamaño óptimo alcanzado al procesar documentos ya comprimidos.
+- Indicador visual cuando un documento ya se encuentra en su tamaño óptimo de compresión.
 
 ### Changed
-- Rediseño de la pantalla de resultados para optimizar descargas masivas e individuales.
-- Optimización de adaptabilidad y flujo de trabajo en pantallas reducidas.
+- Rediseño de la pantalla de resultados con opciones más claras de descarga individual y por paquete ZIP.
+- Mejoras de adaptabilidad y navegación en pantallas de menor resolución.
 
 ### Fixed
-- Corrección de desbordamiento horizontal en dispositivos de pantalla pequeña.
-- Control de compresión para evitar incrementos en el peso final del archivo.
+- Corrección de desbordamiento horizontal en pantallas pequeñas.
+- Control de compresión para evitar incrementos no deseados en el tamaño del archivo final.
 
 ### Removed
-- Lista redundante de descargas por archivo individual en el panel de resultados.
+- Lista duplicada de descargas por archivo en el panel de resultados.
 
 ## [1.0.0] - 2026-08-07
 
 ### Added
-- Herramienta **Unir PDF**: combina múltiples archivos PDF e imágenes en un único documento.
-- Herramienta **Organizar PDF**: reordena, rota y excluye páginas mediante arrastrar y soltar.
-- Herramienta **Dividir PDF**: extrae páginas o divide documentos por rangos y bloques.
-- Herramienta **Comprimir PDF**: reduce el tamaño de archivos PDF con niveles ajustables.
-- Procesamiento 100% local en memoria RAM del navegador.
+- Herramienta **Unir PDF**: combinación de múltiples archivos PDF e imágenes en un único documento.
+- Herramienta **Organizar PDF**: reordenación, rotación y exclusión de páginas interactivas.
+- Herramienta **Dividir PDF**: extracción de páginas por selección directa, rangos o bloques de páginas.
+- Herramienta **Comprimir PDF**: reducción del tamaño de archivos con niveles de optimización ajustables.
+- Procesamiento 100% local en el navegador sin envío de datos a servidores externos.
 - Soporte para arrastrar y soltar archivos.
-- Exportación en formato PDF o paquetes comprimidos ZIP.
-- Modo oscuro y modo claro con persistencia.
+- Exportación de documentos individuales en PDF y descargas múltiples en paquetes ZIP.
+- Soporte para tema visual claro y oscuro con persistencia.
 
 [Unreleased]: https://github.com/alejopiaa/trapumpdf/compare/v1.2.0...HEAD
 [1.2.0]: https://github.com/alejopiaa/trapumpdf/compare/v1.1.0...v1.2.0
