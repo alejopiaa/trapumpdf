@@ -5,24 +5,7 @@ Todos los cambios notables de este proyecto se documentan en este archivo.
 El formato sigue el estándar [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y el versionado sigue [Semantic Versioning](https://semver.org/lang/es/).
 
-## [1.3.0] - 2026-08-14
-
-### Added
-- Soporte para rotación de 90° en páginas de la herramienta DIVIDIR.
-- Botones de selección rápida "Todas", "Ninguna", "Páginas Pares" y "Páginas Impares" con alternancia inteligente en DIVIDIR.
-- Cuadros de ayuda e instrucciones contextuales en el panel lateral de cada herramienta.
-- Componente `CanvasErrorBoundary` para atrapar fallos de renderizado en documentos corruptos sin afectar la aplicación.
-
-### Changed
-- Renderizado concurrente por lotes (chunks de 4 páginas) en generación de miniaturas, acelerando la carga en un ~60%.
-- Optimización de escala de miniaturas a `0.95` (retina-ready) reduciendo el consumo de memoria GPU y canvas en más de un 55%.
-- Destrucción explícita de proxies `PDFDocumentProxy` en bloques `finally` para eliminar fugas de memoria en Web Workers.
-- Formato uniforme de nombres de archivo descargados con sufijo limpio `_trapumpdf` sin duplicaciones ni caracteres corruptos.
-- Restricción estricta de selección a 1 solo archivo en el cuadro de diálogo nativo para ORGANIZAR y DIVIDIR.
-- Eliminación de desenfoque de fondo en tarjetas para permitir previsualizar rotaciones de página con 100% de nitidez en tiempo real.
-
-### Fixed
-- Corrección de la selección de páginas pares e impares en DIVIDIR para evitar exclusión inadvertida de páginas.
+## [Unreleased]
 
 ## [1.2.0] - 2026-08-14
 
@@ -31,6 +14,10 @@ y el versionado sigue [Semantic Versioning](https://semver.org/lang/es/).
 - Panel lateral de control unificado y persistente en CSS Grid con cálculo matemático `minmax(0, 1fr) 320px`, inmune a desbordes en 1366×768.
 - Auto-colapso inteligente del Hero Banner al cargar documentos para maximizar el área de trabajo vertical.
 - Tarjetas `PageCard` de alta densidad con micro-acciones en hover (Zoom, Rotar, Quitar) y barra inferior ultracompacta.
+- Soporte para rotación de 90° en páginas de la herramienta DIVIDIR.
+- Botones de selección rápida "Todas", "Ninguna", "Páginas Pares" y "Páginas Impares" con alternancia inteligente en DIVIDIR.
+- Cuadros de ayuda e instrucciones contextuales en el panel lateral de cada herramienta.
+- Componente `CanvasErrorBoundary` para atrapar fallos de renderizado en documentos corruptos sin afectar la aplicación.
 - Detección automática y exclusión de páginas en blanco en documentos PDF.
 - Motor de compresión híbrido con optimización estructural de objetos y flujos nativos `pdf-lib`.
 - Botón para re-ajustar nivel de compresión en la pantalla final conservando los archivos cargados.
@@ -39,11 +26,18 @@ y el versionado sigue [Semantic Versioning](https://semver.org/lang/es/).
 - Generación automática de instalador portable `.bat` y empaquetado en carpetas versionadas `dist/TrapumPDF_vX.X.X`.
 
 ### Changed
+- Renderizado concurrente por lotes (chunks de 4 páginas) en generación de miniaturas, acelerando la carga en un ~60%.
+- Optimización de escala de miniaturas a `0.95` (retina-ready) reduciendo el consumo de memoria GPU y canvas en más de un 55%.
+- Destrucción explícita de proxies `PDFDocumentProxy` en bloques `finally` para eliminar fugas de memoria en Web Workers.
 - Procesamiento directo de compresión sin generación redundante de miniaturas, acelerando el proceso a 1-2 segundos.
 - Eliminación de conversiones a Base64 en compresión de imágenes mediante buffers nativos `OffscreenCanvas` y `Blob`.
 - Preservación íntegra de texto vectorial y búsqueda interactiva (`Ctrl + F`) en documentos comprimidos.
+- Formato uniforme de nombres de archivo descargados con sufijo limpio `_trapumpdf` sin duplicaciones ni caracteres corruptos.
+- Restricción estricta de selección a 1 solo archivo en el cuadro de diálogo nativo para ORGANIZAR y DIVIDIR.
+- Eliminación de desenfoque de fondo en tarjetas para permitir previsualizar rotaciones de página con 100% de nitidez en tiempo real.
 
 ### Fixed
+- Corrección de la selección de páginas pares e impares en DIVIDIR para evitar exclusión inadvertida de páginas.
 - Corrección del botón "Descargar Archivos Separados" en la pantalla de resultados tras exportación masiva.
 - Corrección de inoperatividad en el botón de reinicio para redirigir limpiamente a la pantalla principal.
 - Corrección de parpadeo (*flickering*) y cálculo de posición de inserción (antes/después) al soltar páginas entre tarjetas.
@@ -76,3 +70,8 @@ y el versionado sigue [Semantic Versioning](https://semver.org/lang/es/).
 - Soporte para arrastrar y soltar archivos.
 - Exportación en formato PDF o paquetes comprimidos ZIP.
 - Modo oscuro y modo claro con persistencia.
+
+[Unreleased]: https://github.com/alejopiaa/trapumpdf/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/alejopiaa/trapumpdf/compare/v1.1.0...v1.2.0
+[1.1.0]: https://github.com/alejopiaa/trapumpdf/compare/v1.0.0...v1.1.0
+[1.0.0]: https://github.com/alejopiaa/trapumpdf/releases/tag/v1.0.0

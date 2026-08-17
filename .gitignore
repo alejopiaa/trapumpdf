@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Internal docs & audit notes
+*AUDITORIA*.md
+*auditoria*.md
