@@ -7,7 +7,7 @@ y el versionado sigue [Semantic Versioning](https://semver.org/lang/es/).
 
 ## [Unreleased]
 
-## [1.2.0] - 2026-08-14
+## [1.2.0] - 2026-08-21
 
 ### Added
 - Soporte para rotar páginas individuales en la herramienta Dividir.
@@ -16,6 +16,7 @@ y el versionado sigue [Semantic Versioning](https://semver.org/lang/es/).
 - Botón para reajustar los niveles de compresión sin recargar los archivos.
 - Indicador visual para la posición exacta de inserción al arrastrar páginas.
 - Sistema de tolerancia a fallos para aislar errores en documentos dañados sin interrumpir la aplicación.
+- Generación automática de instalador autónomo `.CMD` con GUI nativa WPF y script Inno Setup (`setup.iss`) para distribución en Windows.
 
 ### Changed
 - Rediseño de la interfaz centrado en el espacio de trabajo con visualización expandida de miniaturas en cuadrícula.
