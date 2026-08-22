@@ -123,6 +123,143 @@ pause
       fs.writeFileSync(path.join(targetDir, 'favicon.ico'), icoBuf)
       fs.writeFileSync(path.join(targetDir, 'Instalar_TrapumPDF.bat'), batContent, 'utf-8')
 
+      // Generar Instalador Autónomo .CMD con GUI Moderna Nativa (WPF / .NET)
+      const indexPath = path.join(targetDir, 'index.html')
+      if (fs.existsSync(indexPath)) {
+        const indexB64 = fs.readFileSync(indexPath).toString('base64')
+        const icoB64 = icoBuf.toString('base64')
+
+        const cmdContent = `<# :
+@echo off
+setlocal
+powershell -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -Command "$f=[IO.File]::ReadAllText('%~f0', [Text.Encoding]::UTF8); Invoke-Expression $f"
+exit /b
+#>
+
+Add-Type -AssemblyName PresentationFramework, PresentationCore, WindowsBase
+
+$appVersion = "${appVersion}"
+$destFolder = "$env:LocalAppData\\TrapumPDF"
+$indexPath = "$destFolder\\index.html"
+$isInstalled = Test-Path $indexPath
+
+$initialDesc = if ($isInstalled) { "TrapümPDF ya se encuentra instalado. Haga clic abajo para actualizar los archivos." } else { "Haga clic en el botón de abajo para instalar TrapümPDF y crear el acceso directo en el Escritorio." }
+$initialBtnText = if ($isInstalled) { "Actualizar TrapümPDF" } else { "Instalar TrapümPDF" }
+
+$indexPayload = @"
+${indexB64}
+"@
+
+$icoPayload = @"
+${icoB64}
+"@
+
+$xaml = @"
+<Window
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="TrapümPDF v$appVersion"
+    Width="430" Height="360"
+    WindowStartupLocation="CenterScreen"
+    ResizeMode="NoResize"
+    Background="#F8FAFC"
+    FontFamily="Segoe UI">
+    <Grid Margin="20">
+        <Border Background="White" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="16" Padding="20">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="20" ShadowDepth="4" Opacity="0.06" Color="#0F172A"/>
+            </Border.Effect>
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="330">
+                <Border Width="48" Height="48" CornerRadius="12" Background="#6366F1" HorizontalAlignment="Center" Margin="0,0,0,8">
+                    <TextBlock Text="T" Foreground="White" FontSize="24" FontWeight="ExtraBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,4">
+                    <TextBlock Text="TRAPÜM" FontSize="18" FontWeight="ExtraBold" Foreground="#0F172A"/>
+                    <TextBlock Text="PDF" FontSize="18" FontWeight="ExtraBold" Foreground="#6366F1"/>
+                </StackPanel>
+                
+                <Border Background="#EDE9FE" BorderBrush="#DDD6FE" BorderThickness="1" CornerRadius="10" Padding="8,2" HorizontalAlignment="Center" Margin="0,0,0,12">
+                    <TextBlock Text="Versión $appVersion" FontSize="11" FontWeight="Bold" Foreground="#6D28D9"/>
+                </Border>
+                
+                <TextBlock Name="txtDesc" Text="$initialDesc" FontSize="12" Foreground="#64748B" TextWrapping="Wrap" TextAlignment="Center" Margin="0,0,0,16" LineHeight="18"/>
+                
+                <ProgressBar Name="pBar" Height="7" Foreground="#6366F1" Background="#E2E8F0" BorderThickness="0" Margin="0,0,0,8" Visibility="Collapsed"/>
+                <TextBlock Name="txtStatus" Text="Instalando..." FontSize="11" FontWeight="SemiBold" Foreground="#6366F1" HorizontalAlignment="Center" Margin="0,0,0,12" Visibility="Collapsed"/>
+
+                <Button Name="btnAction" Content="$initialBtnText" Height="40" Background="#6366F1" Foreground="White" FontWeight="Bold" FontSize="13" Cursor="Hand" BorderThickness="0">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="10"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>
+"@
+
+$reader = [System.Xml.XmlReader]::Create([System.IO.StringReader]::new($xaml))
+$window = [System.Windows.Markup.XamlReader]::Load($reader)
+
+$btnAction = $window.FindName("btnAction")
+$txtDesc = $window.FindName("txtDesc")
+$pBar = $window.FindName("pBar")
+$txtStatus = $window.FindName("txtStatus")
+
+$script:step = "install"
+
+$btnAction.Add_Click({
+    if ($script:step -eq "install") {
+        $btnAction.IsEnabled = $false
+        $btnAction.Visibility = [System.Windows.Visibility]::Collapsed
+        $pBar.Visibility = [System.Windows.Visibility]::Visible
+        $txtStatus.Visibility = [System.Windows.Visibility]::Visible
+        $pBar.Value = 30
+
+        if (-not (Test-Path $destFolder)) {
+            New-Item -ItemType Directory -Path $destFolder -Force | Out-Null
+        }
+        
+        $pBar.Value = 60
+        [IO.File]::WriteAllBytes("$destFolder\\index.html", [Convert]::FromBase64String($indexPayload))
+        [IO.File]::WriteAllBytes("$destFolder\\app.ico", [Convert]::FromBase64String($icoPayload))
+        
+        $pBar.Value = 85
+        $ws = New-Object -ComObject WScript.Shell
+        $desktop = [Environment]::GetFolderPath('Desktop')
+        $sc = $ws.CreateShortcut("$desktop\\TrapümPDF.lnk")
+        $sc.TargetPath = "$destFolder\\index.html"
+        $sc.IconLocation = "$destFolder\\app.ico"
+        $sc.Save()
+
+        $pBar.Value = 100
+        $pBar.Visibility = [System.Windows.Visibility]::Collapsed
+        $txtStatus.Visibility = [System.Windows.Visibility]::Collapsed
+
+        $txtDesc.Text = "¡TrapümPDF se instaló con éxito en su equipo!"
+        $btnAction.Content = "Abrir TrapümPDF"
+        $btnAction.Background = [System.Windows.Media.BrushConverter]::new().ConvertFromString("#10B981")
+        $btnAction.Visibility = [System.Windows.Visibility]::Visible
+        $btnAction.IsEnabled = $true
+        $script:step = "open"
+    }
+    elseif ($script:step -eq "open") {
+        Start-Process "$destFolder\\index.html"
+        $window.Close()
+    }
+})
+
+$window.ShowDialog() | Out-Null
+`
+
+        fs.writeFileSync(path.join(targetDir, 'Instalar_TrapumPDF.cmd'), cmdContent, 'utf-8')
+        const distRoot = path.resolve(baseDir, 'dist')
+        fs.writeFileSync(path.join(distRoot, 'Instalar_TrapumPDF.cmd'), cmdContent, 'utf-8')
+      }
+
       // Guardar también en public para desarrollo
       const publicDir = path.resolve(baseDir, 'public')
       if (fs.existsSync(publicDir)) {
