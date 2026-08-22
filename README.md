@@ -42,14 +42,13 @@ Este diseño es compatible con los principios establecidos en la **Ley N.º 21.7
 
 ## 📥 Descarga y Uso (Usuarios)
 
-Descarga la última versión estable desde la sección **[Releases](https://github.com/alejopiaa/trapumpdf/releases)** de este repositorio:
+Descarga la versión más reciente desde la sección **[Releases](https://github.com/alejopiaa/trapumpdf/releases/latest)** de este repositorio:
 
-1. Ve a **Releases → v1.0.0 → Assets**.
-2. Descarga el archivo `.zip` de la versión.
-3. Descomprime la carpeta en tu equipo.
-4. Abre el archivo `index.html` directamente en tu navegador (Chrome, Edge o Firefox).
+* **Instalador Autónomo para Windows (`.cmd`)**: Descarga `Instalar_TrapumPDF_v1.2.0.cmd` y haz doble clic para instalar la aplicación con interfaz gráfica y crear el acceso directo en el Escritorio.
+* **Paquete Portable (`.zip`)**: Descarga `TrapumPDF_v1.2.0_portable.zip`, descomprime la carpeta y abre `index.html`.
+* **Archivo Único Autónomo (`.html`)**: Descarga `TrapumPDF_v1.2.0_standalone.html` y ábrelo directamente en cualquier navegador moderno (Chrome, Edge o Firefox).
 
-No requiere instalación, internet ni permisos de administrador.
+> 💡 **Nota**: TrapümPDF funciona 100% en local, no requiere servidores, internet ni permisos de administrador.
 
 ---
 
