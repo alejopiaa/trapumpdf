@@ -23,6 +23,3 @@ dist-ssr
 *.sln
 *.sw?
 
-# Internal docs & audit notes
-*AUDITORIA*.md
-*auditoria*.md
