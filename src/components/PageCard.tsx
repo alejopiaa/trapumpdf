@@ -103,7 +103,7 @@ const PageCardComponent: React.FC<PageCardProps> = ({
 
         <div
           className="w-9 h-11 sm:w-12 sm:h-14 bg-muted rounded-md overflow-hidden shrink-0 cursor-pointer border hover:ring-2 hover:ring-primary/50 transition-all flex items-center justify-center relative"
-          onClick={(e) => { e.stopPropagation(); onPreview && onPreview(page); }}
+          onClick={(e) => { e.stopPropagation(); onPreview?.(page); }}
           title="Haz clic para ver en grande"
         >
           <img
@@ -177,7 +177,7 @@ const PageCardComponent: React.FC<PageCardProps> = ({
               type="button"
               variant="success"
               size="sm"
-              onClick={(e) => { e.stopPropagation(); onRestore && onRestore(page.id); }}
+              onClick={(e) => { e.stopPropagation(); onRestore?.(page.id); }}
               className="h-7 text-xs gap-1 font-semibold"
               title="Restaurar página"
             >
@@ -223,7 +223,7 @@ const PageCardComponent: React.FC<PageCardProps> = ({
       {/* Main Thumbnail Container (Aspect 3:4) */}
       <div
         className="relative aspect-[3/4] w-full bg-muted/20 flex items-center justify-center p-1.5 cursor-pointer overflow-hidden"
-        onClick={() => onPreview && onPreview(page)}
+        onClick={() => onPreview?.(page)}
         title="Haz clic para previsualizar en grande (Lightbox)"
       >
         <img
@@ -262,7 +262,7 @@ const PageCardComponent: React.FC<PageCardProps> = ({
               type="button"
               variant="secondary"
               size="sm"
-              onClick={(e) => { e.stopPropagation(); onRestore && onRestore(page.id); }}
+              onClick={(e) => { e.stopPropagation(); onRestore?.(page.id); }}
               className="h-6 text-[10px] font-bold px-2 gap-1 shadow-sm"
             >
               <RotateCcw className="w-3 h-3" /> Restaurar
@@ -279,7 +279,7 @@ const PageCardComponent: React.FC<PageCardProps> = ({
                 variant="ghost"
                 size="icon"
                 className="h-7 w-7 rounded-full text-foreground hover:bg-primary hover:text-primary-foreground transition-all"
-                onClick={(e) => { e.stopPropagation(); onPreview && onPreview(page); }}
+                onClick={(e) => { e.stopPropagation(); onPreview?.(page); }}
                 title="Ver en grande"
               >
                 <ZoomIn className="w-3.5 h-3.5" />

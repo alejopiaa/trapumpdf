@@ -106,6 +106,28 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
     }
   }, [omittedFiles]);
 
+  // Keyboard accessibility shortcuts with strict focus check
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const activeEl = document.activeElement;
+      const isInput =
+        activeEl instanceof HTMLInputElement ||
+        activeEl instanceof HTMLTextAreaElement ||
+        (activeEl instanceof HTMLElement && activeEl.isContentEditable);
+
+      if (isInput) return; // Never intercept if the user is focused on an input/textarea
+
+      if (e.key === 'Escape') {
+        if (showClearConfirm) setShowClearConfirm(false);
+        if (showRestoreConfirm) setShowRestoreConfirm(false);
+        if (showPopover) setShowPopover(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showClearConfirm, showRestoreConfirm, showPopover]);
+
   return (
     <div className="relative w-full flex flex-col gap-3 min-h-[calc(100vh-140px)]">
       
@@ -393,7 +415,7 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
                 size="sm"
                 onClick={() => {
                   setShowClearConfirm(false);
-                  onClearAll && onClearAll();
+                  onClearAll?.();
                 }}
                 className="rounded-xl font-bold text-xs gap-1.5 shadow-sm"
               >
@@ -443,7 +465,7 @@ export const ToolCanvasLayout: React.FC<ToolCanvasLayoutProps> = ({
                 size="sm"
                 onClick={() => {
                   setShowRestoreConfirm(false);
-                  onRestoreAllPages && onRestoreAllPages();
+                  onRestoreAllPages?.();
                 }}
                 className="rounded-xl font-bold text-xs gap-1.5 shadow-sm"
               >

@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import type { EditFileGroup } from '../services/pdfService';
-import { revokeThumbnailUrl } from '../services/pdfService';
+import { revokeThumbnailUrl, clearFileBufferMap, syncFileBufferMap } from '../services/pdfService';
 
 export function usePdfEdit() {
   const [editGroups, setEditGroups] = useState<EditFileGroup[]>([]);
@@ -40,7 +40,11 @@ export function usePdfEdit() {
           if (p.thumbnailUrl) revokeThumbnailUrl(p.thumbnailUrl);
         });
       }
-      return prev.filter((g) => g.id !== groupId);
+      const remaining = prev.filter((g) => g.id !== groupId);
+      const activeFileIds = new Set<string>();
+      remaining.forEach((g) => g.pages.forEach((p) => activeFileIds.add(p.fileId)));
+      syncFileBufferMap(activeFileIds);
+      return remaining;
     });
   }, []);
 
@@ -139,6 +143,7 @@ export function usePdfEdit() {
       return [];
     });
     setEditViewMode('grid');
+    clearFileBufferMap();
   }, []);
 
   return {

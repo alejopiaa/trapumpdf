@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import type { PageItem } from '../services/pdfService';
-import { revokeThumbnailUrl } from '../services/pdfService';
+import { revokeThumbnailUrl, clearFileBufferMap, syncFileBufferMap } from '../services/pdfService';
 
 export function usePdfSplit() {
   const [splitMode, setSplitMode] = useState<'individual' | 'custom' | 'fixed'>('custom');
@@ -15,6 +15,7 @@ export function usePdfSplit() {
     setPages(newPages);
     setSelectedPageIds(new Set(newPages.map((p) => p.id)));
     setCustomRanges([{ start: 1, end: newPages.length }]);
+    syncFileBufferMap(new Set(newPages.map((p) => p.fileId)));
   }, []);
 
   const handleTogglePageSelection = useCallback((pageId: string) => {
@@ -111,6 +112,7 @@ export function usePdfSplit() {
     setCustomRanges([]);
     setFixedSize(10);
     setDraggedPageIdx(null);
+    clearFileBufferMap();
   }, []);
 
   const handleSelectEvenPages = useCallback(() => {

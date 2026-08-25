@@ -186,18 +186,65 @@ export const releaseBlobUrls = (urls: (string | undefined)[]) => {
   urls.forEach((url) => revokeThumbnailUrl(url));
 };
 
-const pdfjsGlobalDocMap = new Map<any, any>();
+interface DestroyableProxy {
+  destroy?: () => Promise<void> | void;
+  cleanup?: () => void;
+}
+
+function isDestroyable(target: unknown): target is DestroyableProxy {
+  return typeof target === 'object' && target !== null && ('destroy' in target || 'cleanup' in target);
+}
+
+export async function safeDestroy(target: unknown): Promise<void> {
+  if (!isDestroyable(target)) return;
+  try {
+    if (typeof target.destroy === 'function') {
+      await target.destroy();
+    } else if (typeof target.cleanup === 'function') {
+      target.cleanup();
+    }
+  } catch (e) {
+    console.warn('Advertencia al liberar proxy de PDF:', e);
+  }
+}
+
+const pdfjsGlobalDocMap = new Map<unknown, unknown>();
 
 export const clearPdfjsCache = () => {
   pdfjsGlobalDocMap.forEach((doc) => {
-    try {
-      doc?.destroy?.();
-    } catch (e) {
-      console.warn('Error destruyendo proxy de PDF.js:', e);
-    }
+    safeDestroy(doc);
   });
   pdfjsGlobalDocMap.clear();
 };
+
+/**
+ * Centralized File ArrayBuffer cache to avoid duplicating ArrayBuffers across hundreds of PageItems
+ */
+const pdfFileBufferMap = new Map<string, ArrayBuffer>();
+
+export function storeFileBuffer(fileId: string, buffer: ArrayBuffer): void {
+  pdfFileBufferMap.set(fileId, buffer);
+}
+
+export function getFileBuffer(fileId: string): ArrayBuffer | undefined {
+  return pdfFileBufferMap.get(fileId);
+}
+
+export function removeFileBuffer(fileId: string): void {
+  pdfFileBufferMap.delete(fileId);
+}
+
+export function syncFileBufferMap(activeFileIds: Set<string>): void {
+  for (const key of pdfFileBufferMap.keys()) {
+    if (!activeFileIds.has(key)) {
+      pdfFileBufferMap.delete(key);
+    }
+  }
+}
+
+export function clearFileBufferMap(): void {
+  pdfFileBufferMap.clear();
+}
 
 /**
  * Parses files (PDFs or Images) into individual PageItems with high-res thumbnails
@@ -224,12 +271,14 @@ export const parseFilesToPages = async (
     }
 
     if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
-      let pdfDoc: any = null;
+      let pdfDoc: unknown = null;
       try {
         const arrayBuffer = await file.arrayBuffer();
+        storeFileBuffer(fileId, arrayBuffer);
+
         const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer.slice(0) });
         pdfDoc = await loadingTask.promise;
-        const totalPages = pdfDoc.numPages;
+        const totalPages = (pdfDoc as { numPages: number }).numPages;
 
         // Process thumbnails in concurrent batches of 4 pages
         const BATCH_SIZE = 4;
@@ -239,7 +288,7 @@ export const parseFilesToPages = async (
 
           for (let pageNum = startPage; pageNum <= endPage; pageNum++) {
             batchPromises.push((async (pNum) => {
-              const page = await pdfDoc.getPage(pNum);
+              const page = await (pdfDoc as { getPage: (num: number) => Promise<any> }).getPage(pNum);
               // Scale 0.95 gives ~350px width: retina-crisp for 175px cards and saves 55% RAM/render time
               const viewport = page.getViewport({ scale: 0.95 });
 
@@ -249,10 +298,10 @@ export const parseFilesToPages = async (
               canvas.height = viewport.height;
 
               if (context) {
-                await (page.render({
+                await page.render({
                   canvasContext: context,
                   viewport: viewport,
-                } as any)).promise;
+                }).promise;
               }
 
               let isBlank = false;
@@ -308,11 +357,7 @@ export const parseFilesToPages = async (
         });
       } finally {
         if (pdfDoc) {
-          try {
-            await pdfDoc.destroy();
-          } catch (destroyErr) {
-            console.warn('Advertencia al destruir pdfDoc proxy:', destroyErr);
-          }
+          await safeDestroy(pdfDoc);
         }
       }
     } else if (file.type.startsWith('image/')) {
@@ -442,8 +487,9 @@ export async function mergeAndCompressPages(
   for (const page of pages) {
     if (!countedFiles.has(page.fileId)) {
       countedFiles.add(page.fileId);
-      if (page.pdfArrayBuffer) {
-        originalSizeBytes += page.pdfArrayBuffer.byteLength;
+      const buffer = getFileBuffer(page.fileId) || page.pdfArrayBuffer;
+      if (buffer) {
+        originalSizeBytes += buffer.byteLength;
       } else if (page.imageFile) {
         originalSizeBytes += page.imageFile.size;
       }
@@ -454,10 +500,11 @@ export async function mergeAndCompressPages(
   const totalPages = pages.length;
 
   const pdfDocMap = new Map<ArrayBuffer, PDFDocument>();
-  const pdfjsDocMap = new Map<ArrayBuffer, pdfjsLib.PDFDocumentProxy>();
+  const pdfjsDocMap = new Map<ArrayBuffer, unknown>();
 
   for (let i = 0; i < totalPages; i++) {
     const pageItem = pages[i];
+    const pageBuffer = getFileBuffer(pageItem.fileId) || pageItem.pdfArrayBuffer;
     
     if (onProgress) {
       onProgress(
@@ -467,11 +514,11 @@ export async function mergeAndCompressPages(
     }
 
     if (options.level === 'none') {
-      if (pageItem.fileType === 'pdf' && pageItem.pdfArrayBuffer) {
-        let srcPdfDoc = pdfDocMap.get(pageItem.pdfArrayBuffer);
+      if (pageItem.fileType === 'pdf' && pageBuffer) {
+        let srcPdfDoc = pdfDocMap.get(pageBuffer);
         if (!srcPdfDoc) {
-          srcPdfDoc = await PDFDocument.load(pageItem.pdfArrayBuffer.slice(0));
-          pdfDocMap.set(pageItem.pdfArrayBuffer, srcPdfDoc);
+          srcPdfDoc = await PDFDocument.load(pageBuffer.slice(0));
+          pdfDocMap.set(pageBuffer, srcPdfDoc);
         }
 
         const [copiedPage] = await mergedDoc.copyPages(srcPdfDoc, [pageItem.pageIndex]);
@@ -534,12 +581,12 @@ export async function mergeAndCompressPages(
 
         if (!ctx) throw new Error('No se pudo inicializar el contexto 2D de renderizado.');
 
-        if (pageItem.fileType === 'pdf' && pageItem.pdfArrayBuffer) {
-          let pdfjsDoc = pdfjsDocMap.get(pageItem.pdfArrayBuffer);
+        if (pageItem.fileType === 'pdf' && pageBuffer) {
+          let pdfjsDoc = pdfjsDocMap.get(pageBuffer) as pdfjsLib.PDFDocumentProxy | undefined;
           if (!pdfjsDoc) {
-            const loadingTask = pdfjsLib.getDocument({ data: pageItem.pdfArrayBuffer.slice(0) });
+            const loadingTask = pdfjsLib.getDocument({ data: pageBuffer.slice(0) });
             pdfjsDoc = await loadingTask.promise;
-            pdfjsDocMap.set(pageItem.pdfArrayBuffer, pdfjsDoc);
+            pdfjsDocMap.set(pageBuffer, pdfjsDoc);
           }
 
           const pdfPage = await pdfjsDoc.getPage(pageItem.pageIndex + 1);
@@ -547,10 +594,10 @@ export async function mergeAndCompressPages(
           const desiredScale = (canvasWidth / unscaledViewport.width);
           const viewport = pdfPage.getViewport({ scale: desiredScale });
 
-          await (pdfPage.render({
+          await pdfPage.render({
             canvasContext: ctx,
             viewport: viewport,
-          } as any)).promise;
+          }).promise;
         } else if (pageItem.fileType === 'image' && pageItem.imageFile) {
           const imageUrl = URL.createObjectURL(pageItem.imageFile);
           const img = new Image();
@@ -585,9 +632,7 @@ export async function mergeAndCompressPages(
 
   // Cleanup all pdfjsDoc proxies from the map
   for (const doc of pdfjsDocMap.values()) {
-    try {
-      await (doc as any).destroy?.();
-    } catch {}
+    await safeDestroy(doc);
   }
 
   const pdfBytes = await mergedDoc.save({ useObjectStreams: true });

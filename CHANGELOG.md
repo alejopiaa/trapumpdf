@@ -7,6 +7,16 @@ y el versionado sigue [Semantic Versioning](https://semver.org/lang/es/).
 
 ## [Unreleased]
 
+### Added
+- Atajo de teclado (`Escape`) con protección de foco para cerrar modales y confirmaciones sin interrumpir la escritura.
+
+### Changed
+- Centralización de almacenamiento en memoria para reutilizar un único búfer de datos por archivo en lugar de duplicarlo por página.
+- Gestión segura y tolerante en la liberación de recursos internos de documentos PDF.
+
+### Fixed
+- Corrección de advertencias de sintaxis y llamadas opcionales en los eventos de previsualización y restauración de páginas.
+
 ## [1.2.0] - 2026-08-21
 
 ### Added
